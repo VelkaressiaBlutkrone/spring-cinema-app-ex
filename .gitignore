@@ -1,0 +1,170 @@
+# ============================================
+# Spring Boot / Gradle
+# ============================================
+HELP.md
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+# ============================================
+# IDE - IntelliJ IDEA
+# ============================================
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+# ============================================
+# IDE - Eclipse / STS
+# ============================================
+.apt_generated/
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache/
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+# ============================================
+# IDE - NetBeans
+# ============================================
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# ============================================
+# IDE - VS Code
+# ============================================
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# ============================================
+# Frontend (React / Node.js)
+# ============================================
+frontend/node_modules/
+frontend/.pnp
+frontend/.pnp.js
+frontend/coverage/
+frontend/*.log
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+frontend/dist/
+frontend/build/
+frontend/.next/
+frontend/.nuxt/
+frontend/.cache/
+frontend/.parcel-cache/
+frontend/.vite/
+frontend/.DS_Store
+frontend/.eslintcache
+
+# ============================================
+# Mobile (Flutter / Dart)
+# ============================================
+mobile/.dart_tool/
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/.packages
+mobile/.pub-cache/
+mobile/.pub/
+mobile/build/
+mobile/.ios/
+mobile/.android/
+mobile/*.iml
+mobile/.idea/
+mobile/.metadata
+mobile/.gradle/
+mobile/local.properties
+mobile/.fvm/
+
+# ============================================
+# Infrastructure (Docker / Database)
+# ============================================
+# MySQL 데이터 파일
+infra/mysql/data/
+!infra/mysql/data/.gitkeep
+
+# Redis 데이터 파일
+infra/redis/data/
+!infra/redis/data/.gitkeep
+
+# Docker
+*.log
+docker-compose.override.yml
+
+# ============================================
+# OS Files
+# ============================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ============================================
+# Application Specific
+# ============================================
+# Application properties (민감 정보 포함 가능)
+# application-local.yml
+# application-prod.yml
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# ============================================
+# Keep empty directories
+# ============================================
+!.gitkeep

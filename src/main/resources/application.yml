@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: cinema-backend
+  
+  datasource:
+    url: jdbc:mysql://localhost:3306/cinema?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: cinema_user
+    password: cinema_26118791
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  
+  jpa:
+    open-in-view : false
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+  
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000ms
+
+server:
+  port: 8080
+
+logging:
+  level:
+    com.cinema: DEBUG
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql: trace
+
+jwt:
+  secret: dGhpc2lzYXZlcnlsb25nc2VjcmV0a2V5Zm9yamF2YXdlYnRva2Vuc2lnbmluZ3B1cnBvc2Vz
+  access-token-expire-time: 3600000  # 1시간 (밀리초)
+  refresh-token-expire-time: 604800000  # 7일 (밀리초)
+

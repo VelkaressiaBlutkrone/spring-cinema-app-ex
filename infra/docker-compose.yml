@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  cinema-db:
+    image: mysql:8.0
+    container_name: cinema-db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: cinema
+      MYSQL_USER: cinema_user
+      MYSQL_PASSWORD: cinema_26118791
+      TZ: Asia/Seoul
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
+    command: 
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    networks:
+      - cinema-net
+
+  # Redis Cache
+  cinema-redis:
+    image: redis:alpine
+    container_name: cinema-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - cinema-net
+
+networks:
+  cinema-net:
+    driver: bridge
