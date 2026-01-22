@@ -1,0 +1,30 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.1.18",
+    "@tanstack/react-query": "^5.90.19",
+    "axios": "^1.13.2",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "zustand": "^5.0.10"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.1.2",
+    "autoprefixer": "^10.4.23",
+    "eslint-config-prettier": "^10.1.8",
+    "postcss": "^8.5.6",
+    "prettier": "^3.8.0",
+    "tailwindcss": "^4.1.18",
+    "vite": "^7.3.1"
+  }
+}
