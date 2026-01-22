@@ -35,23 +35,37 @@ spring:
   # DataSource
   ########################################
   datasource:
-    url: jdbc:mysql://localhost:3306/cinema?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/cinema?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&connectTimeout=5000&socketTimeout=5000&allowPublicKeyRetrieval=true
     username: cinema_user
     password: cinema_26118791
     driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      initialization-fail-timeout: -1       # DB 연결 실패해도 서버 시작
+      connection-timeout: 5000              # 연결 타임아웃 5초
+      maximum-pool-size: 10
+      minimum-idle: 2
 
   ########################################
   # JPA
   ########################################
   jpa:
     open-in-view: false
+    defer-datasource-initialization: true   # DataSource 초기화 지연
     hibernate:
       ddl-auto: none
     show-sql: true
     properties:
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.MySQL8Dialect
+        dialect: org.hibernate.dialect.MySQLDialect  # Hibernate 7.x용 dialect
+
+  ########################################
+  # SQL Init
+  ########################################
+  sql:
+    init:
+      mode: never                           # SQL 초기화 스크립트 실행 안 함
+      continue-on-error: true               # 초기화 에러 시 계속 진행
 
   ########################################
   # Redis
@@ -61,6 +75,7 @@ spring:
       host: localhost
       port: 6379
       timeout: 2000ms
+      connect-timeout: 5000ms
 
   ########################################
   # Error Handling
