@@ -51,7 +51,7 @@
   - [ ] Seat (좌석) - Screening 소속
   - [ ] Reservation (예매)
   - [ ] Payment (결제)
-- [ ] SeatStatus Enum 정의 (AVAILABLE, HOLD, RESERVED)
+- [ ] SeatStatus Enum 정의 (AVAILABLE, HOLD, PAYMENT_PENDING, RESERVED, CANCELLED, BLOCKED, DISABLED)
 - [ ] JPA Entity 매핑 (Infrastructure Layer)
 - [ ] Repository 인터페이스 정의 (Domain 기준)
 - [ ] application.yml 설정 (DB, Redis 연결)
@@ -136,6 +136,7 @@
 - [ ] 좌석 배치 설정 API:
   - [ ] 상영관별 좌석 배치 설정
   - [ ] 좌석 타입 설정
+  - [ ] 좌석 상태 관리 (BLOCKED, DISABLED 설정)
 - [ ] 관리자 API Rate Limit 설정
 
 ### 체크리스트
@@ -144,6 +145,7 @@
 - [ ] 일반 사용자는 관리자 API 접근 불가 확인
 - [ ] 모든 관리자 API 인증/권한 검사 확인
 - [ ] CRUD 기능 정상 동작 확인
+- [ ] 좌석 상태 관리 (BLOCKED, DISABLED) 기능 확인
 
 ### 예상 소요 시간
 4-5일
@@ -234,27 +236,37 @@
 - [ ] 예매 트랜잭션 구현:
   - [ ] HOLD Token 검증
   - [ ] 가격 계산 (Domain Service)
-  - [ ] 결제 검증
+  - [ ] 좌석 상태 전이: HOLD → PAYMENT_PENDING
+  - [ ] 결제 검증 (Mock PG 요청)
+  - [ ] 결제 성공 시: PAYMENT_PENDING → RESERVED
   - [ ] DB 저장 (트랜잭션)
   - [ ] Redis HOLD 정리
   - [ ] 순서: 결제 검증 → DB 저장 → Redis 정리
 - [ ] 결제 실패 처리:
+  - [ ] PAYMENT_PENDING → AVAILABLE (또는 HOLD 해제)
   - [ ] HOLD 자동 해제
   - [ ] 트랜잭션 롤백
   - [ ] 재시도 옵션 제공
+- [ ] 예매 취소 로직:
+  - [ ] RESERVED → CANCELLED 상태 전이
+  - [ ] 취소 처리 및 환불 로직
 - [ ] 예매 API 구현
 - [ ] 결제 API 구현
 - [ ] 예매 내역 조회 API
-- [ ] 예매 취소 API (선택사항)
+- [ ] 예매 취소 API:
+  - [ ] 예매 취소 로직 (RESERVED → CANCELLED)
+  - [ ] 취소 처리 및 환불 로직
 
 ### 체크리스트
 - [ ] 트랜잭션이 Controller가 아닌 Service에서 관리되는지 확인
 - [ ] 결제 정보는 서버에서만 검증 확인
 - [ ] HOLD Token 검증 확인
-- [ ] 결제 실패 시 HOLD 자동 해제 확인
+- [ ] 좌석 상태 전이 정상 동작 확인 (HOLD → PAYMENT_PENDING → RESERVED/AVAILABLE)
+- [ ] 결제 실패 시 PAYMENT_PENDING → AVAILABLE 상태 전이 확인
 - [ ] 트랜잭션 일관성 확인
 - [ ] 중복 예매 0% 보장 확인
 - [ ] 결제 성공/실패 로깅 확인
+- [ ] 예매 취소 시 RESERVED → CANCELLED 상태 전이 확인
 
 ### 예상 소요 시간
 4-5일
@@ -346,7 +358,7 @@
 - [ ] 좌석 맵 컴포넌트 구현:
   - [ ] Canvas 또는 SVG 선택
   - [ ] 좌석 배치 렌더링
-  - [ ] 좌석 상태별 시각적 구분 (AVAILABLE, HOLD, RESERVED)
+  - [ ] 좌석 상태별 시각적 구분 (AVAILABLE, HOLD, PAYMENT_PENDING, RESERVED, CANCELLED, BLOCKED, DISABLED)
 - [ ] 좌석 선택 기능:
   - [ ] 좌석 클릭 이벤트 처리
   - [ ] 다중 좌석 선택
@@ -481,6 +493,7 @@
 - [ ] 좌석 배치 설정 페이지:
   - [ ] 상영관별 좌석 배치 설정
   - [ ] 좌석 타입 설정
+  - [ ] 좌석 상태 관리 (BLOCKED, DISABLED 설정)
 - [ ] CRUD 기능 API 연동
 - [ ] 폼 검증 및 에러 처리
 
@@ -490,6 +503,7 @@
 - [ ] 상영 스케줄 관리 기능 정상 동작 확인
 - [ ] 가격 정책 관리 기능 정상 동작 확인
 - [ ] 좌석 배치 설정 기능 정상 동작 확인
+- [ ] 좌석 상태 관리 (BLOCKED, DISABLED) 기능 정상 동작 확인
 
 ### 예상 소요 시간
 4-5일

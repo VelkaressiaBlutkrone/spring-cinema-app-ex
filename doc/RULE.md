@@ -63,18 +63,22 @@ Controller → Application(Service) → Domain → Infrastructure
 ## 4. 좌석 상태 관리 규칙
 
 ### 4.1 좌석 상태 정의
-좌석 상태는 단일 Enum으로 정의하며, 다음 3가지 상태만 허용:
+좌석 상태는 단일 Enum으로 정의하며, 다음 7가지 상태만 허용:
 
 ```java
 public enum SeatStatus {
-    AVAILABLE,  // 예매 가능
-    HOLD,       // 임시 보류 (결제 대기 중)
-    RESERVED    // 예매 완료
+    AVAILABLE,            // 예매 가능
+    HOLD,                 // 임시 점유
+    PAYMENT_PENDING,      // PG 요청 중
+    RESERVED,             // 결제 완료
+    CANCELLED,            // 예매 취소
+    BLOCKED,              // 운영 차단
+    DISABLED              // 물리적 사용 불가
 }
 ```
 
 - **임의 상태 추가 금지**
-  - 위 3가지 상태 외 추가 상태는 절대 금지
+  - 위 7가지 상태 외 추가 상태는 절대 금지
   - 상태 전이는 명확한 비즈니스 규칙에 따라만 가능
 
 ### 4.2 HOLD 규칙
@@ -117,10 +121,14 @@ lock:screening:{screeningId}:seat:{seatId}
 ## 5. 트랜잭션 규칙
 
 ### 5.1 트랜잭션 범위
+- **결제 프로세스 상태 전이**
+  - HOLD → PAYMENT_PENDING: 결제 요청 시작
+  - PAYMENT_PENDING → RESERVED: 결제 성공
+  - PAYMENT_PENDING → AVAILABLE: 결제 실패
 - **결제 성공 → DB 커밋 → Redis 정리**
   - 결제 성공 후 DB에 먼저 커밋
   - DB 커밋 성공 후 Redis에서 HOLD 정보 정리
-  - 순서: 결제 검증 → DB 저장 → Redis 정리
+  - 순서: 결제 검증 → 상태 전이 (PAYMENT_PENDING → RESERVED) → DB 저장 → Redis 정리
 
 - **Redis 성공을 기준으로 DB를 커밋하지 않음**
   - DB가 최종 진실이므로, Redis 상태와 무관하게 DB 커밋 결정
@@ -231,8 +239,9 @@ lock:seat:{screeningId}:{seatId}       # 분산 락
   - 개발 및 테스트 환경에서 사용
 
 ### 10.2 결제 실패 처리
-- **결제 실패 시 HOLD된 좌석은 자동으로 해제**
-  - 결제 실패 이벤트 발생 시 HOLD 자동 해제
+- **결제 실패 시 PAYMENT_PENDING 상태의 좌석은 자동으로 AVAILABLE로 복구**
+  - 결제 실패 이벤트 발생 시 PAYMENT_PENDING → AVAILABLE 상태 전이
+  - HOLD 정보 자동 해제
   - 사용자에게 재시도 옵션 제공
 
 ### 10.3 결제 위변조 방지
@@ -245,6 +254,7 @@ lock:seat:{screeningId}:{seatId}       # 분산 락
 ### 11.1 필수 로그
 다음 이벤트는 반드시 로깅:
 - 좌석 HOLD / 해제
+- 좌석 상태 전이 (모든 상태 변경)
 - 결제 성공 / 실패
 - 락 획득 실패
 - 장애 발생 시점 및 원인
@@ -267,8 +277,8 @@ lock:seat:{screeningId}:{seatId}       # 분산 락
   - 사용자 경험과 데이터 일관성 모두 보장
 
 ### 12.2 좌석 UI
-- **선택 가능 / HOLD / RESERVED 시각적 명확 분리**
-  - 좌석 상태별로 명확한 시각적 구분
+- **좌석 상태별 시각적 명확 분리**
+  - AVAILABLE, HOLD, PAYMENT_PENDING, RESERVED, CANCELLED, BLOCKED, DISABLED 상태별로 명확한 시각적 구분
   - 사용자가 현재 상태를 쉽게 인지할 수 있어야 함
 
 - **HOLD 타이머는 서버 기준 시간 사용**
