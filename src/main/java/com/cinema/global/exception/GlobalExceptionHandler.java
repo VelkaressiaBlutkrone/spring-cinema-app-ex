@@ -46,6 +46,47 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * 결제 예외 처리
+     */
+    @ExceptionHandler(PaymentException.class)
+    public ResponseEntity<ErrorResponse> handlePaymentException(PaymentException e) {
+        log.warn("[PaymentException] code={}, paymentId={}, reservationId={}, message={}",
+                e.getErrorCode().getCode(), e.getPaymentId(), e.getReservationId(), e.getMessage());
+        return ErrorResponse.of(e.getErrorCode(), e.getMessage());
+    }
+
+    /**
+     * 예매 예외 처리
+     */
+    @ExceptionHandler(ReservationException.class)
+    public ResponseEntity<ErrorResponse> handleReservationException(ReservationException e) {
+        log.warn("[ReservationException] code={}, reservationId={}, reservationNo={}, message={}",
+                e.getErrorCode().getCode(), e.getReservationId(), e.getReservationNo(), e.getMessage());
+        return ErrorResponse.of(e.getErrorCode(), e.getMessage());
+    }
+
+    /**
+     * 상영 스케줄 예외 처리
+     */
+    @ExceptionHandler(ScreeningException.class)
+    public ResponseEntity<ErrorResponse> handleScreeningException(ScreeningException e) {
+        log.warn("[ScreeningException] code={}, screeningId={}, message={}",
+                e.getErrorCode().getCode(), e.getScreeningId(), e.getMessage());
+        return ErrorResponse.of(e.getErrorCode(), e.getMessage());
+    }
+
+    /**
+     * 회원 예외 처리
+     */
+    @ExceptionHandler(MemberException.class)
+    public ResponseEntity<ErrorResponse> handleMemberException(MemberException e) {
+        // 민감 정보 로깅 주의: loginId는 로깅하지 않음
+        log.warn("[MemberException] code={}, memberId={}, message={}",
+                e.getErrorCode().getCode(), e.getMemberId(), e.getMessage());
+        return ErrorResponse.of(e.getErrorCode(), e.getMessage());
+    }
+
+    /**
      * Validation 예외 처리 (@Valid)
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)

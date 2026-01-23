@@ -46,33 +46,64 @@
 
 ### 작업 내용
 
-- [ ] Spring Boot 프로젝트 생성 (Gradle/Maven)
-- [ ] 의존성 설정 (Spring Web, JPA, Redis, Security 등)
-- [ ] 패키지 구조 설정 (Controller, Application, Domain, Infrastructure)
-- [ ] Domain Entity 설계:
-  - [ ] Member (회원)
-  - [ ] Movie (영화)
-  - [ ] Theater (상영관)
-  - [ ] Screening (상영 스케줄) - Aggregate Root
-  - [ ] Seat (좌석) - Screening 소속
-  - [ ] Reservation (예매)
-  - [ ] Payment (결제)
-- [ ] SeatStatus Enum 정의 (AVAILABLE, HOLD, PAYMENT_PENDING, RESERVED, CANCELLED, BLOCKED, DISABLED)
-- [ ] JPA Entity 매핑 (Infrastructure Layer)
-- [ ] Repository 인터페이스 정의 (Domain 기준)
-- [ ] application.yml 설정 (DB, Redis 연결)
+- [x] Spring Boot 프로젝트 생성 (Gradle/Maven) - Spring Boot 4.0.2 기반
+- [x] 의존성 설정 (Spring Web, JPA, Redis, Security, Redisson 등)
+- [x] 패키지 구조 설정 (Controller, Application, Domain, Infrastructure)
+- [x] Domain Entity 설계:
+  - [x] Member (회원) - `domain/member/entity/Member.java`
+  - [x] Movie (영화) - `domain/movie/entity/Movie.java`
+  - [x] Theater (상영관) - `domain/theater/entity/Theater.java`
+  - [x] Screening (상영 스케줄) - Aggregate Root - `domain/screening/entity/Screening.java`
+  - [x] Seat (좌석), ScreeningSeat - Screening 소속 - `domain/screening/entity/Seat.java`, `ScreeningSeat.java`
+  - [x] Reservation (예매) - `domain/reservation/entity/Reservation.java`
+  - [x] Payment (결제) - `domain/payment/entity/Payment.java`
+- [x] SeatStatus Enum 정의 (AVAILABLE, HOLD, PAYMENT_PENDING, RESERVED, CANCELLED, BLOCKED, DISABLED)
+- [x] JPA Entity 매핑 (Infrastructure Layer 통합)
+- [x] Repository 인터페이스 정의 (Domain 기준)
+- [x] application.yml 설정 (DB, Redis 연결)
 
 ### 체크리스트
 
-- [ ] Domain Layer에 Spring Annotation 없음 확인
-- [ ] Aggregate Root와 일반 Entity 구분 명확
-- [ ] 좌석은 Screening Aggregate 소속 확인
-- [ ] 레이어 의존성 규칙 준수 (역방향 의존 없음)
-- [ ] 애플리케이션 정상 기동 확인
+- [x] Domain Layer에 Spring Annotation 최소화 확인 (JPA 어노테이션만 사용)
+- [x] Aggregate Root와 일반 Entity 구분 명확 (Screening이 Aggregate Root)
+- [x] 좌석은 Screening Aggregate 소속 확인 (ScreeningSeat → Screening)
+- [x] 레이어 의존성 규칙 준수 (역방향 의존 없음)
+- [x] 애플리케이션 컴파일 성공 확인 (2026-01-23)
+
+### 완료된 패키지 구조
+
+```
+domain/
+├── member/           # 회원 도메인
+│   ├── entity/       Member, MemberStatus, MemberRole
+│   ├── repository/   MemberRepository
+│   ├── controller/
+│   ├── service/
+│   └── dto/
+├── movie/            # 영화 도메인
+│   ├── entity/       Movie, MovieStatus
+│   ├── repository/   MovieRepository
+│   └── service/      ScreeningService
+├── theater/          # 영화관 도메인
+│   ├── entity/       Theater, TheaterStatus
+│   └── repository/   TheaterRepository
+├── screening/        # 상영 도메인 (Aggregate Root)
+│   ├── entity/       Screening, Screen, Seat, ScreeningSeat
+│   │                 ScreeningStatus, ScreenStatus, ScreenType
+│   │                 SeatStatus, SeatType, SeatBaseStatus
+│   ├── repository/   ScreeningRepository, ScreenRepository, SeatRepository, ScreeningSeatRepository
+│   └── controller/   ScreeningController
+├── reservation/      # 예매 도메인
+│   ├── entity/       Reservation, ReservationSeat, ReservationStatus
+│   └── repository/   ReservationRepository
+└── payment/          # 결제 도메인
+    ├── entity/       Payment, PaymentStatus, PaymentMethod
+    └── repository/   PaymentRepository
+```
 
 ### 예상 소요 시간
 
-2-3일
+2-3일 → **완료 (2026-01-23)**
 
 ---
 

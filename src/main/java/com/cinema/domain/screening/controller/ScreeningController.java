@@ -1,4 +1,4 @@
-package com.cinema.domain.member.controller;
+package com.cinema.domain.screening.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,6 +11,9 @@ import com.cinema.domain.movie.service.ScreeningService;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * 상영 스케줄 API Controller
+ */
 @RestController
 @RequestMapping("/api/screenings")
 @RequiredArgsConstructor

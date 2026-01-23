@@ -970,6 +970,286 @@ if (paramNames != null && paramNames.hasNext()) {
 | 2024-01-XX | verbatimModuleSyntax로 인한 타입 import 오류 | 타입만 import하는 경우 `import type` 사용 | - |
 | 2024-01-XX | front_end에서 gradle 명령어 실행 오류 | 백엔드 빌드는 프로젝트 루트에서, 프론트엔드는 npm 사용 | - |
 | 2024-01-XX | 테스트 실패: NoSuchBeanDefinitionException | 테스트용 H2 인메모리 DB 설정 추가 | - |
+| 2026-01-23 | spring-boot-starter-aop 찾을 수 없음 | Spring Milestone Repository 추가 및 AOP 의존성 변경 | - |
+| 2026-01-23 | DDD 패키지 구조 정리 | screen → screening 패키지 통합, 도메인별 분리 | - |
+| 2026-01-23 | 도메인 예외 처리 통합 | IllegalStateException → 도메인별 공통 예외 클래스로 전환 | - |
+
+---
+
+## Cinema App 프로젝트 관련 문제
+
+### 문제: Spring Boot 4.0.2에서 spring-boot-starter-aop 찾을 수 없음
+
+**에러 메시지:**
+
+```
+Could not find org.springframework.boot:spring-boot-starter-aop:.
+```
+
+**원인:**
+
+- Spring Boot 4.0.2가 Maven Central에 아직 없을 수 있음
+- Spring Milestone Repository가 필요함
+
+**해결 방법:**
+
+#### build.gradle 수정
+
+```gradle
+repositories {
+    mavenCentral()
+    // Spring Milestone Repository 추가
+    maven { url 'https://repo.spring.io/milestone' }
+}
+
+dependencies {
+    // AOP - Spring AOP + AspectJ 직접 추가
+    implementation 'org.springframework:spring-aop'
+    implementation 'org.aspectj:aspectjweaver'
+}
+```
+
+---
+
+### 문제: 패키지 구조 중복 (screen vs screening)
+
+**원인:**
+
+- `domain/screen` 패키지와 `domain/screening` 패키지가 혼재
+- Entity 정의가 중복됨
+
+**해결 방법:**
+
+1. `domain/screen` 패키지의 파일들 삭제
+2. `domain/screening` 패키지로 통합
+3. DDD 원칙에 따라 Aggregate Root(Screening) 중심으로 구조화
+
+**변경된 패키지 구조:**
+
+```
+domain/
+├── member/           # 회원 도메인
+├── movie/            # 영화 도메인
+├── theater/          # 영화관 도메인
+├── screening/        # 상영 도메인 (Aggregate Root)
+│   ├── entity/
+│   │   ├── Screening.java      # Aggregate Root
+│   │   ├── Screen.java
+│   │   ├── Seat.java
+│   │   ├── ScreeningSeat.java
+│   │   └── (Enum 파일들)
+│   └── repository/
+├── reservation/      # 예매 도메인
+└── payment/          # 결제 도메인
+```
+
+---
+
+### 문제: JPA Entity에서 Lazy Loading 관련 N+1 문제
+
+**원인:**
+
+- `@ManyToOne(fetch = FetchType.LAZY)` 설정 시 연관 엔티티 조회에서 N+1 쿼리 발생
+
+**해결 방법:**
+
+Repository에서 Fetch Join 사용:
+
+```java
+@Query("SELECT s FROM Screening s " +
+       "JOIN FETCH s.movie " +
+       "JOIN FETCH s.screen " +
+       "WHERE s.id = :id")
+Optional<Screening> findByIdWithMovieAndScreen(@Param("id") Long id);
+```
+
+---
+
+### 문제: SeatStatus Enum 7단계 정의
+
+**RULE.md 4.1에 따른 좌석 상태 정의:**
+
+```java
+public enum SeatStatus {
+    AVAILABLE,        // 예매 가능
+    HOLD,             // 임시 점유
+    PAYMENT_PENDING,  // PG 요청 중
+    RESERVED,         // 결제 완료
+    CANCELLED,        // 예매 취소
+    BLOCKED,          // 운영 차단
+    DISABLED          // 물리적 사용 불가
+}
+```
+
+**상태 전이 규칙:**
+
+- AVAILABLE → HOLD (좌석 선택)
+- HOLD → PAYMENT_PENDING (결제 시작)
+- PAYMENT_PENDING → RESERVED (결제 성공)
+- PAYMENT_PENDING → AVAILABLE (결제 실패)
+- RESERVED → CANCELLED (예매 취소)
+- 관리자 설정: BLOCKED, DISABLED
+
+---
+
+### 경고: WebMvcConfigurer.configureMessageConverters deprecated
+
+**경고 메시지:**
+
+```
+warning: [removal] configureMessageConverters(List<HttpMessageConverter<?>>) in WebMvcConfigurer has been deprecated and marked for removal
+```
+
+**원인:**
+
+- Spring Boot 4.0에서 `configureMessageConverters` 메서드가 deprecated됨
+- 향후 버전에서 제거 예정
+
+**현재 상태:**
+
+- 기능은 정상 작동함
+- 추후 `extendMessageConverters` 또는 다른 방식으로 마이그레이션 필요
+
+**향후 해결 방안:**
+
+1. `HttpMessageConverters` Bean 등록 방식으로 변경
+2. 또는 Spring Boot 공식 마이그레이션 가이드 참조
+
+```java
+// 대안 예시
+@Bean
+public HttpMessageConverters customConverters(Gson gson) {
+    GsonHttpMessageConverter gsonConverter = new GsonHttpMessageConverter();
+    gsonConverter.setGson(gson);
+    return new HttpMessageConverters(gsonConverter);
+}
+```
+
+---
+
+### 문제: screen 패키지와 screening 패키지 충돌
+
+**원인:**
+
+- 기존 `domain/screen` 패키지와 새로운 `domain/screening` 패키지가 혼재
+- import 경로 불일치로 컴파일 오류 발생
+
+**해결 방법:**
+
+1. `domain/screen` 패키지의 모든 파일 삭제
+2. `domain/screening` 패키지로 통합
+3. 기존 import 경로를 새 경로로 수정:
+
+```java
+// 변경 전
+import com.cinema.domain.screen.entity.Screen;
+import com.cinema.domain.screen.entity.Screening;
+
+// 변경 후
+import com.cinema.domain.screening.entity.Screen;
+import com.cinema.domain.screening.entity.Screening;
+```
+
+---
+
+### 문제: 도메인 예외 처리 불일치
+
+**원인:**
+
+- Entity의 비즈니스 메서드에서 `IllegalStateException`, `IllegalArgumentException` 등 Java 기본 예외 사용
+- API 응답에서 일관된 에러 코드 및 메시지 제공 어려움
+- 예외 로깅 시 컨텍스트 정보 부족
+
+**해결 방법:**
+
+#### 1. 도메인별 예외 클래스 생성
+
+```java
+// 결제 예외
+public class PaymentException extends BusinessException {
+    private final Long paymentId;
+    private final Long reservationId;
+    // ...
+}
+
+// 예매 예외
+public class ReservationException extends BusinessException {
+    private final Long reservationId;
+    private final String reservationNo;
+    // ...
+}
+
+// 상영 스케줄 예외
+public class ScreeningException extends BusinessException {
+    private final Long screeningId;
+    // ...
+}
+
+// 회원 예외
+public class MemberException extends BusinessException {
+    private final Long memberId;
+    private final String loginId;
+    // ...
+}
+```
+
+#### 2. ErrorCode에 세부 코드 추가
+
+```java
+// 상영 스케줄 관련
+SCREENING_CANNOT_START(HttpStatus.BAD_REQUEST, "SCREENING_004", "상영을 시작할 수 없는 상태입니다."),
+SCREENING_CANNOT_CANCEL(HttpStatus.BAD_REQUEST, "SCREENING_005", "상영을 취소할 수 없는 상태입니다."),
+SCREENING_NOT_BOOKABLE(HttpStatus.BAD_REQUEST, "SCREENING_006", "예매 가능한 상영이 아닙니다."),
+
+// 예매 관련
+RESERVATION_CANNOT_START_PAYMENT(HttpStatus.BAD_REQUEST, "RESERVATION_004", "결제를 시작할 수 없는 상태입니다."),
+RESERVATION_CANNOT_CONFIRM(HttpStatus.BAD_REQUEST, "RESERVATION_005", "예매를 확정할 수 없는 상태입니다."),
+RESERVATION_CANNOT_REFUND(HttpStatus.BAD_REQUEST, "RESERVATION_006", "환불할 수 없는 상태입니다."),
+
+// 결제 관련
+PAYMENT_CANNOT_COMPLETE(HttpStatus.BAD_REQUEST, "PAYMENT_005", "결제를 완료할 수 없는 상태입니다."),
+PAYMENT_CANNOT_CANCEL(HttpStatus.BAD_REQUEST, "PAYMENT_006", "결제를 취소할 수 없는 상태입니다."),
+PAYMENT_CANNOT_REFUND(HttpStatus.BAD_REQUEST, "PAYMENT_007", "환불할 수 없는 상태입니다."),
+```
+
+#### 3. Entity에서 공통 예외 사용
+
+```java
+// 변경 전
+public void cancel() {
+    if (this.payStatus != PaymentStatus.SUCCESS) {
+        throw new IllegalStateException("취소할 수 없는 결제 상태입니다. 현재 상태: " + this.payStatus);
+    }
+    // ...
+}
+
+// 변경 후
+public void cancel() {
+    if (this.payStatus != PaymentStatus.SUCCESS) {
+        throw new PaymentException(ErrorCode.PAYMENT_CANNOT_CANCEL, 
+                String.format("paymentId=%d, 현재 상태: %s", this.id, this.payStatus));
+    }
+    // ...
+}
+```
+
+#### 4. GlobalExceptionHandler에 핸들러 추가
+
+```java
+@ExceptionHandler(PaymentException.class)
+public ResponseEntity<ErrorResponse> handlePaymentException(PaymentException e) {
+    log.warn("[PaymentException] code={}, paymentId={}, reservationId={}, message={}",
+            e.getErrorCode().getCode(), e.getPaymentId(), e.getReservationId(), e.getMessage());
+    return ErrorResponse.of(e.getErrorCode(), e.getMessage());
+}
+```
+
+**장점:**
+
+- API 응답에서 일관된 에러 코드 제공
+- 예외 로깅 시 컨텍스트 정보(ID 등) 포함
+- 클라이언트에서 에러 코드 기반 처리 가능
+- 도메인별 예외 분리로 코드 가독성 향상
 
 ---
 

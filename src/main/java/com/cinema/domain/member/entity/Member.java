@@ -1,20 +1,32 @@
 package com.cinema.domain.member.entity;
 
-import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
-
+/**
+ * 회원 Entity
+ */
 @Entity
+@Table(name = "member", indexes = {
+    @Index(name = "idx_member_status", columnList = "status")
+})
 @Getter
-@Table(name = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
 public class Member {
 
     @Id
@@ -34,24 +46,69 @@ public class Member {
     @Column(length = 20)
     private String phone;
 
-    @Column(length = 100)
+    @Column(length = 100, unique = true)
     private String email;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private MemberStatus status; // Enum도 같은 패키지 혹은 별도 model/vo 패키지에 위치
+    private MemberRole role;
 
-    @CreatedDate
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private MemberStatus status;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt;
+
     @Builder
-    public Member(String loginId, String passwordHash, String name, String phone, String email) {
+    public Member(String loginId, String passwordHash, String name, String phone, String email, MemberRole role) {
         this.loginId = loginId;
         this.passwordHash = passwordHash;
         this.name = name;
         this.phone = phone;
         this.email = email;
+        this.role = role != null ? role : MemberRole.USER;
         this.status = MemberStatus.ACTIVE;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    // 비즈니스 메서드
+    public void deactivate() {
+        this.status = MemberStatus.INACTIVE;
+    }
+
+    public void activate() {
+        this.status = MemberStatus.ACTIVE;
+    }
+
+    public void updatePassword(String newPasswordHash) {
+        this.passwordHash = newPasswordHash;
+    }
+
+    public void updateInfo(String name, String phone, String email) {
+        this.name = name;
+        this.phone = phone;
+        this.email = email;
+    }
+
+    public boolean isAdmin() {
+        return this.role == MemberRole.ADMIN;
+    }
+
+    public boolean isActive() {
+        return this.status == MemberStatus.ACTIVE;
     }
 }

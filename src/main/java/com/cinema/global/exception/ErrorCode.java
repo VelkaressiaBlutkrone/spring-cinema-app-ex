@@ -46,6 +46,9 @@ public enum ErrorCode {
     SCREENING_NOT_FOUND(HttpStatus.NOT_FOUND, "SCREENING_001", "상영 스케줄을 찾을 수 없습니다."),
     SCREENING_ENDED(HttpStatus.BAD_REQUEST, "SCREENING_002", "이미 종료된 상영입니다."),
     SCREENING_CANCELLED(HttpStatus.BAD_REQUEST, "SCREENING_003", "취소된 상영입니다."),
+    SCREENING_CANNOT_START(HttpStatus.BAD_REQUEST, "SCREENING_004", "상영을 시작할 수 없는 상태입니다."),
+    SCREENING_CANNOT_CANCEL(HttpStatus.BAD_REQUEST, "SCREENING_005", "상영을 취소할 수 없는 상태입니다."),
+    SCREENING_NOT_BOOKABLE(HttpStatus.BAD_REQUEST, "SCREENING_006", "예매 가능한 상영이 아닙니다."),
 
     // ========================================
     // 좌석 관련 (SEAT) - 핵심 도메인
@@ -66,6 +69,9 @@ public enum ErrorCode {
     RESERVATION_NOT_FOUND(HttpStatus.NOT_FOUND, "RESERVATION_001", "예매 정보를 찾을 수 없습니다."),
     RESERVATION_ALREADY_CANCELLED(HttpStatus.BAD_REQUEST, "RESERVATION_002", "이미 취소된 예매입니다."),
     RESERVATION_CANNOT_CANCEL(HttpStatus.BAD_REQUEST, "RESERVATION_003", "취소할 수 없는 예매입니다."),
+    RESERVATION_CANNOT_START_PAYMENT(HttpStatus.BAD_REQUEST, "RESERVATION_004", "결제를 시작할 수 없는 상태입니다."),
+    RESERVATION_CANNOT_CONFIRM(HttpStatus.BAD_REQUEST, "RESERVATION_005", "예매를 확정할 수 없는 상태입니다."),
+    RESERVATION_CANNOT_REFUND(HttpStatus.BAD_REQUEST, "RESERVATION_006", "환불할 수 없는 상태입니다."),
 
     // ========================================
     // 결제 관련 (PAYMENT)
@@ -74,6 +80,9 @@ public enum ErrorCode {
     PAYMENT_ALREADY_COMPLETED(HttpStatus.CONFLICT, "PAYMENT_002", "이미 결제가 완료되었습니다."),
     PAYMENT_AMOUNT_MISMATCH(HttpStatus.BAD_REQUEST, "PAYMENT_003", "결제 금액이 일치하지 않습니다."),
     PAYMENT_TIMEOUT(HttpStatus.REQUEST_TIMEOUT, "PAYMENT_004", "결제 시간이 초과되었습니다."),
+    PAYMENT_CANNOT_COMPLETE(HttpStatus.BAD_REQUEST, "PAYMENT_005", "결제를 완료할 수 없는 상태입니다."),
+    PAYMENT_CANNOT_CANCEL(HttpStatus.BAD_REQUEST, "PAYMENT_006", "결제를 취소할 수 없는 상태입니다."),
+    PAYMENT_CANNOT_REFUND(HttpStatus.BAD_REQUEST, "PAYMENT_007", "환불할 수 없는 상태입니다."),
 
     // ========================================
     // Rate Limit 관련
