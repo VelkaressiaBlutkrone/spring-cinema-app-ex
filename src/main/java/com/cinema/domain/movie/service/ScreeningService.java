@@ -5,11 +5,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.cinema.domain.movie.dto.ScreeningRequest;
 import com.cinema.domain.movie.entity.Movie;
-import com.cinema.domain.movie.entity.Screen;
-import com.cinema.domain.movie.entity.Screening;
 import com.cinema.domain.movie.repository.MovieRepository;
-import com.cinema.domain.movie.repository.ScreenRepository;
-import com.cinema.domain.movie.repository.ScreeningRepository;
+import com.cinema.domain.screen.entity.Screen;
+import com.cinema.domain.screen.entity.Screening;
+import com.cinema.domain.screen.repository.ScreenRepository;
+import com.cinema.domain.screen.repository.ScreeningRepository;
 
 import lombok.RequiredArgsConstructor;
 

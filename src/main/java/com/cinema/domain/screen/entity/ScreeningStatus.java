@@ -1,4 +1,4 @@
-package com.cinema.domain.movie.entity;
+package com.cinema.domain.screen.entity;
 
 public enum ScreeningStatus {
     OPEN, CLOSED
