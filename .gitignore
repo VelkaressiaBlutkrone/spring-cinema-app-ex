@@ -102,6 +102,10 @@ mobile/.fvm/
 # ============================================
 # Infrastructure (Docker / Database)
 # ============================================
+# 환경 변수 (민감 정보)
+infra/.env
+!infra/.env.example
+
 # MySQL 데이터 파일
 infra/mysql/data/
 !infra/mysql/data/.gitkeep

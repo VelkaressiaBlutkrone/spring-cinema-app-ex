@@ -1,36 +1,94 @@
 version: '3.8'
 
 services:
+  # ========================================
   # MySQL Database
+  # ========================================
   cinema-db:
     image: mysql:8.0
     container_name: cinema-db
+    env_file:
+      - .env
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: cinema
-      MYSQL_USER: cinema_user
-      MYSQL_PASSWORD: cinema_26118791
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-cinema}
+      MYSQL_USER: ${MYSQL_USER:-cinema_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-cinema_26118791}
       TZ: Asia/Seoul
     ports:
-      - "3306:3306"
+      - "${MYSQL_PORT:-3306}:3306"
     volumes:
-      - ./mysql/data:/var/lib/mysql
+      - cinema-mysql-data:/var/lib/mysql
       - ./mysql/init:/docker-entrypoint-initdb.d
-    command: 
+      - ./mysql/conf:/etc/mysql/conf.d
+    command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
+      - --default-authentication-plugin=mysql_native_password
     networks:
       - cinema-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-rootpassword}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
 
+  # ========================================
   # Redis Cache
+  # ========================================
   cinema-redis:
-    image: redis:alpine
+    image: redis:7-alpine
     container_name: cinema-redis
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - cinema-redis-data:/data
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
     networks:
       - cinema-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
 
+  # ========================================
+  # Nginx Reverse Proxy (추후 사용)
+  # ========================================
+  cinema-nginx:
+    image: nginx:alpine
+    container_name: cinema-nginx
+    ports:
+      - "${NGINX_PORT:-80}:80"
+      - "${NGINX_SSL_PORT:-443}:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+    depends_on:
+      - cinema-db
+      - cinema-redis
+    networks:
+      - cinema-net
+    profiles:
+      - with-nginx  # nginx 포함 시: docker-compose --profile with-nginx up
+    restart: unless-stopped
+
+# ========================================
+# Networks
+# ========================================
 networks:
   cinema-net:
     driver: bridge
+
+# ========================================
+# Volumes (데이터 영속성)
+# ========================================
+volumes:
+  cinema-mysql-data:
+    driver: local
+  cinema-redis-data:
+    driver: local
