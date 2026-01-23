@@ -109,5 +109,20 @@ logging:
 ########################################
 jwt:
   secret: dGhpc2lzYXZlcnlsb25nc2VjcmV0a2V5Zm9yamF2YXdlYnRva2Vuc2lnbmluZ3B1cnBvc2Vz
-  access-token-expire-time: 3600000    # 1시간 (밀리초)
+  access-token-expire-time: 900000     # 15분 (밀리초) - RULE: Access Token ≤ 15분
   refresh-token-expire-time: 604800000 # 7일 (밀리초)
+
+########################################
+# CORS
+########################################
+cors:
+  allowed-origins: "*"                 # 개발 환경: 모든 origin 허용 (운영 시 특정 도메인으로 변경)
+  max-age: 3600                        # Preflight 요청 캐시 시간 (초)
+
+########################################
+# Seat HOLD
+########################################
+seat:
+  hold:
+    ttl-minutes: 7                     # HOLD TTL (5~10분 권장)
+    max-seats-per-user: 4              # 사용자당 최대 선택 가능 좌석 수
