@@ -126,3 +126,17 @@ seat:
   hold:
     ttl-minutes: 7                     # HOLD TTL (5~10분 권장)
     max-seats-per-user: 4              # 사용자당 최대 선택 가능 좌석 수
+
+########################################
+# Redisson (분산 락)
+########################################
+redisson:
+  single-server-config:
+    address: redis://localhost:6379
+    connection-minimum-idle-size: 5
+    connection-pool-size: 10
+    idle-connection-timeout: 10000
+    connect-timeout: 5000
+    timeout: 3000
+    retry-attempts: 3
+    retry-interval: 1500
