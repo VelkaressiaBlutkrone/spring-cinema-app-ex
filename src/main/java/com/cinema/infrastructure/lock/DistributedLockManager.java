@@ -6,6 +6,9 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Component;
 
+import com.cinema.global.exception.BusinessException;
+import com.cinema.global.exception.ErrorCode;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -120,7 +123,7 @@ public class DistributedLockManager {
      */
     public <T> T executeWithLock(String lockKey, LockAction<T> action) {
         if (!tryLock(lockKey)) {
-            throw new LockAcquisitionException("락 획득 실패: " + lockKey);
+            throw new BusinessException(ErrorCode.SEAT_LOCK_FAILED);
         }
         try {
             return action.execute();
@@ -135,14 +138,5 @@ public class DistributedLockManager {
     @FunctionalInterface
     public interface LockAction<T> {
         T execute();
-    }
-
-    /**
-     * 락 획득 실패 예외
-     */
-    public static class LockAcquisitionException extends RuntimeException {
-        public LockAcquisitionException(String message) {
-            super(message);
-        }
     }
 }

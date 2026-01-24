@@ -25,6 +25,11 @@ public class ScreeningException extends BusinessException {
         this.screeningId = screeningId;
     }
 
+    public ScreeningException(ErrorCode errorCode, String additionalMessage) {
+        super(errorCode, additionalMessage);
+        this.screeningId = null;
+    }
+
     // 정적 팩토리 메서드
     public static ScreeningException notFound(Long screeningId) {
         return new ScreeningException(ErrorCode.SCREENING_NOT_FOUND, screeningId);
@@ -41,5 +46,10 @@ public class ScreeningException extends BusinessException {
     public static ScreeningException invalidState(Long screeningId, String currentStatus, String action) {
         return new ScreeningException(ErrorCode.SCREENING_ENDED, screeningId,
                 String.format("현재 상태: %s, 요청 작업: %s", currentStatus, action));
+    }
+
+    public static ScreeningException timeOverlap(Long screenId) {
+        return new ScreeningException(ErrorCode.SCREENING_TIME_OVERLAP,
+                String.format("상영관 ID: %d", screenId));
     }
 }

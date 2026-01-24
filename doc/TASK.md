@@ -198,6 +198,7 @@ domain/
   - [ ] 상영 스케줄 등록
   - [ ] 상영 스케줄 수정
   - [ ] 상영 스케줄 삭제
+  - [ ] 상영 스케줄 등록 시 시간 중복 검증 로직 구현
 - [ ] 가격 정책 관리 API:
   - [ ] 시간대별 가격 설정
   - [ ] 좌석 등급별 가격 설정
@@ -961,6 +962,7 @@ domain/
 3. **코드 리뷰**: 각 Step 완료 후 코드 리뷰를 진행하고 체크리스트를 확인합니다.
 4. **테스트 우선**: 핵심 로직은 반드시 테스트를 작성한 후 배포합니다.
 5. **문서화**: 각 Step 완료 시 관련 문서를 업데이트합니다.
+6. **공통 예외 사용 필수**: 예외 처리는 반드시 공통 예외 체계를 사용한다. `BusinessException` + `ErrorCode`, 또는 도메인별 예외(`MemberException`, `ScreeningException`, `SeatException` 등)만 사용하며, `IllegalArgumentException`, `RuntimeException` 등 공통 체계 밖 예외 사용 금지. (RULE.md 14. 예외 처리 규칙 참고)
 
 ---
 

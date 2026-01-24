@@ -50,6 +50,7 @@ public enum ErrorCode {
     SCREENING_CANNOT_START(HttpStatus.BAD_REQUEST, "SCREENING_004", "상영을 시작할 수 없는 상태입니다."),
     SCREENING_CANNOT_CANCEL(HttpStatus.BAD_REQUEST, "SCREENING_005", "상영을 취소할 수 없는 상태입니다."),
     SCREENING_NOT_BOOKABLE(HttpStatus.BAD_REQUEST, "SCREENING_006", "예매 가능한 상영이 아닙니다."),
+    SCREENING_TIME_OVERLAP(HttpStatus.CONFLICT, "SCREENING_007", "해당 시간대에 이미 상영 스케줄이 존재합니다."),
 
     // ========================================
     // 좌석 관련 (SEAT) - 핵심 도메인

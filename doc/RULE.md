@@ -307,7 +307,26 @@ lock:seat:{screeningId}:{seatId}       # 분산 락
   - 트랜잭션 롤백을 통한 일관성 보장
   - 정기적인 상태 동기화 작업
 
-## 14. 금지 사항 요약 (Blacklist)
+## 14. 예외 처리 규칙
+
+### 14.1 공통 예외 사용 필수
+- **비즈니스 로직 예외는 반드시 공통 예외 체계 사용**
+  - `BusinessException` + `ErrorCode` (기본)
+  - 도메인별 예외: `MemberException`, `ScreeningException`, `SeatException`, `PaymentException`, `ReservationException` 등 (`global.exception` 패키지)
+  - 모든 예외는 `GlobalExceptionHandler`에서 처리되어 일관된 `ErrorResponse`로 변환
+
+### 14.2 금지 예외
+- **다음 예외는 비즈니스 로직에서 사용 금지**
+  - `IllegalArgumentException`, `IllegalStateException`
+  - `RuntimeException` 직접 상속 커스텀 예외 (공통 체계 미적용)
+  - 기타 `ErrorCode`와 무관한 예외
+
+### 14.3 ErrorCode 정의
+- **신규 비즈니스 오류는 `ErrorCode`에 추가 후 공통 예외로 사용**
+  - `ErrorCode` enum에 코드, HTTP 상태, 메시지 정의
+  - 필요 시 도메인별 예외 클래스에 정적 팩토리 메서드 추가
+
+## 15. 금지 사항 요약 (Blacklist)
 
 다음 사항은 절대 금지:
 
@@ -341,7 +360,10 @@ lock:seat:{screeningId}:{seatId}       # 분산 락
 10. **TTL 없는 HOLD Key 생성**
     - 모든 HOLD Key는 반드시 TTL 설정
 
-## 15. 코드 리뷰 체크리스트
+11. **공통 예외 미사용**
+    - 비즈니스 예외는 `BusinessException`/`ErrorCode` 및 도메인 예외만 사용. `IllegalArgumentException` 등 공통 체계 밖 예외 금지
+
+## 16. 코드 리뷰 체크리스트
 
 코드 리뷰 시 다음 사항을 반드시 확인:
 
@@ -355,8 +377,9 @@ lock:seat:{screeningId}:{seatId}       # 분산 락
 - [ ] 비동기 이벤트가 멱등성을 보장하는가?
 - [ ] 개인정보가 로그에 기록되지 않는가?
 - [ ] 관리자 API에 인증 및 권한 검사가 있는가?
+- [ ] 예외 처리가 공통 예외(`BusinessException`, `ErrorCode`, 도메인 예외)를 사용하는가?
 
-## 16. 참고사항
+## 17. 참고사항
 
 - 본 규칙은 PRD.md의 요구사항을 기반으로 작성되었습니다.
 - 규칙 위반 시 코드 리뷰에서 반드시 지적하고 수정을 요구합니다.

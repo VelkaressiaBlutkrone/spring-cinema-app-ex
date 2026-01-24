@@ -10,6 +10,9 @@ import com.cinema.domain.screening.entity.Screen;
 import com.cinema.domain.screening.entity.Screening;
 import com.cinema.domain.screening.repository.ScreenRepository;
 import com.cinema.domain.screening.repository.ScreeningRepository;
+import com.cinema.global.exception.BusinessException;
+import com.cinema.global.exception.ErrorCode;
+import com.cinema.global.exception.ScreeningException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,15 +28,18 @@ public class ScreeningService {
     public Long createScreening(ScreeningRequest request) {
         // 1. 영화 및 상영관 조회
         Movie movie = movieRepository.findById(request.getMovieId())
-                .orElseThrow(() -> new IllegalArgumentException("영화를 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.MOVIE_NOT_FOUND));
         Screen screen = screenRepository.findById(request.getScreenId())
-                .orElseThrow(() -> new IllegalArgumentException("상영관을 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.SCREEN_NOT_FOUND));
 
         // 2. 상영 종료 시간 계산 (영화 러닝타임 기준)
         java.time.LocalDateTime endTime = request.getStartTime().plusMinutes(movie.getRunningTime());
 
-        // 3. TODO: 시간 중복 검증 로직 구현 필요
-        // 현재는 단순화하여 생략
+        // 3. 시간 중복 검증: 같은 상영관에서 시간이 겹치는 상영이 있는지 확인
+        if (!screeningRepository.findOverlappingScreenings(
+                request.getScreenId(), request.getStartTime(), endTime).isEmpty()) {
+            throw ScreeningException.timeOverlap(request.getScreenId());
+        }
 
         // 4. 저장
         Screening screening = Screening.builder()
