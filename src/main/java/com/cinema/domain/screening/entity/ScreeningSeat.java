@@ -28,21 +28,18 @@ import lombok.NoArgsConstructor;
 
 /**
  * 상영별 좌석 상태 Entity
- * 
+ *
  * RULE.md 4.1: 좌석 상태 정의 (7단계)
  * - 상태 변경은 SeatCommandService를 통해서만 가능
  * - 상태 전이는 명확한 비즈니스 규칙에 따라만 가능
  */
 @Entity
-@Table(name = "screening_seat", 
-    uniqueConstraints = {
-        @UniqueConstraint(name = "uk_screening_seat", columnNames = {"screening_id", "seat_id"})
-    },
-    indexes = {
+@Table(name = "screening_seat", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_screening_seat", columnNames = { "screening_id", "seat_id" })
+}, indexes = {
         @Index(name = "idx_screening_seat_status", columnList = "status"),
         @Index(name = "idx_screening_seat_hold_expire", columnList = "hold_expire_at")
-    }
-)
+})
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ScreeningSeat {
@@ -125,9 +122,9 @@ public class ScreeningSeat {
     /**
      * 좌석 HOLD (임시 점유)
      * AVAILABLE -> HOLD
-     * 
-     * @param member HOLD 요청 회원
-     * @param holdToken HOLD 토큰
+     *
+     * @param member      HOLD 요청 회원
+     * @param holdToken   HOLD 토큰
      * @param holdMinutes HOLD 유지 시간 (분)
      */
     public void hold(Member member, String holdToken, int holdMinutes) {
@@ -167,7 +164,7 @@ public class ScreeningSeat {
     /**
      * 예매 확정
      * PAYMENT_PENDING -> RESERVED
-     * 
+     *
      * @param member 예매 확정 회원
      */
     public void reserve(Member member) {

@@ -11,7 +11,7 @@ import org.springframework.web.filter.CorsFilter;
 
 /**
  * CORS 설정
- * 
+ *
  * - 개발 환경: 모든 origin 허용
  * - 운영 환경: 특정 origin만 허용 (application.yml에서 설정)
  */

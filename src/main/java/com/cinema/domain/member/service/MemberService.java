@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 회원 서비스
- * 
+ *
  * RULE:
  * - Access Token 유효시간 ≤ 15분 (설정값 사용)
  * - Refresh Token은 Redis에 저장
@@ -74,14 +74,14 @@ public class MemberService {
 
         // 토큰 발급 (Access: 설정값, Refresh: 설정값)
         String accessToken = jwtTokenProvider.createToken(
-                member.getLoginId(), 
-                member.getRole().name(), 
+                member.getLoginId(),
+                member.getRole().name(),
                 accessTokenExpireTime);
         String refreshToken = jwtTokenProvider.createToken(
-                member.getLoginId(), 
-                member.getRole().name(), 
+                member.getLoginId(),
+                member.getRole().name(),
                 refreshTokenExpireTime);
-        
+
         // Refresh Token은 Redis에 저장
         refreshTokenService.saveRefreshToken(member.getLoginId(), refreshToken);
 
@@ -94,7 +94,7 @@ public class MemberService {
 
     /**
      * 토큰 갱신
-     * 
+     *
      * @param refreshToken Refresh Token
      * @return 새로운 Access Token과 Refresh Token
      */
@@ -105,7 +105,7 @@ public class MemberService {
         }
 
         String loginId = jwtTokenProvider.getSubject(refreshToken);
-        
+
         // Redis에서 Refresh Token 검증
         if (!refreshTokenService.validateRefreshToken(loginId, refreshToken)) {
             throw new BusinessException(ErrorCode.INVALID_REFRESH_TOKEN);
@@ -120,12 +120,12 @@ public class MemberService {
 
         // 새로운 토큰 발급
         String newAccessToken = jwtTokenProvider.createToken(
-                member.getLoginId(), 
-                member.getRole().name(), 
+                member.getLoginId(),
+                member.getRole().name(),
                 accessTokenExpireTime);
         String newRefreshToken = jwtTokenProvider.createToken(
-                member.getLoginId(), 
-                member.getRole().name(), 
+                member.getLoginId(),
+                member.getRole().name(),
                 refreshTokenExpireTime);
 
         // 새로운 Refresh Token을 Redis에 저장 (기존 토큰 교체)
@@ -140,7 +140,7 @@ public class MemberService {
 
     /**
      * 로그아웃
-     * 
+     *
      * @param loginId 로그인 ID
      */
     public void logout(String loginId) {

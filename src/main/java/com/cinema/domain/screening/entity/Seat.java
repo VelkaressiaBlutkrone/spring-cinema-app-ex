@@ -23,13 +23,13 @@ import lombok.NoArgsConstructor;
 
 /**
  * 좌석 Entity (상영관에 속함)
- * 
+ *
  * 좌석의 기본 정보 및 관리자가 설정하는 기본 상태를 관리
  * 실제 상영별 좌석 상태는 ScreeningSeat에서 관리
  */
 @Entity
 @Table(name = "seat", uniqueConstraints = {
-    @UniqueConstraint(name = "uk_seat_position", columnNames = {"screen_id", "row_label", "seat_no"})
+        @UniqueConstraint(name = "uk_seat_position", columnNames = { "screen_id", "row_label", "seat_no" })
 })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -45,10 +45,10 @@ public class Seat {
     private Screen screen;
 
     @Column(name = "row_label", nullable = false, length = 5)
-    private String rowLabel;  // A, B, C, ...
+    private String rowLabel; // A, B, C, ...
 
     @Column(name = "seat_no", nullable = false)
-    private Integer seatNo;   // 1, 2, 3, ...
+    private Integer seatNo; // 1, 2, 3, ...
 
     @Enumerated(EnumType.STRING)
     @Column(name = "seat_type", nullable = false)

@@ -14,8 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * @Logging 어노테이션 처리 Aspect
- * 
- * RULE: 개인정보, 결제 상세 정보, JWT Token 전체 값은 로그에 기록하지 않음
+ *
+ *          RULE: 개인정보, 결제 상세 정보, JWT Token 전체 값은 로그에 기록하지 않음
  */
 @Aspect
 @Component
@@ -28,7 +28,7 @@ public class LoggingAspect {
 
     // 민감 정보 필드명 목록 (로그에서 마스킹 처리)
     private static final String[] SENSITIVE_FIELDS = {
-        "password", "pwd", "secret", "token", "cardNumber", "cvv", "accountNumber"
+            "password", "pwd", "secret", "token", "cardNumber", "cvv", "accountNumber"
     };
 
     @Around("@annotation(logging)")
@@ -100,7 +100,8 @@ public class LoggingAspect {
     }
 
     private String truncate(String str) {
-        if (str == null) return "null";
+        if (str == null)
+            return "null";
         return str.length() > MAX_LOG_LENGTH
                 ? str.substring(0, MAX_LOG_LENGTH) + "...(truncated)"
                 : str;
@@ -114,9 +115,8 @@ public class LoggingAspect {
         for (String field : SENSITIVE_FIELDS) {
             // "password":"value" 패턴을 "password":"****"로 변경
             result = result.replaceAll(
-                "\"" + field + "\"\\s*:\\s*\"[^\"]*\"",
-                "\"" + field + "\":\"****\""
-            );
+                    "\"" + field + "\"\\s*:\\s*\"[^\"]*\"",
+                    "\"" + field + "\":\"****\"");
         }
         return result;
     }

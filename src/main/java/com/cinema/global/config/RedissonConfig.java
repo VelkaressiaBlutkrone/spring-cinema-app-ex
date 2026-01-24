@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * Redisson 설정 - 분산 락을 위한 Redis 클라이언트
- * 
+ *
  * RULE 4.3: 분산 락 규칙
  * - 락 키 규칙: lock:screening:{screeningId}:seat:{seatId}
  * - 락 획득 실패 시 즉시 실패 응답
@@ -44,7 +44,7 @@ public class RedissonConfig {
     @Bean(destroyMethod = "shutdown")
     public RedissonClient redissonClient() {
         Config config = new Config();
-        
+
         config.useSingleServer()
                 .setAddress(address)
                 .setConnectionMinimumIdleSize(connectionMinimumIdleSize)

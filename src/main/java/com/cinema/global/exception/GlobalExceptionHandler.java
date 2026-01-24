@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 전역 예외 처리 핸들러
- * 
+ *
  * RULE: 개인정보, 결제 상세 정보, JWT 전체 값은 로그에 기록하지 않음
  */
 @RestControllerAdvice
@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ErrorResponse> handleBusinessException(BusinessException e) {
-        log.warn("[BusinessException] code={}, message={}", 
+        log.warn("[BusinessException] code={}, message={}",
                 e.getErrorCode().getCode(), e.getMessage());
         return ErrorResponse.of(e.getErrorCode(), extractAdditionalMessage(e));
     }
@@ -138,7 +138,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ErrorResponse> handleNoResourceFoundException(NoResourceFoundException e) {
         log.warn("[NoResourceFoundException] path={}", e.getResourcePath());
-        return ErrorResponse.of(HttpStatus.NOT_FOUND, "NOT_FOUND", 
+        return ErrorResponse.of(HttpStatus.NOT_FOUND, "NOT_FOUND",
                 "요청한 리소스를 찾을 수 없습니다: " + e.getResourcePath());
     }
 
@@ -175,7 +175,7 @@ public class GlobalExceptionHandler {
     private String extractAdditionalMessage(BusinessException e) {
         String fullMessage = e.getMessage();
         String baseMessage = e.getErrorCode().getMessage();
-        
+
         if (fullMessage != null && fullMessage.startsWith(baseMessage) && fullMessage.length() > baseMessage.length()) {
             return fullMessage.substring(baseMessage.length()).trim();
         }

@@ -35,22 +35,22 @@ public class PaymentException extends BusinessException {
     }
 
     public static PaymentException alreadyCompleted(Long paymentId) {
-        return new PaymentException(ErrorCode.PAYMENT_ALREADY_COMPLETED, 
+        return new PaymentException(ErrorCode.PAYMENT_ALREADY_COMPLETED,
                 String.format("paymentId=%d", paymentId));
     }
 
     public static PaymentException amountMismatch(Long paymentId, int expected, int actual) {
-        return new PaymentException(ErrorCode.PAYMENT_AMOUNT_MISMATCH, 
+        return new PaymentException(ErrorCode.PAYMENT_AMOUNT_MISMATCH,
                 String.format("paymentId=%d, expected=%d, actual=%d", paymentId, expected, actual));
     }
 
     public static PaymentException timeout(Long paymentId) {
-        return new PaymentException(ErrorCode.PAYMENT_TIMEOUT, 
+        return new PaymentException(ErrorCode.PAYMENT_TIMEOUT,
                 String.format("paymentId=%d", paymentId));
     }
 
     public static PaymentException invalidState(String currentStatus, String expectedStatus) {
-        return new PaymentException(ErrorCode.PAYMENT_FAILED, 
+        return new PaymentException(ErrorCode.PAYMENT_FAILED,
                 String.format("현재 상태: %s, 필요한 상태: %s", currentStatus, expectedStatus));
     }
 }

@@ -34,8 +34,8 @@ public interface ScreeningSeatRepository extends JpaRepository<ScreeningSeat, Lo
      */
     @Modifying
     @Query("UPDATE ScreeningSeat ss SET ss.status = 'AVAILABLE', " +
-           "ss.holdToken = null, ss.holdMember = null, ss.holdExpireAt = null " +
-           "WHERE ss.status = 'HOLD' AND ss.holdExpireAt < :now")
+            "ss.holdToken = null, ss.holdMember = null, ss.holdExpireAt = null " +
+            "WHERE ss.status = 'HOLD' AND ss.holdExpireAt < :now")
     int releaseExpiredHolds(@Param("now") LocalDateTime now);
 
     /**

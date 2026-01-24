@@ -53,7 +53,7 @@ public class ReservationException extends BusinessException {
     }
 
     public static ReservationException invalidState(Long reservationId, String currentStatus, String expectedStatus) {
-        return new ReservationException(ErrorCode.RESERVATION_CANNOT_CANCEL, reservationId, 
+        return new ReservationException(ErrorCode.RESERVATION_CANNOT_CANCEL, reservationId,
                 String.format("현재 상태: %s, 필요한 상태: %s", currentStatus, expectedStatus));
     }
 }

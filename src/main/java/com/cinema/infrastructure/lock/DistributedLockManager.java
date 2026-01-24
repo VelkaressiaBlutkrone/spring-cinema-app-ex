@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 분산 락 관리자
- * 
+ *
  * RULE 4.3: 분산 락 규칙
  * - 락 키 규칙: lock:screening:{screeningId}:seat:{seatId}
  * - 락 획득 실패 시 즉시 실패 응답 (Fail Fast)
@@ -25,14 +25,14 @@ public class DistributedLockManager {
     private final RedissonClient redissonClient;
 
     private static final String LOCK_PREFIX = "lock:";
-    private static final long DEFAULT_WAIT_TIME = 0L;  // 즉시 실패 (Fail Fast)
+    private static final long DEFAULT_WAIT_TIME = 0L; // 즉시 실패 (Fail Fast)
     private static final long DEFAULT_LEASE_TIME = 10L; // 락 보유 시간 (초)
 
     /**
      * 좌석 락 키 생성
-     * 
+     *
      * @param screeningId 상영 ID
-     * @param seatId 좌석 ID
+     * @param seatId      좌석 ID
      * @return 락 키
      */
     public String createSeatLockKey(Long screeningId, Long seatId) {
@@ -41,9 +41,9 @@ public class DistributedLockManager {
 
     /**
      * 락 획득 시도 (Fail Fast)
-     * 
-     * @param lockKey 락 키
-     * @param waitTime 대기 시간 (밀리초)
+     *
+     * @param lockKey   락 키
+     * @param waitTime  대기 시간 (밀리초)
      * @param leaseTime 락 보유 시간 (밀리초)
      * @return 락 획득 성공 여부
      */
@@ -66,7 +66,7 @@ public class DistributedLockManager {
 
     /**
      * 락 획득 시도 (기본 설정)
-     * 
+     *
      * @param lockKey 락 키
      * @return 락 획득 성공 여부
      */
@@ -76,9 +76,9 @@ public class DistributedLockManager {
 
     /**
      * 좌석 락 획득 시도
-     * 
+     *
      * @param screeningId 상영 ID
-     * @param seatId 좌석 ID
+     * @param seatId      좌석 ID
      * @return 락 획득 성공 여부
      */
     public boolean tryLockSeat(Long screeningId, Long seatId) {
@@ -88,7 +88,7 @@ public class DistributedLockManager {
 
     /**
      * 락 해제
-     * 
+     *
      * @param lockKey 락 키
      */
     public void unlock(String lockKey) {
@@ -101,9 +101,9 @@ public class DistributedLockManager {
 
     /**
      * 좌석 락 해제
-     * 
+     *
      * @param screeningId 상영 ID
-     * @param seatId 좌석 ID
+     * @param seatId      좌석 ID
      */
     public void unlockSeat(Long screeningId, Long seatId) {
         String lockKey = createSeatLockKey(screeningId, seatId);
@@ -112,10 +112,10 @@ public class DistributedLockManager {
 
     /**
      * 락을 사용하여 작업 실행
-     * 
+     *
      * @param lockKey 락 키
-     * @param action 실행할 작업
-     * @param <T> 반환 타입
+     * @param action  실행할 작업
+     * @param <T>     반환 타입
      * @return 작업 결과
      */
     public <T> T executeWithLock(String lockKey, LockAction<T> action) {

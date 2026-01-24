@@ -15,9 +15,10 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * 회원 컨트롤러
- * 
+ *
  * RULE:
- * - /api/members/signup, /api/members/login은 인증 불필요 (SecurityConfig에서 permitAll)
+ * - /api/members/signup, /api/members/login은 인증 불필요 (SecurityConfig에서
+ * permitAll)
  * - /api/members/refresh, /api/members/logout은 인증 필요
  */
 @RestController

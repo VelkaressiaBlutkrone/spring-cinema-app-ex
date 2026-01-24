@@ -39,7 +39,7 @@ public class ScreeningException extends BusinessException {
     }
 
     public static ScreeningException invalidState(Long screeningId, String currentStatus, String action) {
-        return new ScreeningException(ErrorCode.SCREENING_ENDED, screeningId, 
+        return new ScreeningException(ErrorCode.SCREENING_ENDED, screeningId,
                 String.format("현재 상태: %s, 요청 작업: %s", currentStatus, action));
     }
 }

@@ -60,8 +60,7 @@ public class GsonConfig implements WebMvcConfigurer {
         gsonConverter.setGson(gson());
         gsonConverter.setSupportedMediaTypes(List.of(
                 MediaType.APPLICATION_JSON,
-                new MediaType("application", "*+json")
-        ));
+                new MediaType("application", "*+json")));
         // 최우선 순위로 추가
         converters.add(0, gsonConverter);
     }

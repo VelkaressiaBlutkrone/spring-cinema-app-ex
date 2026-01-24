@@ -28,15 +28,15 @@ import lombok.NoArgsConstructor;
 
 /**
  * 결제 Entity
- * 
+ *
  * RULE.md 10: 결제 규칙
  * - Mock 결제 시스템 사용
  * - 결제 정보는 서버에서만 검증
  */
 @Entity
 @Table(name = "payment", indexes = {
-    @Index(name = "idx_payment_reservation", columnList = "reservation_id"),
-    @Index(name = "idx_payment_status", columnList = "pay_status")
+        @Index(name = "idx_payment_reservation", columnList = "reservation_id"),
+        @Index(name = "idx_payment_status", columnList = "pay_status")
 })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -115,7 +115,7 @@ public class Payment {
      */
     public void success(String pgTransactionId) {
         if (this.payStatus != PaymentStatus.PENDING) {
-            throw new PaymentException(ErrorCode.PAYMENT_CANNOT_COMPLETE, 
+            throw new PaymentException(ErrorCode.PAYMENT_CANNOT_COMPLETE,
                     String.format("paymentId=%d, 현재 상태: %s", this.id, this.payStatus));
         }
         this.payStatus = PaymentStatus.SUCCESS;
@@ -129,7 +129,7 @@ public class Payment {
      */
     public void fail() {
         if (this.payStatus != PaymentStatus.PENDING) {
-            throw new PaymentException(ErrorCode.PAYMENT_FAILED, 
+            throw new PaymentException(ErrorCode.PAYMENT_FAILED,
                     String.format("paymentId=%d, 현재 상태: %s", this.id, this.payStatus));
         }
         this.payStatus = PaymentStatus.FAILED;
@@ -141,7 +141,7 @@ public class Payment {
      */
     public void cancel() {
         if (this.payStatus != PaymentStatus.SUCCESS) {
-            throw new PaymentException(ErrorCode.PAYMENT_CANNOT_CANCEL, 
+            throw new PaymentException(ErrorCode.PAYMENT_CANNOT_CANCEL,
                     String.format("paymentId=%d, 현재 상태: %s", this.id, this.payStatus));
         }
         this.payStatus = PaymentStatus.CANCELLED;
@@ -154,7 +154,7 @@ public class Payment {
      */
     public void refund() {
         if (this.payStatus != PaymentStatus.CANCELLED) {
-            throw new PaymentException(ErrorCode.PAYMENT_CANNOT_REFUND, 
+            throw new PaymentException(ErrorCode.PAYMENT_CANNOT_REFUND,
                     String.format("paymentId=%d, 현재 상태: %s", this.id, this.payStatus));
         }
         this.payStatus = PaymentStatus.REFUNDED;

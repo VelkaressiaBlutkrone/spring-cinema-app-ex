@@ -45,7 +45,7 @@ public class Screen {
     private Theater theater;
 
     @Column(nullable = false, length = 50)
-    private String name;  // "1관", "IMAX관"
+    private String name; // "1관", "IMAX관"
 
     @Column(name = "total_rows", nullable = false)
     private Integer totalRows;

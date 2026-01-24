@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Refresh Token 관리 서비스
- * 
+ *
  * RULE:
  * - Refresh Token은 Redis에 저장
  * - Key: refresh:token:{loginId}
@@ -32,8 +32,8 @@ public class RefreshTokenService {
 
     /**
      * Refresh Token 저장
-     * 
-     * @param loginId 로그인 ID
+     *
+     * @param loginId      로그인 ID
      * @param refreshToken Refresh Token
      */
     public void saveRefreshToken(String loginId, String refreshToken) {
@@ -44,7 +44,7 @@ public class RefreshTokenService {
 
     /**
      * Refresh Token 조회
-     * 
+     *
      * @param loginId 로그인 ID
      * @return Refresh Token (없으면 null)
      */
@@ -55,7 +55,7 @@ public class RefreshTokenService {
 
     /**
      * Refresh Token 삭제 (로그아웃)
-     * 
+     *
      * @param loginId 로그인 ID
      */
     public void deleteRefreshToken(String loginId) {
@@ -66,8 +66,8 @@ public class RefreshTokenService {
 
     /**
      * Refresh Token 존재 여부 확인
-     * 
-     * @param loginId 로그인 ID
+     *
+     * @param loginId      로그인 ID
      * @param refreshToken Refresh Token
      * @return 일치 여부
      */

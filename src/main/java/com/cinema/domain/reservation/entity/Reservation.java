@@ -36,9 +36,9 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @Table(name = "reservation", indexes = {
-    @Index(name = "idx_reservation_member", columnList = "member_id"),
-    @Index(name = "idx_reservation_screening", columnList = "screening_id"),
-    @Index(name = "idx_reservation_status", columnList = "status")
+        @Index(name = "idx_reservation_member", columnList = "member_id"),
+        @Index(name = "idx_reservation_screening", columnList = "screening_id"),
+        @Index(name = "idx_reservation_status", columnList = "status")
 })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

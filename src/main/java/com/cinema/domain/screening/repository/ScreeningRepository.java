@@ -33,25 +33,25 @@ public interface ScreeningRepository extends JpaRepository<Screening, Long> {
      */
     @Query("SELECT s FROM Screening s WHERE s.movie.id = :movieId AND DATE(s.startTime) = DATE(:date) AND s.status = :status")
     List<Screening> findByMovieIdAndDateAndStatus(
-            @Param("movieId") Long movieId, 
-            @Param("date") LocalDateTime date, 
+            @Param("movieId") Long movieId,
+            @Param("date") LocalDateTime date,
             @Param("status") ScreeningStatus status);
 
     /**
      * 상영과 관련된 좌석 정보를 함께 조회
      */
     @Query("SELECT s FROM Screening s " +
-           "JOIN FETCH s.movie " +
-           "JOIN FETCH s.screen " +
-           "WHERE s.id = :id")
+            "JOIN FETCH s.movie " +
+            "JOIN FETCH s.screen " +
+            "WHERE s.id = :id")
     Optional<Screening> findByIdWithMovieAndScreen(@Param("id") Long id);
 
     /**
      * 상영과 좌석 상태를 함께 조회
      */
     @Query("SELECT DISTINCT s FROM Screening s " +
-           "LEFT JOIN FETCH s.screeningSeats ss " +
-           "LEFT JOIN FETCH ss.seat " +
-           "WHERE s.id = :id")
+            "LEFT JOIN FETCH s.screeningSeats ss " +
+            "LEFT JOIN FETCH ss.seat " +
+            "WHERE s.id = :id")
     Optional<Screening> findByIdWithScreeningSeats(@Param("id") Long id);
 }

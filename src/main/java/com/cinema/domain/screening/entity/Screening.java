@@ -32,14 +32,14 @@ import lombok.NoArgsConstructor;
 
 /**
  * 상영 스케줄 Entity (Aggregate Root)
- * 
+ *
  * RULE 3.2: 좌석은 반드시 Screening Aggregate 소속
  * - 좌석 상태 변경은 Screening을 통해서만 가능
  */
 @Entity
 @Table(name = "screening", indexes = {
-    @Index(name = "idx_screening_time", columnList = "start_time, end_time"),
-    @Index(name = "idx_screening_status", columnList = "status")
+        @Index(name = "idx_screening_time", columnList = "start_time, end_time"),
+        @Index(name = "idx_screening_status", columnList = "status")
 })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -145,8 +145,8 @@ public class Screening {
      * 예매 가능 여부 확인
      */
     public boolean isBookable() {
-        return this.status == ScreeningStatus.SCHEDULED && 
-               this.startTime.isAfter(LocalDateTime.now());
+        return this.status == ScreeningStatus.SCHEDULED &&
+                this.startTime.isAfter(LocalDateTime.now());
     }
 
     /**

@@ -15,7 +15,7 @@ import io.jsonwebtoken.security.Keys;
 
 /**
  * JWT Token 생성 및 검증 Provider
- * 
+ *
  * RULE:
  * - Access Token 유효시간 ≤ 15분
  * - JWT Token 전체 값이 로그에 기록되지 않음 (일부만 마스킹)
@@ -32,9 +32,9 @@ public class JwtTokenProvider {
 
     /**
      * 토큰 생성 (Role 포함)
-     * 
-     * @param subject 로그인 ID
-     * @param role 역할 (USER, ADMIN)
+     *
+     * @param subject    로그인 ID
+     * @param role       역할 (USER, ADMIN)
      * @param expireTime 만료 시간 (밀리초)
      * @return JWT Token
      */
@@ -52,8 +52,8 @@ public class JwtTokenProvider {
 
     /**
      * 토큰 생성 (Role 없이 - 하위 호환성)
-     * 
-     * @param subject 로그인 ID
+     *
+     * @param subject    로그인 ID
      * @param expireTime 만료 시간 (밀리초)
      * @return JWT Token
      */
@@ -63,7 +63,7 @@ public class JwtTokenProvider {
 
     /**
      * subject 추출
-     * 
+     *
      * @param token JWT Token
      * @return 로그인 ID
      */
@@ -73,7 +73,7 @@ public class JwtTokenProvider {
 
     /**
      * Role 추출
-     * 
+     *
      * @param token JWT Token
      * @return Role (없으면 null)
      */
@@ -84,7 +84,7 @@ public class JwtTokenProvider {
 
     /**
      * 토큰 검증
-     * 
+     *
      * @param token JWT Token
      * @return 유효 여부
      */
@@ -100,7 +100,7 @@ public class JwtTokenProvider {
     /**
      * 토큰 마스킹 (로그용)
      * JWT Token 전체 값이 로그에 기록되지 않도록 일부만 표시
-     * 
+     *
      * @param token JWT Token
      * @return 마스킹된 토큰 (예: "eyJhbGc...xxxxx")
      */

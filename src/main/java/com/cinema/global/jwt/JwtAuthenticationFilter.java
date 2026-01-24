@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * JWT 인증 필터
- * 
+ *
  * RULE:
  * - Access Token 유효시간 ≤ 15분
  * - JWT Token 전체 값이 로그에 기록되지 않음
@@ -91,7 +90,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     /**
      * Request에서 JWT Token 추출
-     * 
+     *
      * @param request HttpServletRequest
      * @return JWT Token (없으면 null)
      */

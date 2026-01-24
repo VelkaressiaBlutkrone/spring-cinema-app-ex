@@ -25,8 +25,8 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @Table(name = "movie", indexes = {
-    @Index(name = "idx_movie_status", columnList = "status"),
-    @Index(name = "idx_movie_release", columnList = "release_date")
+        @Index(name = "idx_movie_status", columnList = "status"),
+        @Index(name = "idx_movie_release", columnList = "release_date")
 })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -82,8 +82,8 @@ public class Movie {
     private LocalDateTime updatedAt;
 
     @Builder
-    public Movie(String title, String description, Integer runningTime, String rating, 
-                 String genre, String director, String actors, String posterUrl, LocalDate releaseDate) {
+    public Movie(String title, String description, Integer runningTime, String rating,
+            String genre, String director, String actors, String posterUrl, LocalDate releaseDate) {
         this.title = title;
         this.description = description;
         this.runningTime = runningTime;
@@ -120,8 +120,8 @@ public class Movie {
         this.status = MovieStatus.SHOWING;
     }
 
-    public void updateInfo(String title, String description, Integer runningTime, 
-                           String rating, String genre, String director, String actors, String posterUrl) {
+    public void updateInfo(String title, String description, Integer runningTime,
+            String rating, String genre, String director, String actors, String posterUrl) {
         this.title = title;
         this.description = description;
         this.runningTime = runningTime;

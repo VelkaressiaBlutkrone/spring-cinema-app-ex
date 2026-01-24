@@ -14,7 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * Redis 서비스
- * 
+ *
  * RULE 7: Redis 사용 규칙
  * - Key 네이밍 규칙 준수
  * - TTL 설정 필수
@@ -39,25 +39,25 @@ public class RedisService {
     /**
      * 좌석 HOLD 저장
      * Key: seat:hold:{screeningId}:{seatId}
-     * 
+     *
      * @param screeningId 상영 ID
-     * @param seatId 좌석 ID
-     * @param memberId 회원 ID
-     * @param ttlMinutes TTL (분)
+     * @param seatId      좌석 ID
+     * @param memberId    회원 ID
+     * @param ttlMinutes  TTL (분)
      * @return HOLD Token
      */
     public String saveHold(Long screeningId, Long seatId, Long memberId, long ttlMinutes) {
         String key = createHoldKey(screeningId, seatId);
         String holdToken = generateHoldToken();
-        
+
         HoldInfo holdInfo = new HoldInfo(holdToken, memberId, System.currentTimeMillis());
         String value = gson.toJson(holdInfo);
-        
+
         redisTemplate.opsForValue().set(key, value, Duration.ofMinutes(ttlMinutes));
-        
-        log.info("[Redis] HOLD 저장 - screeningId={}, seatId={}, memberId={}, ttl={}분", 
+
+        log.info("[Redis] HOLD 저장 - screeningId={}, seatId={}, memberId={}, ttl={}분",
                 screeningId, seatId, memberId, ttlMinutes);
-        
+
         return holdToken;
     }
 
@@ -67,11 +67,11 @@ public class RedisService {
     public Optional<HoldInfo> getHold(Long screeningId, Long seatId) {
         String key = createHoldKey(screeningId, seatId);
         String value = redisTemplate.opsForValue().get(key);
-        
+
         if (value == null) {
             return Optional.empty();
         }
-        
+
         return Optional.of(gson.fromJson(value, HoldInfo.class));
     }
 
@@ -90,7 +90,7 @@ public class RedisService {
     public void deleteHold(Long screeningId, Long seatId) {
         String key = createHoldKey(screeningId, seatId);
         Boolean deleted = redisTemplate.delete(key);
-        
+
         if (Boolean.TRUE.equals(deleted)) {
             log.info("[Redis] HOLD 삭제 - screeningId={}, seatId={}", screeningId, seatId);
         }
@@ -154,11 +154,11 @@ public class RedisService {
     public <T> Optional<T> getSeatStatus(Long screeningId, Class<T> clazz) {
         String key = createSeatStatusKey(screeningId);
         String value = redisTemplate.opsForValue().get(key);
-        
+
         if (value == null) {
             return Optional.empty();
         }
-        
+
         return Optional.of(gson.fromJson(value, clazz));
     }
 
@@ -200,6 +200,6 @@ public class RedisService {
     public record HoldInfo(
             String holdToken,
             Long memberId,
-            Long holdAt
-    ) {}
+            Long holdAt) {
+    }
 }

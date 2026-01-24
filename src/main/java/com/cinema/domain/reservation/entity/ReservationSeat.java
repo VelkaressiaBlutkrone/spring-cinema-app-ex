@@ -2,8 +2,8 @@ package com.cinema.domain.reservation.entity;
 
 import java.time.LocalDateTime;
 
-import com.cinema.domain.screening.entity.Seat;
 import com.cinema.domain.screening.entity.ScreeningSeat;
+import com.cinema.domain.screening.entity.Seat;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @Table(name = "reservation_seat", uniqueConstraints = {
-    @UniqueConstraint(name = "uk_reservation_seat", columnNames = {"reservation_id", "seat_id"})
+        @UniqueConstraint(name = "uk_reservation_seat", columnNames = { "reservation_id", "seat_id" })
 })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

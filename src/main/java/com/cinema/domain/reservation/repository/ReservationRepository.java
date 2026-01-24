@@ -27,21 +27,21 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
      * 예매 상세 조회 (좌석 정보 포함)
      */
     @Query("SELECT r FROM Reservation r " +
-           "JOIN FETCH r.member " +
-           "JOIN FETCH r.screening s " +
-           "JOIN FETCH s.movie " +
-           "LEFT JOIN FETCH r.reservationSeats rs " +
-           "LEFT JOIN FETCH rs.seat " +
-           "WHERE r.id = :id")
+            "JOIN FETCH r.member " +
+            "JOIN FETCH r.screening s " +
+            "JOIN FETCH s.movie " +
+            "LEFT JOIN FETCH r.reservationSeats rs " +
+            "LEFT JOIN FETCH rs.seat " +
+            "WHERE r.id = :id")
     Optional<Reservation> findByIdWithDetails(@Param("id") Long id);
 
     /**
      * 회원의 예매 목록 조회 (상세 정보 포함)
      */
     @Query("SELECT DISTINCT r FROM Reservation r " +
-           "JOIN FETCH r.screening s " +
-           "JOIN FETCH s.movie " +
-           "WHERE r.member.id = :memberId " +
-           "ORDER BY r.createdAt DESC")
+            "JOIN FETCH r.screening s " +
+            "JOIN FETCH s.movie " +
+            "WHERE r.member.id = :memberId " +
+            "ORDER BY r.createdAt DESC")
     List<Reservation> findByMemberIdWithDetails(@Param("memberId") Long memberId);
 }
