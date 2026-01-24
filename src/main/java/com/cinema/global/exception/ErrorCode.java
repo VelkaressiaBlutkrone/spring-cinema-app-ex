@@ -25,9 +25,10 @@ public enum ErrorCode {
     // 회원 관련 (MEMBER)
     // ========================================
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "MEMBER_001", "회원을 찾을 수 없습니다."),
-    DUPLICATE_EMAIL(HttpStatus.CONFLICT, "MEMBER_002", "이미 존재하는 이메일입니다."),
-    INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "MEMBER_003", "비밀번호가 일치하지 않습니다."),
-    MEMBER_DISABLED(HttpStatus.FORBIDDEN, "MEMBER_004", "비활성화된 회원입니다."),
+    DUPLICATE_LOGIN_ID(HttpStatus.CONFLICT, "MEMBER_002", "이미 존재하는 아이디입니다."),
+    DUPLICATE_EMAIL(HttpStatus.CONFLICT, "MEMBER_003", "이미 존재하는 이메일입니다."),
+    INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "MEMBER_004", "비밀번호가 일치하지 않습니다."),
+    MEMBER_DISABLED(HttpStatus.FORBIDDEN, "MEMBER_005", "비활성화된 회원입니다."),
 
     // ========================================
     // 영화 관련 (MOVIE)

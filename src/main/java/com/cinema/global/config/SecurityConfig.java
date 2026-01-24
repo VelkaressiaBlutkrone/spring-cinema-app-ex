@@ -11,7 +11,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.CorsFilter;
+
+import com.cinema.global.jwt.JwtAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
     private final CorsFilter corsFilter;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -57,6 +61,9 @@ public class SecurityConfig {
                 // 인증 관련
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/members/signup", "/api/members/login").permitAll()
+                
+                // 토큰 갱신은 인증 불필요 (Refresh Token으로 인증)
+                .requestMatchers("/api/members/refresh").permitAll()
                 
                 // 영화 조회 (GET)
                 .requestMatchers(HttpMethod.GET, "/api/movies/**").permitAll()
@@ -98,8 +105,8 @@ public class SecurityConfig {
                 })
             );
 
-        // TODO: JWT 필터 추가
-        // http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        // JWT 필터 추가 (UsernamePasswordAuthenticationFilter 전에 실행)
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

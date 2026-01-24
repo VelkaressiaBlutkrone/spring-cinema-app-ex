@@ -21,4 +21,10 @@ public class MemberRequest {
         private String loginId;
         private String password;
     }
+
+    @Getter
+    @NoArgsConstructor
+    public static class RefreshToken {
+        private String refreshToken;
+    }
 }

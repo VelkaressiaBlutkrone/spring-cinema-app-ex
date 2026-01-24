@@ -117,30 +117,53 @@ domain/
 
 ### 작업 내용
 
-- [ ] Member Domain 설계 및 구현
-- [ ] 회원 가입 API 구현
-- [ ] 로그인 API 구현
-- [ ] JWT Token 생성/검증 로직
-- [ ] Refresh Token 관리 (Redis 저장)
-- [ ] Spring Security 설정:
-  - [ ] JWT 필터 구현
-  - [ ] 인증/인가 설정
-  - [ ] Access Token 유효시간 ≤ 15분 설정
-- [ ] 토큰 갱신 API 구현
-- [ ] 로그아웃 API 구현 (Redis 토큰 삭제)
-- [ ] 예외 처리 (인증 실패, 토큰 만료 등)
+- [x] Member Domain 설계 및 구현
+- [x] 회원 가입 API 구현
+- [x] 로그인 API 구현
+- [x] JWT Token 생성/검증 로직
+- [x] Refresh Token 관리 (Redis 저장)
+- [x] Spring Security 설정:
+  - [x] JWT 필터 구현
+  - [x] 인증/인가 설정
+  - [x] Access Token 유효시간 ≤ 15분 설정
+- [x] 토큰 갱신 API 구현
+- [x] 로그아웃 API 구현 (Redis 토큰 삭제)
+- [x] 예외 처리 (인증 실패, 토큰 만료 등)
 
 ### 체크리스트
 
-- [ ] Access Token 유효시간 ≤ 15분 확인
-- [ ] Refresh Token은 Redis에 저장 확인
-- [ ] JWT Token 전체 값이 로그에 기록되지 않음 확인
-- [ ] 회원 가입/로그인 정상 동작 확인
-- [ ] 토큰 갱신 정상 동작 확인
+- [x] Access Token 유효시간 ≤ 15분 확인
+- [x] Refresh Token은 Redis에 저장 확인
+- [x] JWT Token 전체 값이 로그에 기록되지 않음 확인
+- [x] 회원 가입/로그인 정상 동작 확인
+- [x] 토큰 갱신 정상 동작 확인
+
+### 완료된 구현 내용
+
+#### 구현된 주요 클래스
+- `RefreshTokenService`: Refresh Token Redis 저장/조회/삭제/검증
+- `JwtAuthenticationFilter`: JWT 토큰 검증 및 인증 처리 필터
+- `JwtTokenProvider`: JWT 토큰 생성/검증, Role 포함, 토큰 마스킹
+- `MemberService`: 회원 가입/로그인/토큰 갱신/로그아웃 로직
+- `MemberController`: 회원 관련 API 엔드포인트
+
+#### API 엔드포인트
+- `POST /api/members/signup`: 회원 가입
+- `POST /api/members/login`: 로그인 (Access Token + Refresh Token 발급)
+- `POST /api/members/refresh`: 토큰 갱신
+- `POST /api/members/logout`: 로그아웃 (Refresh Token 삭제)
+
+#### 주요 기능
+- JWT Access Token 유효시간: 15분 (application.yml 설정값 사용)
+- Refresh Token: Redis 저장 (Key: `refresh:token:{loginId}`, TTL: 7일)
+- JWT Token에 Role 정보 포함
+- 토큰 마스킹 기능 (로그 보안)
+- Spring Security JWT 필터 통합
+- 예외 처리 강화 (BusinessException 사용)
 
 ### 예상 소요 시간
 
-3-4일
+3-4일 → **완료 (2026-01-24)**
 
 ---
 
