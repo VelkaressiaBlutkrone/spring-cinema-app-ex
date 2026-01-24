@@ -1,14 +1,9 @@
-/**
- * 유틸리티 함수
- * 
- * 공통으로 사용하는 유틸리티 함수
- * 
- * 파일:
- * - dateUtils.ts: 날짜 관련 유틸리티 (formatDate, getRelativeTime 등)
- * - errorHandler.ts: 에러 처리 유틸리티 (getErrorMessage, isNetworkError 등)
- * - formatters.ts: 포맷팅 유틸리티 (formatNumber, formatPrice 등)
- * 
- * 도메인별 유틸리티는 필요시 추가:
- * - tokenUtils.ts: 토큰 관리 유틸리티
- * - validationUtils.ts: 유효성 검증 유틸리티
- */
+# 유틸리티 함수
+
+프로젝트 전반에서 사용되는 유틸리티 함수 모음입니다.
+
+## 파일 목록
+
+- `dateUtils.ts`: 날짜 포맷팅 및 계산
+- `errorHandler.ts`: API 에러 메시지 처리
+- `formatters.ts`: 숫자, 금액 등 포맷팅
