@@ -1,7 +1,6 @@
 package com.cinema.domain.admin.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -104,6 +103,6 @@ public class AdminSeatService {
     public List<SeatResponse> getSeatsByScreen(Long screenId) {
         return seatRepository.findByScreenIdOrderByRowLabelAscSeatNoAsc(screenId).stream()
                 .map(SeatResponse::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

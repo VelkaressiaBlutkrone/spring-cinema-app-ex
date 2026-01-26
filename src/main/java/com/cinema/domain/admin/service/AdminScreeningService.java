@@ -1,7 +1,6 @@
 package com.cinema.domain.admin.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -130,7 +129,7 @@ public class AdminScreeningService {
     public List<ScreeningResponse> getScreeningsByMovie(Long movieId) {
         return screeningRepository.findByMovieId(movieId).stream()
                 .map(ScreeningResponse::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -139,6 +138,6 @@ public class AdminScreeningService {
     public List<ScreeningResponse> getScreeningsByScreen(Long screenId) {
         return screeningRepository.findByScreenId(screenId).stream()
                 .map(ScreeningResponse::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 }
