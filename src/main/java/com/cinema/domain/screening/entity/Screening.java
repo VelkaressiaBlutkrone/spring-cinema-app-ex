@@ -167,4 +167,14 @@ public class Screening {
                 .filter(ss -> ss.getStatus() == SeatStatus.AVAILABLE)
                 .count();
     }
+
+    /**
+     * 상영 스케줄 정보 수정
+     */
+    public void updateInfo(Movie movie, Screen screen, LocalDateTime startTime, LocalDateTime endTime) {
+        this.movie = movie;
+        this.screen = screen;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
 }

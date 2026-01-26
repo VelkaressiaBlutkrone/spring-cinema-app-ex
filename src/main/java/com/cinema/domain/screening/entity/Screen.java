@@ -111,4 +111,20 @@ public class Screen {
     public void addSeat(Seat seat) {
         this.seats.add(seat);
     }
+
+    public void updateInfo(String name, Integer totalRows, Integer totalCols, ScreenType screenType) {
+        this.name = name;
+        if (totalRows != null) {
+            this.totalRows = totalRows;
+        }
+        if (totalCols != null) {
+            this.totalCols = totalCols;
+        }
+        if (totalRows != null && totalCols != null) {
+            this.totalSeats = totalRows * totalCols;
+        }
+        if (screenType != null) {
+            this.screenType = screenType;
+        }
+    }
 }

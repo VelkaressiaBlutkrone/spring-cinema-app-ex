@@ -85,4 +85,11 @@ public class Theater {
     public void maintenance() {
         this.status = TheaterStatus.MAINTENANCE;
     }
+
+    public void updateInfo(String name, String location, String address, String phone) {
+        this.name = name;
+        this.location = location;
+        this.address = address;
+        this.phone = phone;
+    }
 }

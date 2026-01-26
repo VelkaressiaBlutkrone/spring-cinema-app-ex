@@ -178,48 +178,96 @@ domain/
 
 ### 작업 내용
 
-- [ ] Movie Domain 설계 및 구현
-- [ ] Theater Domain 설계 및 구현
-- [ ] Screening Domain 설계 및 구현
-- [ ] 관리자 API 경로 설정 (`/admin/**`)
-- [ ] Role 기반 접근 제어 구현:
-  - [ ] ADMIN Role 검증
-  - [ ] 일반 사용자 접근 차단
-- [ ] 영화 관리 API:
-  - [ ] 영화 등록
-  - [ ] 영화 수정
-  - [ ] 영화 삭제
-  - [ ] 영화 목록 조회
-- [ ] 상영관 관리 API:
-  - [ ] 상영관 등록
-  - [ ] 상영관 수정
-  - [ ] 상영관 삭제
-- [ ] 상영 스케줄 관리 API:
-  - [ ] 상영 스케줄 등록
-  - [ ] 상영 스케줄 수정
-  - [ ] 상영 스케줄 삭제
-  - [ ] 상영 스케줄 등록 시 시간 중복 검증 로직 구현
+- [x] Movie Domain 설계 및 구현
+- [x] Theater Domain 설계 및 구현
+- [x] Screening Domain 설계 및 구현
+- [x] 관리자 API 경로 설정 (`/api/admin/**`)
+- [x] Role 기반 접근 제어 구현:
+  - [x] ADMIN Role 검증
+  - [x] 일반 사용자 접근 차단
+- [x] 영화 관리 API:
+  - [x] 영화 등록
+  - [x] 영화 수정
+  - [x] 영화 삭제
+  - [x] 영화 목록 조회
+- [x] 상영관 관리 API:
+  - [x] 상영관 등록
+  - [x] 상영관 수정
+  - [x] 상영관 삭제
+- [x] 상영 스케줄 관리 API:
+  - [x] 상영 스케줄 등록
+  - [x] 상영 스케줄 수정
+  - [x] 상영 스케줄 삭제
+  - [x] 상영 스케줄 등록 시 시간 중복 검증 로직 구현
 - [ ] 가격 정책 관리 API:
   - [ ] 시간대별 가격 설정
   - [ ] 좌석 등급별 가격 설정
-- [ ] 좌석 배치 설정 API:
-  - [ ] 상영관별 좌석 배치 설정
-  - [ ] 좌석 타입 설정
-  - [ ] 좌석 상태 관리 (BLOCKED, DISABLED 설정)
-- [ ] 관리자 API Rate Limit 설정
+- [x] 좌석 배치 설정 API:
+  - [x] 상영관별 좌석 배치 설정
+  - [x] 좌석 타입 설정
+  - [x] 좌석 상태 관리 (BLOCKED, DISABLED 설정)
+- [ ] 관리자 API Rate Limit 설정 (Step 16에서 구현 예정)
 
 ### 체크리스트
 
-- [ ] `/admin/**` 경로는 Role 기반 접근 필수 확인
-- [ ] 관리자 API 별도 Rate Limit 적용 확인
-- [ ] 일반 사용자는 관리자 API 접근 불가 확인
-- [ ] 모든 관리자 API 인증/권한 검사 확인
-- [ ] CRUD 기능 정상 동작 확인
-- [ ] 좌석 상태 관리 (BLOCKED, DISABLED) 기능 확인
+- [x] `/api/admin/**` 경로는 Role 기반 접근 필수 확인
+- [ ] 관리자 API 별도 Rate Limit 적용 확인 (Step 16에서 구현 예정)
+- [x] 일반 사용자는 관리자 API 접근 불가 확인
+- [x] 모든 관리자 API 인증/권한 검사 확인
+- [x] CRUD 기능 정상 동작 확인
+- [x] 좌석 상태 관리 (BLOCKED, DISABLED) 기능 확인
+
+### 완료된 구현 내용
+
+#### 구현된 주요 클래스
+- `AdminMovieController`: 영화 관리 API 엔드포인트
+- `AdminTheaterController`: 영화관 관리 API 엔드포인트
+- `AdminScreenController`: 상영관 관리 API 엔드포인트
+- `AdminScreeningController`: 상영 스케줄 관리 API 엔드포인트
+- `AdminSeatController`: 좌석 관리 API 엔드포인트
+- `AdminMovieService`, `AdminTheaterService`, `AdminScreenService`, `AdminScreeningService`, `AdminSeatService`: 각 도메인별 관리 서비스
+
+#### API 엔드포인트
+- `POST /api/admin/movies`: 영화 등록
+- `PUT /api/admin/movies/{movieId}`: 영화 수정
+- `DELETE /api/admin/movies/{movieId}`: 영화 삭제
+- `GET /api/admin/movies`: 영화 목록 조회 (페이징)
+- `GET /api/admin/movies/{movieId}`: 영화 상세 조회
+- `POST /api/admin/theaters`: 영화관 등록
+- `PUT /api/admin/theaters/{theaterId}`: 영화관 수정
+- `DELETE /api/admin/theaters/{theaterId}`: 영화관 삭제
+- `GET /api/admin/theaters`: 영화관 목록 조회 (페이징)
+- `GET /api/admin/theaters/{theaterId}`: 영화관 상세 조회
+- `POST /api/admin/screens`: 상영관 등록
+- `PUT /api/admin/screens/{screenId}`: 상영관 수정
+- `DELETE /api/admin/screens/{screenId}`: 상영관 삭제
+- `GET /api/admin/screens`: 상영관 목록 조회 (페이징)
+- `GET /api/admin/screens/{screenId}`: 상영관 상세 조회
+- `GET /api/admin/screens/by-theater?theaterId={theaterId}`: 특정 영화관의 상영관 목록 조회
+- `POST /api/admin/screenings`: 상영 스케줄 등록
+- `PUT /api/admin/screenings/{screeningId}`: 상영 스케줄 수정
+- `DELETE /api/admin/screenings/{screeningId}`: 상영 스케줄 삭제
+- `GET /api/admin/screenings`: 상영 스케줄 목록 조회 (페이징)
+- `GET /api/admin/screenings/{screeningId}`: 상영 스케줄 상세 조회
+- `GET /api/admin/screenings/by-movie?movieId={movieId}`: 특정 영화의 상영 스케줄 목록 조회
+- `GET /api/admin/screenings/by-screen?screenId={screenId}`: 특정 상영관의 상영 스케줄 목록 조회
+- `POST /api/admin/seats`: 좌석 등록
+- `PUT /api/admin/seats/{seatId}`: 좌석 수정 (타입, 상태)
+- `DELETE /api/admin/seats/{seatId}`: 좌석 삭제
+- `GET /api/admin/seats`: 좌석 목록 조회 (페이징)
+- `GET /api/admin/seats/{seatId}`: 좌석 상세 조회
+- `GET /api/admin/seats/by-screen?screenId={screenId}`: 특정 상영관의 좌석 목록 조회
+
+#### 주요 기능
+- 모든 관리자 API는 `@PreAuthorize("hasRole('ADMIN')")` 적용
+- SecurityConfig에서 `/api/admin/**` 경로 Role 기반 접근 제어 설정
+- 상영 스케줄 등록/수정 시 시간 중복 검증 로직 구현
+- 좌석 상태 관리 (BLOCKED, DISABLED) 기능 구현
+- ErrorCode에 THEATER_NOT_FOUND 추가
 
 ### 예상 소요 시간
 
-4-5일
+4-5일 → **완료 (2026-01-26)**
 
 ---
 

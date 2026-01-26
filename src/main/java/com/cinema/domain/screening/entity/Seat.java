@@ -108,4 +108,13 @@ public class Seat {
     public String getDisplayName() {
         return rowLabel + seatNo;
     }
+
+    /**
+     * 좌석 정보 수정
+     */
+    public void updateInfo(SeatType seatType) {
+        if (seatType != null) {
+            this.seatType = seatType;
+        }
+    }
 }

@@ -37,6 +37,11 @@ public enum ErrorCode {
     MOVIE_NOT_SHOWING(HttpStatus.BAD_REQUEST, "MOVIE_002", "현재 상영 중인 영화가 아닙니다."),
 
     // ========================================
+    // 영화관 관련 (THEATER)
+    // ========================================
+    THEATER_NOT_FOUND(HttpStatus.NOT_FOUND, "THEATER_001", "영화관을 찾을 수 없습니다."),
+
+    // ========================================
     // 상영관 관련 (SCREEN)
     // ========================================
     SCREEN_NOT_FOUND(HttpStatus.NOT_FOUND, "SCREEN_001", "상영관을 찾을 수 없습니다."),
