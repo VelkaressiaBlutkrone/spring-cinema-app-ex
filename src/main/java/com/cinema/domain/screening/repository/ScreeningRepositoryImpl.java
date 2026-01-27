@@ -2,6 +2,7 @@ package com.cinema.domain.screening.repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +15,6 @@ import com.cinema.domain.screening.entity.QScreeningSeat;
 import com.cinema.domain.screening.entity.QSeat;
 import com.cinema.domain.screening.entity.Screening;
 import com.cinema.domain.screening.entity.ScreeningStatus;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -39,11 +39,14 @@ public class ScreeningRepositoryImpl implements ScreeningRepositoryCustom {
     @Override
     public List<Screening> findByDateAndStatus(LocalDateTime date, ScreeningStatus status) {
         LocalDate targetDate = date.toLocalDate();
+        LocalDateTime startOfDay = LocalDateTime.of(targetDate, LocalTime.MIN);
+        LocalDateTime startOfNextDay = startOfDay.plusDays(1);
         
         return queryFactory
                 .selectFrom(screening)
                 .where(
-                        screening.startTime.date().eq(targetDate),
+                        screening.startTime.goe(startOfDay),
+                        screening.startTime.lt(startOfNextDay),
                         screening.status.eq(status)
                 )
                 .fetch();
@@ -52,12 +55,15 @@ public class ScreeningRepositoryImpl implements ScreeningRepositoryCustom {
     @Override
     public List<Screening> findByMovieIdAndDateAndStatus(Long movieId, LocalDateTime date, ScreeningStatus status) {
         LocalDate targetDate = date.toLocalDate();
+        LocalDateTime startOfDay = LocalDateTime.of(targetDate, LocalTime.MIN);
+        LocalDateTime startOfNextDay = startOfDay.plusDays(1);
         
         return queryFactory
                 .selectFrom(screening)
                 .where(
                         screening.movie.id.eq(movieId),
-                        screening.startTime.date().eq(targetDate),
+                        screening.startTime.goe(startOfDay),
+                        screening.startTime.lt(startOfNextDay),
                         screening.status.eq(status)
                 )
                 .fetch();
