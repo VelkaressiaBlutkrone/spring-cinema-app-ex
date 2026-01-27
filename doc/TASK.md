@@ -390,51 +390,74 @@ domain/
 
 ### 작업 내용
 
-- [ ] 예매 도메인 로직 구현:
-  - [ ] Reservation Aggregate 설계
-  - [ ] 예매 생성 로직
-- [ ] 결제 도메인 로직 구현:
-  - [ ] Payment Aggregate 설계
-  - [ ] Mock 결제 서비스 구현
-- [ ] 예매 트랜잭션 구현:
-  - [ ] HOLD Token 검증
-  - [ ] 가격 계산 (Domain Service)
-  - [ ] 좌석 상태 전이: HOLD → PAYMENT_PENDING
-  - [ ] 결제 검증 (Mock PG 요청)
-  - [ ] 결제 성공 시: PAYMENT_PENDING → RESERVED
-  - [ ] DB 저장 (트랜잭션)
-  - [ ] Redis HOLD 정리
-  - [ ] 순서: 결제 검증 → DB 저장 → Redis 정리
-- [ ] 결제 실패 처리:
-  - [ ] PAYMENT_PENDING → AVAILABLE (또는 HOLD 해제)
-  - [ ] HOLD 자동 해제
-  - [ ] 트랜잭션 롤백
-  - [ ] 재시도 옵션 제공
-- [ ] 예매 취소 로직:
-  - [ ] RESERVED → CANCELLED 상태 전이
-  - [ ] 취소 처리 및 환불 로직
-- [ ] 예매 API 구현
-- [ ] 결제 API 구현
-- [ ] 예매 내역 조회 API
-- [ ] 예매 취소 API:
-  - [ ] 예매 취소 로직 (RESERVED → CANCELLED)
-  - [ ] 취소 처리 및 환불 로직
+- [x] 예매 도메인 로직 구현:
+  - [x] Reservation Aggregate 설계
+  - [x] 예매 생성 로직
+- [x] 결제 도메인 로직 구현:
+  - [x] Payment Aggregate 설계
+  - [x] Mock 결제 서비스 구현
+- [x] 예매 트랜잭션 구현:
+  - [x] HOLD Token 검증
+  - [x] 가격 계산 (Domain Service)
+  - [x] 좌석 상태 전이: HOLD → PAYMENT_PENDING
+  - [x] 결제 검증 (Mock PG 요청)
+  - [x] 결제 성공 시: PAYMENT_PENDING → RESERVED
+  - [x] DB 저장 (트랜잭션)
+  - [x] Redis HOLD 정리
+  - [x] 순서: 결제 검증 → DB 저장 → Redis 정리
+- [x] 결제 실패 처리:
+  - [x] PAYMENT_PENDING → AVAILABLE (또는 HOLD 해제)
+  - [x] HOLD 자동 해제
+  - [x] 트랜잭션 롤백
+  - [ ] 재시도 옵션 제공 (클라이언트/UI에서 처리)
+- [x] 예매 취소 로직:
+  - [x] RESERVED → CANCELLED 상태 전이
+  - [x] 취소 처리 및 환불 로직
+- [x] 예매 API 구현
+- [x] 결제 API 구현
+- [x] 예매 내역 조회 API
+- [x] 예매 취소 API:
+  - [x] 예매 취소 로직 (RESERVED → CANCELLED)
+  - [x] 취소 처리 및 환불 로직
 
 ### 체크리스트
 
-- [ ] 트랜잭션이 Controller가 아닌 Service에서 관리되는지 확인
-- [ ] 결제 정보는 서버에서만 검증 확인
-- [ ] HOLD Token 검증 확인
-- [ ] 좌석 상태 전이 정상 동작 확인 (HOLD → PAYMENT_PENDING → RESERVED/AVAILABLE)
-- [ ] 결제 실패 시 PAYMENT_PENDING → AVAILABLE 상태 전이 확인
-- [ ] 트랜잭션 일관성 확인
-- [ ] 중복 예매 0% 보장 확인
-- [ ] 결제 성공/실패 로깅 확인
-- [ ] 예매 취소 시 RESERVED → CANCELLED 상태 전이 확인
+- [x] 트랜잭션이 Controller가 아닌 Service에서 관리되는지 확인
+- [x] 결제 정보는 서버에서만 검증 확인
+- [x] HOLD Token 검증 확인
+- [x] 좌석 상태 전이 정상 동작 확인 (HOLD → PAYMENT_PENDING → RESERVED/AVAILABLE)
+- [x] 결제 실패 시 PAYMENT_PENDING → AVAILABLE 상태 전이 확인
+- [x] 트랜잭션 일관성 확인
+- [x] 중복 예매 0% 보장 확인
+- [x] 결제 성공/실패 로깅 확인
+- [x] 예매 취소 시 RESERVED → CANCELLED 상태 전이 확인
+
+### 완료된 구현 내용
+
+#### 구현된 주요 클래스
+- `ReservationPaymentService`: 예매·결제 트랜잭션 (holdToken 검증, 가격 서버 계산, Mock 결제, HOLD→PAYMENT_PENDING→RESERVED/AVAILABLE, 예매 취소)
+- `PriceCalculateService`: 상영·좌석 기준 가격 계산 (SeatType별 기본가, application.yml `price.default.*`)
+- `MockPaymentService`: Mock 결제 (processPayment(amount, payMethod) → true)
+- `SeatCommandService` 확장: `startPaymentForReservation`, `reserveForPayment`, `releaseOnPaymentFailure`, `cancelForReservation`
+- `ReservationController`: 결제(예매) 요청, 예매 내역/상세, 예매 취소 API
+
+#### DTO
+- `PaymentRequest`: screeningId, seatHoldItems(List<SeatHoldItem>{seatId, holdToken}), payMethod
+- `PaymentResponse`: reservationId, reservationNo, screeningId, totalSeats, totalAmount
+- `ReservationDetailResponse`: 예매 상세 + 좌석 목록(seatId, rowLabel, seatNo, displayName, price)
+
+#### API 엔드포인트
+- `POST /api/reservations/pay`: 결제(예매) 요청 (인증, PaymentRequest)
+- `GET /api/reservations`: 본인 예매 목록
+- `GET /api/reservations/{reservationId}`: 예매 상세
+- `POST /api/reservations/{reservationId}/cancel`: 예매 취소 (CONFIRMED만)
+
+#### 설정
+- `application.yml`: `price.default.normal`, `premium`, `vip`, `couple`, `wheelchair` (10000~25000)
 
 ### 예상 소요 시간
 
-4-5일
+4-5일 → **완료**
 
 ---
 
@@ -448,33 +471,55 @@ domain/
 
 ### 작업 내용
 
-- [ ] 통신 방식 선택 (WebSocket 또는 SSE)
-- [ ] WebSocket/SSE 서버 구현:
-  - [ ] 연결 관리
-  - [ ] 구독 관리 (상영별)
-- [ ] 좌석 상태 변경 이벤트 발행:
-  - [ ] 좌석 상태 변경 시만 Push
-  - [ ] 변경 좌석 ID만 전달
-  - [ ] 전체 좌석 재전송 금지
-- [ ] 이벤트 멱등성 보장:
-  - [ ] 이벤트 ID 기반 중복 처리 방지
-- [ ] 좌석 상태 변경 시 이벤트 발행 로직 연동
-- [ ] 연결 해제 처리
-- [ ] 에러 처리 및 재연결 로직
+- [x] 통신 방식 선택 (WebSocket 또는 SSE) → **SSE** 사용
+- [x] WebSocket/SSE 서버 구현:
+  - [x] 연결 관리
+  - [x] 구독 관리 (상영별)
+- [x] 좌석 상태 변경 이벤트 발행:
+  - [x] 좌석 상태 변경 시만 Push
+  - [x] 변경 좌석 ID만 전달
+  - [x] 전체 좌석 재전송 금지
+- [x] 이벤트 멱등성 보장:
+  - [x] 이벤트 ID 기반 중복 처리 방지
+- [x] 좌석 상태 변경 시 이벤트 발행 로직 연동
+- [x] 연결 해제 처리
+- [x] 에러 처리 및 재연결 로직 (onCompletion/onTimeout/onError 시 unregister)
 
 ### 체크리스트
 
-- [ ] Polling 방식 사용하지 않음 확인
-- [ ] WebSocket/SSE 중 하나만 사용 (혼용 금지)
-- [ ] 좌석 상태 변경 시만 Push 확인
-- [ ] 변경 좌석 ID만 전달 확인
-- [ ] 전체 좌석 재전송 금지 확인
-- [ ] 이벤트 멱등성 보장 확인
-- [ ] 실시간 갱신 정상 동작 확인
+- [x] Polling 방식 사용하지 않음 확인
+- [x] WebSocket/SSE 중 하나만 사용 (혼용 금지) — SSE만 사용
+- [x] 좌석 상태 변경 시만 Push 확인
+- [x] 변경 좌석 ID만 전달 확인
+- [x] 전체 좌석 재전송 금지 확인
+- [x] 이벤트 멱등성 보장 확인
+- [ ] 실시간 갱신 정상 동작 확인 (수동/통합 테스트)
+
+### 완료된 구현 내용
+
+#### 통신 방식
+- **SSE** 단일 사용 (WebSocket 미사용, 혼용 금지 준수)
+
+#### 구현된 주요 클래스
+- `SeatEventPublisher` (domain/screening/service): 좌석 상태 변경 이벤트 발행 인터페이스
+- `SeatSseBroadcaster` (infrastructure/sse): SSE 구현체, 상영별 구독·발행·연결 해제
+- `ScreeningController`: `GET /api/screenings/{screeningId}/seat-events` (SSE 스트림, 인증 불필요)
+
+#### 이벤트 발행 연동
+- `SeatCommandService`: hold, releaseHold, startPaymentForReservation, reserveForPayment, releaseOnPaymentFailure, cancelForReservation 성공 직후 `publishSeatStatusChanged(screeningId, seatIds)` 호출
+- `HoldExpiryScheduler`: 만료 HOLD 해제 시 screeningId별 seatIds 그룹으로 `publishSeatStatusChanged` 호출
+
+#### 이벤트 포맷
+- 이벤트명: `seat-status-changed`
+- 페이로드: `{ "eventId": "uuid", "screeningId": number, "seatIds": [number,...] }` — 변경 좌석 ID만 전달, eventId 기반 멱등성
+
+#### 구독·연결 관리
+- 상영별 SseEmitter 등록/해제 (ConcurrentHashMap + CopyOnWriteArrayList)
+- SSE 타임아웃 30분, onCompletion/onTimeout/onError 시 자동 unregister
 
 ### 예상 소요 시간
 
-3-4일
+3-4일 → **완료**
 
 ---
 

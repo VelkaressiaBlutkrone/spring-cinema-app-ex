@@ -42,6 +42,7 @@ public class SeatCommandService {
     private final ScreeningSeatRepository screeningSeatRepository;
     private final MemberRepository memberRepository;
     private final SeatStatusQueryService seatStatusQueryService;
+    private final SeatEventPublisher seatEventPublisher;
 
     @Value("${seat.hold.ttl-minutes:7}")
     private int holdTtlMinutes;
@@ -116,6 +117,7 @@ public class SeatCommandService {
 
         // 7. 좌석 상태 캐시 무효화
         seatStatusQueryService.invalidateSeatStatusCache(screeningId);
+        seatEventPublisher.publishSeatStatusChanged(screeningId, List.of(seatId));
 
         // 8. TTL 값 Redis에서 재조회 (예외적 상황 시 직접 계산)
         Long ttlSeconds = redisService.getHoldTtl(screeningId, seatId);
@@ -181,5 +183,100 @@ public class SeatCommandService {
 
         // 4. 좌석 상태 캐시 무효화
         seatStatusQueryService.invalidateSeatStatusCache(screeningId);
+        seatEventPublisher.publishSeatStatusChanged(screeningId, List.of(seatId));
+    }
+
+    // ========================================
+    // Step 7: 예매/결제용 좌석 상태 전이
+    // ========================================
+
+    /**
+     * 결제 진행용: HOLD → PAYMENT_PENDING
+     * holdToken 검증 후 startPayment 호출. 락 획득 실패 시 즉시 실패.
+     */
+    @Transactional
+    public void startPaymentForReservation(Long screeningId, Long seatId, String holdToken) {
+        if (!lockManager.tryLockSeat(screeningId, seatId)) {
+            throw SeatException.lockFailed(screeningId, seatId);
+        }
+        try {
+            if (!redisService.validateHoldToken(screeningId, seatId, holdToken)) {
+                throw SeatException.invalidHoldToken(screeningId, seatId);
+            }
+            ScreeningSeat ss = screeningSeatRepository.findByScreeningIdAndSeatId(screeningId, seatId)
+                    .orElseThrow(() -> new BusinessException(ErrorCode.SEAT_NOT_FOUND));
+            ss.validateHoldTokenOrThrow(holdToken);
+            ss.startPayment();
+            seatStatusQueryService.invalidateSeatStatusCache(screeningId);
+            seatEventPublisher.publishSeatStatusChanged(screeningId, List.of(seatId));
+        } finally {
+            lockManager.unlockSeat(screeningId, seatId);
+        }
+    }
+
+    /**
+     * 예매 확정: PAYMENT_PENDING → RESERVED
+     * holdToken 검증 후 reserve 호출, Redis HOLD 삭제.
+     */
+    @Transactional
+    public void reserveForPayment(Long screeningId, Long seatId, Long memberId, String holdToken) {
+        if (!lockManager.tryLockSeat(screeningId, seatId)) {
+            throw SeatException.lockFailed(screeningId, seatId);
+        }
+        try {
+            if (!redisService.validateHoldToken(screeningId, seatId, holdToken)) {
+                throw SeatException.invalidHoldToken(screeningId, seatId);
+            }
+            Member member = memberRepository.findById(memberId)
+                    .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+            ScreeningSeat ss = screeningSeatRepository.findByScreeningIdAndSeatId(screeningId, seatId)
+                    .orElseThrow(() -> new BusinessException(ErrorCode.SEAT_NOT_FOUND));
+            ss.validateHoldTokenOrThrow(holdToken);
+            ss.reserve(member);
+            redisService.deleteHold(screeningId, seatId);
+            seatStatusQueryService.invalidateSeatStatusCache(screeningId);
+            seatEventPublisher.publishSeatStatusChanged(screeningId, List.of(seatId));
+        } finally {
+            lockManager.unlockSeat(screeningId, seatId);
+        }
+    }
+
+    /**
+     * 결제 실패 시: PAYMENT_PENDING → AVAILABLE, Redis HOLD 삭제
+     */
+    @Transactional
+    public void releaseOnPaymentFailure(Long screeningId, Long seatId) {
+        if (!lockManager.tryLockSeat(screeningId, seatId)) {
+            throw SeatException.lockFailed(screeningId, seatId);
+        }
+        try {
+            ScreeningSeat ss = screeningSeatRepository.findByScreeningIdAndSeatId(screeningId, seatId)
+                    .orElseThrow(() -> new BusinessException(ErrorCode.SEAT_NOT_FOUND));
+            ss.paymentFailed();
+            redisService.deleteHold(screeningId, seatId);
+            seatStatusQueryService.invalidateSeatStatusCache(screeningId);
+            seatEventPublisher.publishSeatStatusChanged(screeningId, List.of(seatId));
+        } finally {
+            lockManager.unlockSeat(screeningId, seatId);
+        }
+    }
+
+    /**
+     * 예매 취소 시: RESERVED → CANCELLED (Step 7)
+     */
+    @Transactional
+    public void cancelForReservation(Long screeningId, Long seatId) {
+        if (!lockManager.tryLockSeat(screeningId, seatId)) {
+            throw SeatException.lockFailed(screeningId, seatId);
+        }
+        try {
+            ScreeningSeat ss = screeningSeatRepository.findByScreeningIdAndSeatId(screeningId, seatId)
+                    .orElseThrow(() -> new BusinessException(ErrorCode.SEAT_NOT_FOUND));
+            ss.cancel();
+            seatStatusQueryService.invalidateSeatStatusCache(screeningId);
+            seatEventPublisher.publishSeatStatusChanged(screeningId, List.of(seatId));
+        } finally {
+            lockManager.unlockSeat(screeningId, seatId);
+        }
     }
 }
