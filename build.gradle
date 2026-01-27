@@ -62,7 +62,8 @@ dependencies {
     /* ===============================
      * Database (Runtime)
      * =============================== */
-    runtimeOnly 'com.mysql:mysql-connector-j'
+    runtimeOnly 'com.mysql:mysql-connector-j'  // 운영 환경 (MySQL)
+    runtimeOnly 'com.h2database:h2'            // 개발 환경 (H2)
 
     /* ===============================
      * Redis - Redisson (분산 락)

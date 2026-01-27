@@ -1,0 +1,53 @@
+########################################
+# Production Profile (운영 환경)
+# 사용 DB: MySQL
+########################################
+spring:
+  ########################################
+  # DevTools (운영 환경 비활성화)
+  ########################################
+  devtools:
+    restart:
+      enabled: false
+    livereload:
+      enabled: false
+
+  ########################################
+  # DataSource (MySQL)
+  ########################################
+  datasource:
+    url: jdbc:mysql://localhost:3306/cinema?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&connectTimeout=5000&socketTimeout=5000&allowPublicKeyRetrieval=true
+    username: cinema_user
+    password: cinema_26118791
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      initialization-fail-timeout: -1       # DB 연결 실패해도 서버 시작
+      connection-timeout: 5000              # 연결 타임아웃 5초
+      maximum-pool-size: 10
+      minimum-idle: 2
+
+  ########################################
+  # JPA (MySQL)
+  ########################################
+  jpa:
+    open-in-view: false
+    defer-datasource-initialization: true   # DataSource 초기화 지연
+    hibernate:
+      ddl-auto: none                        # 운영 환경: 스키마 자동 생성 비활성화
+    show-sql: false                         # 운영 환경: SQL 로그 비활성화
+    properties:
+      hibernate:
+        format_sql: false
+        dialect: org.hibernate.dialect.MySQLDialect  # MySQL용 dialect
+
+########################################
+# Logging (운영 환경)
+########################################
+logging:
+  level:
+    root: INFO
+    "[com.cinema]": INFO
+    "[org.springframework]": WARN
+    "[org.springframework.web]": INFO
+    "[org.hibernate.SQL]": WARN
+    "[org.hibernate.orm.jdbc.bind]": WARN

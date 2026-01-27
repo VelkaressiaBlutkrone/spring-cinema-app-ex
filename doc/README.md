@@ -144,12 +144,15 @@ Flutter 모바일 앱의 아키텍처를 설명합니다.
 서버 구동 및 연결 상태 확인 가이드입니다.
 
 **주요 내용:**
+- 프로파일별 데이터베이스 설정
+  - 개발 환경 (dev): H2 인메모리 데이터베이스
+  - 운영 환경 (prod): MySQL 데이터베이스
 - DB 접속 여부와 상관없이 서버 구동하는 방법
   - application.yml 설정 (HikariCP, JPA/Hibernate, Redis)
   - MySQL 연결 URL 파라미터
   - 주의사항 (개발/테스트 환경에서만 사용)
 - 서버 접속 로깅 (DatabaseConnectionChecker)
-  - MySQL/Redis 연결 상태 체크
+  - 데이터베이스(H2/MySQL)/Redis 연결 상태 체크
   - 출력 예시 (연결 성공/실패)
 
 **대상 독자:** 백엔드 개발자, DevOps
@@ -216,7 +219,9 @@ Flutter 모바일 앱의 아키텍처를 설명합니다.
 - **Backend**: Spring Boot 4.0.2, Java 21
 - **Frontend (Web)**: React, TypeScript, Vite
 - **Frontend (Mobile)**: Flutter, Riverpod
-- **Database**: MySQL 8.0
+- **Database**: 
+  - 개발 환경: H2 (인메모리)
+  - 운영 환경: MySQL 8.0
 - **Cache/Lock**: Redis
 - **Infrastructure**: Docker, Nginx
 

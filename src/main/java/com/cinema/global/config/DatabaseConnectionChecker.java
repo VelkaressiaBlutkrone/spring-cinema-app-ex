@@ -40,15 +40,17 @@ public class DatabaseConnectionChecker implements ApplicationRunner {
 
     private void checkDatabaseConnection() {
         log.info("");
-        log.info("┌─ MySQL Database ─────────────────────────────────────────────");
-
+        
         try (var connection = dataSource.getConnection()) {
             var metaData = connection.getMetaData();
+            var dbName = metaData.getDatabaseProductName();
+            log.info("┌─ {} Database ─────────────────────────────────────────────", dbName);
             log.info("│ [✓] Status: CONNECTED");
             log.info("│     URL: {}", metaData.getURL());
-            log.info("│     Database: {} {}", metaData.getDatabaseProductName(), metaData.getDatabaseProductVersion());
+            log.info("│     Database: {} {}", dbName, metaData.getDatabaseProductVersion());
             log.info("│     Driver: {} {}", metaData.getDriverName(), metaData.getDriverVersion());
         } catch (Exception e) {
+            log.info("┌─ Database ─────────────────────────────────────────────");
             log.warn("│ [✗] Status: DISCONNECTED");
             log.warn("│     Error: {}", e.getMessage());
             log.warn("│     Note: Server running without DB. Some features unavailable.");

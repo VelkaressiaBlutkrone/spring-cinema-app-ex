@@ -1,0 +1,55 @@
+########################################
+# Development Profile (개발 환경)
+# 사용 DB: H2 (인메모리 데이터베이스)
+########################################
+spring:
+  ########################################
+  # DevTools (DEV 전용)
+  ########################################
+  devtools:
+    restart:
+      enabled: true
+      poll-interval: 2s
+      quiet-period: 1s
+    livereload:
+      enabled: true
+
+  ########################################
+  # DataSource (H2)
+  ########################################
+  datasource:
+    url: jdbc:h2:mem:cinema;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=MySQL
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+    hikari:
+      initialization-fail-timeout: -1       # DB 연결 실패해도 서버 시작
+      connection-timeout: 5000              # 연결 타임아웃 5초
+      maximum-pool-size: 10
+      minimum-idle: 2
+
+  ########################################
+  # JPA (H2)
+  ########################################
+  jpa:
+    open-in-view: false
+    defer-datasource-initialization: true   # DataSource 초기화 지연
+    hibernate:
+      ddl-auto: update                      # 개발 환경: 자동 스키마 생성
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect  # H2용 dialect
+
+########################################
+# Logging (개발 환경)
+########################################
+logging:
+  level:
+    root: INFO
+    "[com.cinema]": DEBUG
+    "[org.springframework]": INFO
+    "[org.springframework.web]": DEBUG
+    "[org.hibernate.SQL]": DEBUG
+    "[org.hibernate.orm.jdbc.bind]": TRACE

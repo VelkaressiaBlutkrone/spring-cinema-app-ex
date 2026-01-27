@@ -94,7 +94,13 @@
 - Redis
 
 ### 4.5 Database
-- MySQL
+- **개발 환경 (dev)**: H2 인메모리 데이터베이스
+  - 별도 설치 불필요
+  - 서버 재시작 시 데이터 초기화
+  - 개발 및 테스트에 최적화
+- **운영 환경 (prod)**: MySQL 8.0
+  - 영구 데이터 저장소
+  - 운영 환경에 최적화
 
 ### 4.6 Infrastructure
 - Docker + Nginx
