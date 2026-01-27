@@ -41,14 +41,13 @@ public class ScreeningRepositoryImpl implements ScreeningRepositoryCustom {
         LocalDate targetDate = date.toLocalDate();
         LocalDateTime startOfDay = LocalDateTime.of(targetDate, LocalTime.MIN);
         LocalDateTime startOfNextDay = startOfDay.plusDays(1);
-        
+
         return queryFactory
                 .selectFrom(screening)
                 .where(
                         screening.startTime.goe(startOfDay),
                         screening.startTime.lt(startOfNextDay),
-                        screening.status.eq(status)
-                )
+                        screening.status.eq(status))
                 .fetch();
     }
 
@@ -57,15 +56,14 @@ public class ScreeningRepositoryImpl implements ScreeningRepositoryCustom {
         LocalDate targetDate = date.toLocalDate();
         LocalDateTime startOfDay = LocalDateTime.of(targetDate, LocalTime.MIN);
         LocalDateTime startOfNextDay = startOfDay.plusDays(1);
-        
+
         return queryFactory
                 .selectFrom(screening)
                 .where(
                         screening.movie.id.eq(movieId),
                         screening.startTime.goe(startOfDay),
                         screening.startTime.lt(startOfNextDay),
-                        screening.status.eq(status)
-                )
+                        screening.status.eq(status))
                 .fetch();
     }
 
@@ -102,8 +100,7 @@ public class ScreeningRepositoryImpl implements ScreeningRepositoryCustom {
                         screening.screen.id.eq(screenId),
                         screening.status.ne(ScreeningStatus.CANCELLED),
                         screening.startTime.lt(endTime),
-                        screening.endTime.gt(startTime)
-                )
+                        screening.endTime.gt(startTime))
                 .fetch();
     }
 }

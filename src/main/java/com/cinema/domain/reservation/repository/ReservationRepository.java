@@ -10,7 +10,7 @@ import com.cinema.domain.reservation.entity.ReservationStatus;
 
 /**
  * 예매 Repository
- * 
+ *
  * RULE 2.3: QueryDSL 우선 사용 원칙
  * - 단순 조회는 Spring Data JPA 메서드 사용
  * - 다수 조인이 필요한 쿼리는 QueryDSL 사용 (ReservationRepositoryCustom)

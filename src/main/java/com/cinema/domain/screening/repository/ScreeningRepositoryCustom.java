@@ -15,8 +15,8 @@ public interface ScreeningRepositoryCustom {
 
     /**
      * 특정 날짜의 상영 스케줄 조회
-     * 
-     * @param date 날짜
+     *
+     * @param date   날짜
      * @param status 상영 상태
      * @return 상영 스케줄 목록
      */
@@ -24,17 +24,17 @@ public interface ScreeningRepositoryCustom {
 
     /**
      * 특정 영화의 특정 날짜 상영 스케줄 조회
-     * 
+     *
      * @param movieId 영화 ID
-     * @param date 날짜
-     * @param status 상영 상태
+     * @param date    날짜
+     * @param status  상영 상태
      * @return 상영 스케줄 목록
      */
     List<Screening> findByMovieIdAndDateAndStatus(Long movieId, LocalDateTime date, ScreeningStatus status);
 
     /**
      * 상영과 관련된 좌석 정보를 함께 조회
-     * 
+     *
      * @param id 상영 ID
      * @return 상영 정보 (Movie, Screen 포함)
      */
@@ -42,7 +42,7 @@ public interface ScreeningRepositoryCustom {
 
     /**
      * 상영과 좌석 상태를 함께 조회
-     * 
+     *
      * @param id 상영 ID
      * @return 상영 정보 (ScreeningSeat, Seat 포함)
      */
@@ -52,10 +52,10 @@ public interface ScreeningRepositoryCustom {
      * 같은 상영관에서 시간이 겹치는 상영 스케줄 조회
      * 시간 겹침 조건: 새 상영의 시작 시간 < 기존 상영의 종료 시간 AND 새 상영의 종료 시간 > 기존 상영의 시작 시간
      * 취소된 상영(CANCELLED)은 제외
-     * 
-     * @param screenId 상영관 ID
+     *
+     * @param screenId  상영관 ID
      * @param startTime 시작 시간
-     * @param endTime 종료 시간
+     * @param endTime   종료 시간
      * @return 겹치는 상영 스케줄 목록
      */
     List<Screening> findOverlappingScreenings(Long screenId, LocalDateTime startTime, LocalDateTime endTime);

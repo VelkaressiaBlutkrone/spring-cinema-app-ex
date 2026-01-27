@@ -33,8 +33,7 @@ public class ScreeningSeatRepositoryImpl implements ScreeningSeatRepositoryCusto
                 .selectFrom(screeningSeat)
                 .where(
                         screeningSeat.status.eq(SeatStatus.HOLD),
-                        screeningSeat.holdExpireAt.lt(now)
-                )
+                        screeningSeat.holdExpireAt.lt(now))
                 .fetch();
     }
 
@@ -49,8 +48,7 @@ public class ScreeningSeatRepositoryImpl implements ScreeningSeatRepositoryCusto
                 .setNull(screeningSeat.holdExpireAt)
                 .where(
                         screeningSeat.status.eq(SeatStatus.HOLD),
-                        screeningSeat.holdExpireAt.lt(now)
-                )
+                        screeningSeat.holdExpireAt.lt(now))
                 .execute();
     }
 
@@ -60,8 +58,7 @@ public class ScreeningSeatRepositoryImpl implements ScreeningSeatRepositoryCusto
                 .selectFrom(screeningSeat)
                 .where(
                         screeningSeat.holdMember.id.eq(memberId),
-                        screeningSeat.status.eq(SeatStatus.HOLD)
-                )
+                        screeningSeat.status.eq(SeatStatus.HOLD))
                 .fetch();
     }
 
@@ -70,8 +67,7 @@ public class ScreeningSeatRepositoryImpl implements ScreeningSeatRepositoryCusto
         List<Tuple> results = queryFactory
                 .select(
                         screeningSeat.status,
-                        screeningSeat.status.count()
-                )
+                        screeningSeat.status.count())
                 .from(screeningSeat)
                 .where(screeningSeat.screening.id.eq(screeningId))
                 .groupBy(screeningSeat.status)
@@ -79,7 +75,7 @@ public class ScreeningSeatRepositoryImpl implements ScreeningSeatRepositoryCusto
 
         // Tuple을 Object[]로 변환
         return results.stream()
-                .map(tuple -> new Object[]{
+                .map(tuple -> new Object[] {
                         tuple.get(screeningSeat.status),
                         tuple.get(screeningSeat.status.count())
                 })

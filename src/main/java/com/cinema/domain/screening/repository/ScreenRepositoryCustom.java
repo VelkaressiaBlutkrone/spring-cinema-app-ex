@@ -10,7 +10,7 @@ public interface ScreenRepositoryCustom {
 
     /**
      * 상영관과 영화관 정보를 함께 조회
-     * 
+     *
      * @param id 상영관 ID
      * @return 상영관 정보 (Theater 포함)
      */

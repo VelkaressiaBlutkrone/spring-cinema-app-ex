@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.cinema.domain.screening.entity.ScreeningSeat;
-import com.cinema.domain.screening.entity.SeatStatus;
 
 /**
  * ScreeningSeat Repository Custom 인터페이스
@@ -14,7 +13,7 @@ public interface ScreeningSeatRepositoryCustom {
 
     /**
      * HOLD 만료된 좌석 조회
-     * 
+     *
      * @param now 현재 시간
      * @return 만료된 HOLD 좌석 목록
      */
@@ -22,7 +21,7 @@ public interface ScreeningSeatRepositoryCustom {
 
     /**
      * HOLD 만료된 좌석 일괄 해제
-     * 
+     *
      * @param now 현재 시간
      * @return 해제된 좌석 수
      */
@@ -30,7 +29,7 @@ public interface ScreeningSeatRepositoryCustom {
 
     /**
      * 특정 회원의 HOLD 좌석 조회
-     * 
+     *
      * @param memberId 회원 ID
      * @return HOLD 좌석 목록
      */
@@ -38,7 +37,7 @@ public interface ScreeningSeatRepositoryCustom {
 
     /**
      * 상영별 좌석 상태 통계
-     * 
+     *
      * @param screeningId 상영 ID
      * @return 상태별 좌석 수 (Object[]: [SeatStatus, Long count])
      */
