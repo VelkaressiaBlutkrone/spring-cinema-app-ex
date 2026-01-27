@@ -92,6 +92,9 @@ seat:
   hold:
     ttl-minutes: 7                     # HOLD TTL (5~10분 권장)
     max-seats-per-user: 4              # 사용자당 최대 선택 가능 좌석 수
+  # Step 5: 좌석 배치 조회 Redis 캐시
+  status:
+    cache-ttl-minutes: 5               # seat:status:{screeningId} 캐시 TTL (분)
 
 ########################################
 # Redisson (분산 락)

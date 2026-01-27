@@ -281,27 +281,45 @@ domain/
 
 ### 작업 내용
 
-- [ ] 좌석 배치 조회 API 구현
-- [ ] Redis 캐싱 전략 설계:
-  - [ ] Key 네이밍: `seat:status:{screeningId}`
-  - [ ] 캐시 만료 시간 설정
-- [ ] Redis 캐시 조회 로직 구현
-- [ ] Redis 장애 시 DB Fallback 로직 구현:
-  - [ ] 읽기: DB Fallback
-  - [ ] 쓰기: 예매 차단 (Fail Fast)
-- [ ] 좌석 상태 조회 최적화
-- [ ] 캐시 무효화 전략 설계
+- [x] 좌석 배치 조회 API 구현
+- [x] Redis 캐싱 전략 설계:
+  - [x] Key 네이밍: `seat:status:{screeningId}`
+  - [x] 캐시 만료 시간 설정 (`seat.status.cache-ttl-minutes`)
+- [x] Redis 캐시 조회 로직 구현
+- [x] Redis 장애 시 DB Fallback 로직 구현:
+  - [x] 읽기: DB Fallback (Redis 예외 시 DB 조회 후 반환)
+  - [ ] 쓰기: 예매 차단 (Fail Fast) — Step 6/7에서 구현
+- [x] 좌석 상태 조회 최적화 (Redis 우선, DB Fallback)
+- [x] 캐시 무효화 전략 설계
 
 ### 체크리스트
 
-- [ ] Redis Key 네이밍 규칙 준수 확인
-- [ ] Redis 장애 시 DB Fallback 동작 확인
+- [x] Redis Key 네이밍 규칙 준수 확인 (`seat:status:{screeningId}`)
+- [x] Redis 장애 시 DB Fallback 동작 확인
 - [ ] 좌석 상태 조회 성능 확인 (< 200ms 목표)
-- [ ] 캐시 일관성 확인
+- [x] 캐시 일관성 확인 (무효화 API 노출)
+
+### 완료된 구현 내용
+
+#### 구현된 주요 클래스
+- `SeatStatusQueryService`: 좌석 배치 조회, Redis 우선·DB Fallback, 캐시 무효화
+- `SeatLayoutResponse`, `SeatStatusItem`: 좌석 배치 DTO (Redis 직렬화/응답용)
+
+#### API 엔드포인트
+- `GET /api/screenings/{screeningId}/seats`: 좌석 배치·상태 조회 (Redis 캐시, DB Fallback)
+
+#### 설정
+- `application.yml`: `seat.status.cache-ttl-minutes: 5`
+
+#### 캐시 무효화 전략
+- `SeatStatusQueryService.invalidateSeatStatusCache(screeningId)` 호출 시점:
+  - Step 6: 좌석 HOLD/해제 시
+  - Step 7: 예매 확정/결제 실패/예매 취소 시
+- RedisService.invalidateSeatStatus(screeningId) 사용 (Key 삭제)
 
 ### 예상 소요 시간
 
-2-3일
+2-3일 → **완료**
 
 ---
 
