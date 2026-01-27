@@ -43,6 +43,111 @@ Controller → Application(Service) → Domain → Infrastructure
   - Domain Layer는 인프라스트럭처 기술에 대한 지식이 없어야 함
   - 순수 Java 객체로만 구성
 
+### 2.3 Repository 규칙
+
+#### 2.3.1 QueryDSL 우선 사용 원칙
+- **특정한 경우나 필요가 없는 경우가 아니면 DB 조회는 QueryDSL 방식으로 진행**
+  - 기본적으로 모든 복잡한 쿼리는 QueryDSL을 사용
+  - Spring Data JPA 메서드 네이밍 규칙(`findBy...`)은 단순 조회에만 제한적으로 사용
+  - `@Query` 어노테이션의 JPQL 사용은 QueryDSL로 전환 가능한 경우 우선 전환 검토
+
+#### 2.3.2 QueryDSL 필수 사용 케이스
+다음 경우는 **반드시 QueryDSL을 사용**해야 합니다:
+
+1. **다수 조인이 필요한 SELECT 문**
+   - 2개 이상의 테이블 조인이 필요한 경우
+   - 예: `Reservation` + `Member` + `Screening` + `Movie` + `Seat` 조인
+   - 예: `Screening` + `Movie` + `Screen` + `Theater` 조인
+
+2. **동적 쿼리**
+   - 조건에 따라 WHERE 절이 동적으로 변경되는 경우
+   - 검색 필터, 정렬 옵션이 다양한 경우
+
+3. **복잡한 집계 함수 및 서브쿼리**
+   - GROUP BY, HAVING, 서브쿼리가 포함된 경우
+   - 통계, 집계 쿼리
+
+4. **성능 최적화가 필요한 쿼리**
+   - N+1 문제 해결을 위한 페치 조인
+   - 대용량 데이터 조회
+
+#### 2.3.3 Spring Data JPA 허용 케이스
+다음 경우는 Spring Data JPA 메서드 네이밍 규칙 사용 가능:
+
+1. **단순 조회 (단일 테이블, 단일 조건)**
+   - `findById(Long id)`
+   - `findByLoginId(String loginId)`
+   - `findByStatus(Status status)`
+
+2. **기본 CRUD 작업**
+   - `save()`, `delete()`, `existsById()` 등
+
+3. **단순한 단일 조건 조회**
+   - 단일 필드 조건으로 조회하는 경우
+   - 예: `findByScreeningId(Long screeningId)`
+
+#### 2.3.4 Repository 구현 패턴
+- **QueryDSL 사용 시 Custom Repository 패턴 적용**
+  ```java
+  // 1. 기본 Repository 인터페이스
+  public interface ReservationRepository extends JpaRepository<Reservation, Long> {
+      // 단순 조회만 포함
+  }
+  
+  // 2. Custom Repository 인터페이스
+  public interface ReservationRepositoryCustom {
+      List<Reservation> findWithDetails(Long memberId, ReservationStatus status);
+  }
+  
+  // 3. Custom Repository 구현체
+  @Repository
+  public class ReservationRepositoryImpl implements ReservationRepositoryCustom {
+      private final JPAQueryFactory queryFactory;
+      
+      @Override
+      public List<Reservation> findWithDetails(Long memberId, ReservationStatus status) {
+          // QueryDSL 구현
+      }
+  }
+  
+  // 4. 기본 Repository에 Custom 인터페이스 상속
+  public interface ReservationRepository extends JpaRepository<Reservation, Long>, 
+                                                 ReservationRepositoryCustom {
+  }
+  ```
+
+#### 2.3.5 QueryDSL 사용 가이드
+- **JPAQueryFactory 주입**
+  - `QueryDslConfig`에서 Bean으로 등록된 `JPAQueryFactory` 사용
+  - `@RequiredArgsConstructor`로 주입
+
+- **Q클래스 사용**
+  - QueryDSL이 자동 생성한 Q클래스 사용
+  - 예: `QReservation.reservation`, `QMember.member`
+
+- **페치 조인 사용**
+  - N+1 문제 방지를 위해 필요한 경우 `fetchJoin()` 사용
+  - 예: `queryFactory.selectFrom(reservation).join(reservation.member, member).fetchJoin()`
+
+#### 2.3.6 현재 Repository 현황 및 전환 계획
+
+| Repository | 현재 상태 | QueryDSL 전환 필요 여부 | 우선순위 |
+|------------|----------|----------------------|---------|
+| `ReservationRepository` | `@Query` JPQL 사용 (다수 조인) | **필수** | 높음 |
+| `ScreeningRepository` | `@Query` JPQL 사용 (다수 조인) | **필수** | 높음 |
+| `ScreeningSeatRepository` | `@Query` JPQL 사용 (집계 쿼리) | **권장** | 중간 |
+| `ScreenRepository` | `@Query` JPQL 사용 (조인) | **권장** | 중간 |
+| `PaymentRepository` | Spring Data JPA 메서드 | 선택적 | 낮음 |
+| `MemberRepository` | Spring Data JPA 메서드 | 선택적 | 낮음 |
+| `MovieRepository` | Spring Data JPA 메서드 | 선택적 | 낮음 |
+| `SeatRepository` | Spring Data JPA 메서드 | 선택적 | 낮음 |
+| `TheaterRepository` | Spring Data JPA 메서드 | 선택적 | 낮음 |
+
+**전환 우선순위:**
+1. **높음**: 다수 조인이 포함된 `ReservationRepository`, `ScreeningRepository`
+2. **중간**: 집계 쿼리나 조인이 있는 `ScreeningSeatRepository`, `ScreenRepository`
+3. **낮음**: 단순 조회만 있는 Repository는 필요 시 전환
+
 ## 3. Domain 규칙
 
 ### 3.1 Aggregate 규칙
@@ -363,6 +468,10 @@ lock:seat:{screeningId}:{seatId}       # 분산 락
 11. **공통 예외 미사용**
     - 비즈니스 예외는 `BusinessException`/`ErrorCode` 및 도메인 예외만 사용. `IllegalArgumentException` 등 공통 체계 밖 예외 금지
 
+12. **다수 조인 쿼리에서 QueryDSL 미사용**
+    - 2개 이상의 테이블 조인이 필요한 경우 QueryDSL 사용 필수
+    - `@Query` JPQL 대신 QueryDSL Custom Repository 패턴 사용
+
 ## 16. 코드 리뷰 체크리스트
 
 코드 리뷰 시 다음 사항을 반드시 확인:
@@ -378,6 +487,10 @@ lock:seat:{screeningId}:{seatId}       # 분산 락
 - [ ] 개인정보가 로그에 기록되지 않는가?
 - [ ] 관리자 API에 인증 및 권한 검사가 있는가?
 - [ ] 예외 처리가 공통 예외(`BusinessException`, `ErrorCode`, 도메인 예외)를 사용하는가?
+- [ ] **다수 조인이 필요한 쿼리는 QueryDSL을 사용하는가?**
+- [ ] **동적 쿼리는 QueryDSL을 사용하는가?**
+- [ ] **QueryDSL 사용 시 Custom Repository 패턴을 적용했는가?**
+- [ ] **N+1 문제를 방지하기 위해 필요한 경우 `fetchJoin()`을 사용했는가?**
 
 ## 17. 참고사항
 

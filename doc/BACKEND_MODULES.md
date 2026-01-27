@@ -9,6 +9,7 @@
 3. [예외 처리 체계](#예외-처리-체계)
 4. [기본 엔티티](#기본-엔티티)
 5. [DTO 패턴](#dto-패턴)
+6. [QueryDSL 사용 가이드](#querydsl-사용-가이드)
 
 ---
 
@@ -832,6 +833,260 @@ public class ProdController {
     }
 }
 ```
+
+---
+
+## QueryDSL 사용 가이드
+
+### 위치: `global/config/QueryDslConfig.java`, `domain/*/repository/`
+
+### 개요
+
+프로젝트에서는 **복잡한 쿼리와 다수 조인이 필요한 경우 QueryDSL을 우선 사용**합니다. (자세한 규칙은 [RULE.md](./RULE.md#23-repository-규칙) 참조)
+
+### 1. QueryDSL 설정
+
+`QueryDslConfig`에서 `JPAQueryFactory`를 Bean으로 등록합니다:
+
+```java
+@Configuration
+public class QueryDslConfig {
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Bean
+    public JPAQueryFactory jpaQueryFactory() {
+        return new JPAQueryFactory(entityManager);
+    }
+}
+```
+
+### 2. Custom Repository 패턴
+
+QueryDSL을 사용하는 Repository는 Custom Repository 패턴을 적용합니다:
+
+#### 2.1 기본 Repository 인터페이스
+
+```java
+public interface ReservationRepository extends JpaRepository<Reservation, Long> {
+    // 단순 조회만 포함 (Spring Data JPA 메서드)
+    Optional<Reservation> findByReservationNo(String reservationNo);
+}
+```
+
+#### 2.2 Custom Repository 인터페이스
+
+```java
+public interface ReservationRepositoryCustom {
+    /**
+     * 예매 상세 조회 (다수 조인 포함)
+     */
+    Optional<Reservation> findByIdWithDetails(Long id);
+    
+    /**
+     * 회원의 예매 목록 조회 (동적 조건)
+     */
+    List<Reservation> findByMemberIdWithDetails(Long memberId, ReservationStatus status);
+}
+```
+
+#### 2.3 Custom Repository 구현체
+
+```java
+@Repository
+@RequiredArgsConstructor
+public class ReservationRepositoryImpl implements ReservationRepositoryCustom {
+    
+    private final JPAQueryFactory queryFactory;
+    
+    // Q클래스 import
+    private static final QReservation reservation = QReservation.reservation;
+    private static final QMember member = QMember.member;
+    private static final QScreening screening = QScreening.screening;
+    private static final QMovie movie = QMovie.movie;
+    private static final QReservationSeat reservationSeat = QReservationSeat.reservationSeat;
+    private static final QSeat seat = QSeat.seat;
+    
+    @Override
+    public Optional<Reservation> findByIdWithDetails(Long id) {
+        return Optional.ofNullable(
+            queryFactory
+                .selectFrom(reservation)
+                .join(reservation.member, member).fetchJoin()
+                .join(reservation.screening, screening).fetchJoin()
+                .join(screening.movie, movie).fetchJoin()
+                .leftJoin(reservation.reservationSeats, reservationSeat).fetchJoin()
+                .leftJoin(reservationSeat.seat, seat).fetchJoin()
+                .where(reservation.id.eq(id))
+                .fetchOne()
+        );
+    }
+    
+    @Override
+    public List<Reservation> findByMemberIdWithDetails(Long memberId, ReservationStatus status) {
+        return queryFactory
+            .selectFrom(reservation)
+            .join(reservation.screening, screening).fetchJoin()
+            .join(screening.movie, movie).fetchJoin()
+            .where(
+                reservation.member.id.eq(memberId),
+                status != null ? reservation.status.eq(status) : null
+            )
+            .orderBy(reservation.createdAt.desc())
+            .fetch();
+    }
+}
+```
+
+#### 2.4 기본 Repository에 Custom 인터페이스 상속
+
+```java
+public interface ReservationRepository extends JpaRepository<Reservation, Long>, 
+                                               ReservationRepositoryCustom {
+    // 기본 JPA 메서드와 Custom 메서드 모두 사용 가능
+}
+```
+
+### 3. QueryDSL 사용 예시
+
+#### 3.1 다수 조인 쿼리
+
+```java
+// Screening + Movie + Screen + Theater 조인
+public Optional<Screening> findByIdWithDetails(Long id) {
+    return Optional.ofNullable(
+        queryFactory
+            .selectFrom(screening)
+            .join(screening.movie, movie).fetchJoin()
+            .join(screening.screen, screen).fetchJoin()
+            .join(screen.theater, theater).fetchJoin()
+            .where(screening.id.eq(id))
+            .fetchOne()
+    );
+}
+```
+
+#### 3.2 동적 쿼리
+
+```java
+public List<Screening> searchScreenings(ScreeningSearchCondition condition) {
+    return queryFactory
+        .selectFrom(screening)
+        .join(screening.movie, movie).fetchJoin()
+        .where(
+            condition.getMovieId() != null ? screening.movie.id.eq(condition.getMovieId()) : null,
+            condition.getStartDate() != null ? screening.startTime.goe(condition.getStartDate()) : null,
+            condition.getEndDate() != null ? screening.endTime.loe(condition.getEndDate()) : null,
+            condition.getStatus() != null ? screening.status.eq(condition.getStatus()) : null
+        )
+        .orderBy(screening.startTime.asc())
+        .fetch();
+}
+```
+
+#### 3.3 집계 쿼리
+
+```java
+public List<Object[]> countByScreeningIdGroupByStatus(Long screeningId) {
+    return queryFactory
+        .select(
+            screeningSeat.status,
+            screeningSeat.status.count()
+        )
+        .from(screeningSeat)
+        .where(screeningSeat.screening.id.eq(screeningId))
+        .groupBy(screeningSeat.status)
+        .fetch();
+}
+```
+
+#### 3.4 페이징 쿼리
+
+```java
+public Page<Reservation> findByMemberIdWithPaging(Long memberId, Pageable pageable) {
+    List<Reservation> content = queryFactory
+        .selectFrom(reservation)
+        .join(reservation.screening, screening).fetchJoin()
+        .join(screening.movie, movie).fetchJoin()
+        .where(reservation.member.id.eq(memberId))
+        .orderBy(reservation.createdAt.desc())
+        .offset(pageable.getOffset())
+        .limit(pageable.getPageSize())
+        .fetch();
+    
+    Long total = queryFactory
+        .select(reservation.count())
+        .from(reservation)
+        .where(reservation.member.id.eq(memberId))
+        .fetchOne();
+    
+    return new PageImpl<>(content, pageable, total != null ? total : 0L);
+}
+```
+
+### 4. QueryDSL 사용 규칙
+
+#### 4.1 필수 사용 케이스
+
+다음 경우는 **반드시 QueryDSL을 사용**해야 합니다:
+
+1. **다수 조인이 필요한 SELECT 문** (2개 이상 테이블 조인)
+2. **동적 쿼리** (조건에 따라 WHERE 절이 변경되는 경우)
+3. **복잡한 집계 함수 및 서브쿼리**
+4. **성능 최적화가 필요한 쿼리** (N+1 문제 해결)
+
+#### 4.2 Spring Data JPA 허용 케이스
+
+다음 경우는 Spring Data JPA 메서드 네이밍 규칙 사용 가능:
+
+1. **단순 조회** (단일 테이블, 단일 조건)
+   - `findById(Long id)`
+   - `findByLoginId(String loginId)`
+2. **기본 CRUD 작업**
+   - `save()`, `delete()`, `existsById()` 등
+
+### 5. 주의사항
+
+1. **Q클래스는 static final로 선언**
+   - 매번 생성하지 않고 재사용
+   ```java
+   private static final QReservation reservation = QReservation.reservation;
+   ```
+
+2. **N+1 문제 방지**
+   - 필요한 경우 `fetchJoin()` 사용
+   - `join()`과 `fetchJoin()`의 차이 이해
+
+3. **동적 쿼리에서 null 처리**
+   - `BooleanExpression`을 사용하여 null 조건 제외
+   ```java
+   .where(
+       condition.getStatus() != null ? reservation.status.eq(condition.getStatus()) : null
+   )
+   ```
+
+4. **트랜잭션 관리**
+   - QueryDSL 쿼리는 Service 레이어에서 트랜잭션 관리
+   - Repository는 트랜잭션 경계를 설정하지 않음
+
+### 6. 현재 Repository 전환 현황
+
+| Repository | 현재 상태 | QueryDSL 전환 필요 여부 | 우선순위 |
+|------------|----------|----------------------|---------|
+| `ReservationRepository` | `@Query` JPQL 사용 (다수 조인) | **필수** | 높음 |
+| `ScreeningRepository` | `@Query` JPQL 사용 (다수 조인) | **필수** | 높음 |
+| `ScreeningSeatRepository` | `@Query` JPQL 사용 (집계 쿼리) | **권장** | 중간 |
+| `ScreenRepository` | `@Query` JPQL 사용 (조인) | **권장** | 중간 |
+| `PaymentRepository` | Spring Data JPA 메서드 | 선택적 | 낮음 |
+| `MemberRepository` | Spring Data JPA 메서드 | 선택적 | 낮음 |
+| `MovieRepository` | Spring Data JPA 메서드 | 선택적 | 낮음 |
+| `SeatRepository` | Spring Data JPA 메서드 | 선택적 | 낮음 |
+| `TheaterRepository` | Spring Data JPA 메서드 | 선택적 | 낮음 |
+
+**전환 우선순위:**
+1. **높음**: 다수 조인이 포함된 `ReservationRepository`, `ScreeningRepository`
+2. **중간**: 집계 쿼리나 조인이 있는 `ScreeningSeatRepository`, `ScreenRepository`
+3. **낮음**: 단순 조회만 있는 Repository는 필요 시 전환
 
 ---
 
