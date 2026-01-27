@@ -5,9 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
-import com.cinema.domain.member.entity.Member;
 import com.cinema.domain.member.entity.QMember;
-import com.cinema.domain.movie.entity.Movie;
 import com.cinema.domain.movie.entity.QMovie;
 import com.cinema.domain.reservation.entity.QReservation;
 import com.cinema.domain.reservation.entity.QReservationSeat;
@@ -15,7 +13,6 @@ import com.cinema.domain.reservation.entity.Reservation;
 import com.cinema.domain.reservation.entity.ReservationStatus;
 import com.cinema.domain.screening.entity.QScreening;
 import com.cinema.domain.screening.entity.QSeat;
-import com.cinema.domain.screening.entity.Screening;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -68,8 +65,7 @@ public class ReservationRepositoryImpl implements ReservationRepositoryCustom {
                 .join(screening.movie, movie).fetchJoin()
                 .where(
                         reservation.member.id.eq(memberId),
-                        statusEq(status)
-                )
+                        statusEq(status))
                 .orderBy(reservation.createdAt.desc())
                 .fetch();
     }

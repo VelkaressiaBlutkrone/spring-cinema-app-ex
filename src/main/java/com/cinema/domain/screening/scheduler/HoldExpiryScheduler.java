@@ -36,11 +36,15 @@ public class HoldExpiryScheduler {
     @Transactional
     public void releaseExpiredHolds() {
         LocalDateTime now = LocalDateTime.now();
+
         List<ScreeningSeat> expired = screeningSeatRepository.findExpiredHolds(now);
+
         if (expired.isEmpty()) {
             return;
         }
+
         var screeningIds = new java.util.HashSet<Long>();
+
         for (ScreeningSeat ss : expired) {
             Long screeningId = ss.getScreening().getId();
             Long seatId = ss.getSeat().getId();
@@ -52,10 +56,13 @@ public class HoldExpiryScheduler {
                         screeningId, seatId, e.getMessage());
             }
         }
+
         int count = screeningSeatRepository.releaseExpiredHolds(now);
+
         for (Long screeningId : screeningIds) {
             seatStatusQueryService.invalidateSeatStatusCache(screeningId);
         }
+
         log.info("[HoldExpiry] 만료 HOLD 해제 완료 - {}건", count);
     }
 }

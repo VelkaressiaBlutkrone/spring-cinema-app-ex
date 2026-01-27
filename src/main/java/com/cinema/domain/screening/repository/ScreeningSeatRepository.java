@@ -1,6 +1,5 @@
 package com.cinema.domain.screening.repository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,7 +10,7 @@ import com.cinema.domain.screening.entity.SeatStatus;
 
 /**
  * 상영별 좌석 상태 Repository
- * 
+ *
  * RULE 2.3: QueryDSL 우선 사용 원칙
  * - 단순 조회는 Spring Data JPA 메서드 사용
  * - 집계 쿼리나 복잡한 쿼리는 QueryDSL 사용 (ScreeningSeatRepositoryCustom)
