@@ -333,34 +333,50 @@ domain/
 
 ### 작업 내용
 
-- [ ] SeatCommandService 구현 (단일 진입점)
-- [ ] 분산 락 구현 (Redisson):
-  - [ ] 락 키 규칙: `lock:screening:{screeningId}:seat:{seatId}`
-  - [ ] 락 획득 실패 시 즉시 실패 응답
-- [ ] 좌석 HOLD 로직 구현:
-  - [ ] Redis에 HOLD 정보 저장
-  - [ ] Key: `seat:hold:{screeningId}:{seatId}`
-  - [ ] TTL 설정 (5~10분, 설정값 기반)
-  - [ ] HOLD Token 발급 (UUID)
-- [ ] HOLD Token 검증 로직
-- [ ] HOLD 해제 로직
-- [ ] HOLD 타임아웃 자동 해제 스케줄러 구현
-- [ ] 좌석 HOLD API 구현
-- [ ] 좌석 HOLD 해제 API 구현
+- [x] SeatCommandService 구현 (단일 진입점)
+- [x] 분산 락 구현 (Redisson):
+  - [x] 락 키 규칙: `lock:screening:{screeningId}:seat:{seatId}`
+  - [x] 락 획득 실패 시 즉시 실패 응답
+- [x] 좌석 HOLD 로직 구현:
+  - [x] Redis에 HOLD 정보 저장
+  - [x] Key: `seat:hold:{screeningId}:{seatId}`
+  - [x] TTL 설정 (5~10분, 설정값 기반 `seat.hold.ttl-minutes`)
+  - [x] HOLD Token 발급 (UUID)
+- [x] HOLD Token 검증 로직
+- [x] HOLD 해제 로직
+- [x] HOLD 타임아웃 자동 해제 스케줄러 구현
+- [x] 좌석 HOLD API 구현
+- [x] 좌석 HOLD 해제 API 구현
 
 ### 체크리스트
 
-- [ ] 좌석 상태 변경이 SeatCommandService를 통해서만 이루어지는지 확인
-- [ ] 분산 락이 좌석 변경 시 사용되는지 확인
-- [ ] HOLD Token 발급 및 검증 확인
-- [ ] TTL이 모든 HOLD Key에 설정되어 있는지 확인
-- [ ] 락 획득 실패 시 즉시 실패 응답 확인
-- [ ] HOLD 타임아웃 자동 해제 동작 확인
+- [x] 좌석 상태 변경이 SeatCommandService를 통해서만 이루어지는지 확인
+- [x] 분산 락이 좌석 변경 시 사용되는지 확인
+- [x] HOLD Token 발급 및 검증 확인
+- [x] TTL이 모든 HOLD Key에 설정되어 있는지 확인 (RedisService.saveHold)
+- [x] 락 획득 실패 시 즉시 실패 응답 확인 (SeatException.lockFailed)
+- [x] HOLD 타임아웃 자동 해제 동작 확인 (HoldExpiryScheduler)
 - [ ] 동시성 테스트 (중복 HOLD 방지)
+
+### 완료된 구현 내용
+
+#### 구현된 주요 클래스
+- `SeatCommandService`: 좌석 HOLD/해제 단일 진입점, 분산 락·Redis·DB·캐시 무효화 연동
+- `HoldExpiryScheduler`: 만료 HOLD 자동 해제 (1분 간격, DB releaseExpiredHolds + Redis deleteHold + 캐시 무효화)
+- `SeatHoldResponse`, `SeatReleaseRequest`: HOLD API 요청/응답 DTO
+
+#### API 엔드포인트
+- `POST /api/screenings/{screeningId}/seats/{seatId}/hold`: 좌석 HOLD (인증 필요, Body 없음)
+- `POST /api/screenings/holds/release`: 좌석 HOLD 해제 (Body: screeningId, seatId, holdToken)
+
+#### 기존 인프라 활용
+- `DistributedLockManager`: lock:screening:{screeningId}:seat:{seatId}, tryLockSeat / unlockSeat
+- `RedisService`: seat:hold:{screeningId}:{seatId}, saveHold / getHold / deleteHold / validateHoldToken
+- `SeatStatusQueryService.invalidateSeatStatusCache(screeningId)`: HOLD/해제 시 호출
 
 ### 예상 소요 시간
 
-4-5일
+4-5일 → **완료**
 
 ---
 
