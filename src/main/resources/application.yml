@@ -26,11 +26,14 @@ spring:
 
   ########################################
   # SQL Init
+  # - 기본값: embedded (H2 등 임베디드 DB에서만 실행)
+  # - dev: always (application-dev.yml에서 오버라이드)
+  # - prod: never (운영에서는 SQL 초기화 안 함)
   ########################################
   sql:
     init:
-      mode: never                           # SQL 초기화 스크립트 실행 안 함
-      continue-on-error: true               # 초기화 에러 시 계속 진행
+      mode: embedded                        # 임베디드 DB(H2)에서만 SQL 초기화 실행
+      continue-on-error: false              # 초기화 에러 시 중단
 
   ########################################
   # Redis

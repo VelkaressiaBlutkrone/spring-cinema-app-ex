@@ -8,7 +8,7 @@
 
 | 항목 | 값 |
 |------|------|
-| URL | `http://localhost:8080/h2-console` |
+| URL | `http://localhost:8082` |
 | JDBC URL | `jdbc:h2:mem:cinema` |
 | Driver Class | `org.h2.Driver` |
 | Username | `sa` |
@@ -22,12 +22,41 @@
 spring:
   h2:
     console:
-      enabled: true           # H2 콘솔 활성화
-      path: /h2-console       # 접속 경로
+      enabled: true
+      path: /h2-console
       settings:
-        trace: false          # SQL 트레이스 비활성화
-        web-allow-others: false  # 외부 접속 차단 (보안)
+        trace: false
+        web-allow-others: false
 ```
+
+또한, 이 프로젝트는 개발 편의성을 위해 **H2 Web Console 서버를 별도 포트(8082)** 로 띄웁니다:
+
+- 설정: `src/main/java/com/cinema/global/config/H2WebConsoleServerConfig.java`
+- 접속: `http://localhost:8082`
+
+### H2 Web Console(8082) 추가 설정 설명 (DEV 전용)
+
+`/h2-console`은 Spring Boot의 H2 Console 자동 설정이 정상 동작해야 서블릿이 등록됩니다.  
+환경/의존성/자동설정 변화로 인해 `/h2-console`이 **404(Not Found)** 로 보이는 경우가 있어,
+이 프로젝트는 **H2가 제공하는 Web Console 서버를 별도 포트로 직접 기동**하도록 보강했습니다.
+
+#### 동작 방식
+
+- **프로파일**: `dev`에서만 실행 (`@Profile("dev")`)
+- **포트**: `8082`
+- **접속 URL**: `http://localhost:8082`
+- **JDBC URL**: `jdbc:h2:mem:cinema`
+
+#### 보안 관련 옵션
+
+`H2WebConsoleServerConfig`는 기본적으로 로컬 접속만 허용하도록 실행됩니다.
+
+- `-webAllowOthers` **미사용**: 외부 접속 비허용(권장)
+- 필요 시에만 `-webAllowOthers`를 추가하세요(DEV라도 주의 필요).
+
+#### 포트 변경 방법
+
+`src/main/java/com/cinema/global/config/H2WebConsoleServerConfig.java`의 `-webPort` 값을 변경하세요.
 
 ### 주의사항
 
