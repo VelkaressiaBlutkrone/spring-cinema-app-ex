@@ -2,7 +2,7 @@
  * 토스트 컨텍스트 정의
  */
 import { createContext } from 'react';
-import type { ToastType } from './Toast';
+import type { ToastType } from '@/components/common/ui/Toast';
 
 export interface ToastContextType {
   showToast: (message: string, type: ToastType, duration?: number) => void;

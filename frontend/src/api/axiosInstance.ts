@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useAuthStore } from '@/stores/authStore';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
 
@@ -10,10 +11,9 @@ export const axiosInstance = axios.create({
   },
 });
 
-// 요청 인터셉터
+// 요청 인터셉터: 인증 토큰 헤더 추가
 axiosInstance.interceptors.request.use(
   (config) => {
-    // 인증 토큰이 있다면 헤더에 추가
     const token = localStorage.getItem('accessToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -23,17 +23,12 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// 응답 인터셉터
+// 응답 인터셉터: 401 시 로그아웃 및 로그인 페이지로 이동
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    // 401 에러 시 토큰 갱신 또는 로그아웃 처리
     if (error.response?.status === 401) {
-      // TODO: Refresh Token으로 토큰 갱신 시도
-      // 실패 시 로그아웃 처리
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      // 로그인 페이지로 리다이렉트
+      useAuthStore.getState().clearAuth();
       window.location.href = '/login';
     }
     return Promise.reject(error);

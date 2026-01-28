@@ -5,14 +5,20 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import com.cinema.domain.admin.dto.ScreeningResponse;
+import com.cinema.domain.admin.service.AdminScreeningService;
 import com.cinema.domain.member.repository.MemberRepository;
 import com.cinema.domain.movie.dto.ScreeningRequest;
 import com.cinema.domain.movie.service.ScreeningService;
@@ -41,6 +47,7 @@ import lombok.RequiredArgsConstructor;
 public class ScreeningController {
 
     private final ScreeningService screeningService;
+    private final AdminScreeningService adminScreeningService;
     private final SeatStatusQueryService seatStatusQueryService;
     private final SeatCommandService seatCommandService;
     private final MemberRepository memberRepository;
@@ -49,6 +56,26 @@ public class ScreeningController {
     @PostMapping
     public ResponseEntity<Long> createScreening(@RequestBody ScreeningRequest request) {
         return ResponseEntity.ok(screeningService.createScreening(request));
+    }
+
+    /**
+     * 상영 목록 조회 (사용자용 공개, 페이징)
+     */
+    @GetMapping
+    public ResponseEntity<ApiResponse<Page<ScreeningResponse>>> getScreenings(
+            @PageableDefault(size = 20) Pageable pageable) {
+        Page<ScreeningResponse> page = adminScreeningService.getScreenings(pageable);
+        return ResponseEntity.ok(ApiResponse.success(page));
+    }
+
+    /**
+     * 특정 영화의 상영 스케줄 목록 조회 (사용자용 공개)
+     */
+    @GetMapping("/by-movie")
+    public ResponseEntity<ApiResponse<java.util.List<ScreeningResponse>>> getScreeningsByMovie(
+            @RequestParam Long movieId) {
+        java.util.List<ScreeningResponse> list = adminScreeningService.getScreeningsByMovie(movieId);
+        return ResponseEntity.ok(ApiResponse.success(list));
     }
 
     /**

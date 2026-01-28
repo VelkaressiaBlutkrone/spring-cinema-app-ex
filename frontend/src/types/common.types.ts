@@ -1,8 +1,16 @@
-// API 응답 기본 구조
+// API 응답 기본 구조 (일반 용도)
 export interface ApiResponse<T> {
   success: boolean;
   data: T;
   message?: string;
+}
+
+// 백엔드 ApiResponse와 동일한 구조 (success, message, data, timestamp)
+export interface BackendApiResponse<T> {
+  success: boolean;
+  message: string;
+  data: T;
+  timestamp: string;
 }
 
 // API 에러 응답

@@ -29,6 +29,10 @@ src/
 
 ## Import 경로 가이드
 
+**규칙:** 내부 모듈은 모두 `@/` alias를 사용합니다. 상대 경로(`./`, `../`)는 사용하지 않습니다.
+
+- `@/` → `src/` 루트 (tsconfig.json `paths`, vite.config.js `resolve.alias` 설정)
+
 ### 공통 UI 컴포넌트
 
 ```typescript

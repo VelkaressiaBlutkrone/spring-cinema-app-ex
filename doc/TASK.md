@@ -533,31 +533,36 @@ domain/
 
 ### 작업 내용
 
-- [ ] React + TypeScript 프로젝트 생성 (Vite)
-- [ ] 프로젝트 구조 설정
-- [ ] API 클라이언트 설정 (Axios 등)
-- [ ] 상태 관리 설정 (Context API / Zustand 등)
-- [ ] 라우팅 설정 (React Router)
-- [ ] 메인 페이지 구현:
-  - [ ] 레이아웃 구성
-  - [ ] 네비게이션 바
-  - [ ] 로그인/로그아웃 UI
-- [ ] 영화 목록 페이지 구현:
-  - [ ] 영화 목록 조회 API 연동
-  - [ ] 영화 카드 UI
-  - [ ] 영화 상세 정보 모달
-- [ ] 상영 시간표 조회:
-  - [ ] 날짜별 상영 스케줄 조회
-  - [ ] 상영 시간표 UI
-- [ ] 로딩 상태 처리
-- [ ] 에러 처리
+- [x] React + TypeScript 프로젝트 생성 (Vite) — 기존 frontend 활용
+- [x] 프로젝트 구조 설정 (pages, layouts, routes, stores, api)
+- [x] API 클라이언트 설정 (Axios, baseURL, JWT 인터셉터)
+- [x] 상태 관리 설정 (Zustand: authStore, persist)
+- [x] 라우팅 설정 (React Router, MainLayout + Outlet)
+- [x] 메인 페이지 구현:
+  - [x] 레이아웃 구성 (MainLayout)
+  - [x] 네비게이션 바 (NavigationBar: 홈, 영화 목록, 로그인/로그아웃)
+  - [x] 로그인/로그아웃 UI
+- [x] 영화 목록 페이지 구현:
+  - [x] 영화 목록 조회 API 연동 (GET /api/movies)
+  - [x] 영화 카드 UI
+  - [x] 영화 상세 정보 모달 (상영 시간표 포함)
+- [x] 상영 시간표 조회:
+  - [x] 영화별 상영 스케줄 조회 (GET /api/screenings/by-movie?movieId=)
+  - [x] 상영 시간표 UI (모달 내)
+- [x] 로딩 상태 처리 (LoadingSpinner)
+- [x] 에러 처리 (getErrorMessage, useToast)
 
 ### 체크리스트
 
-- [ ] Vite, React, TypeScript 사용 확인
-- [ ] 영화 목록 정상 조회 확인
-- [ ] 상영 시간표 정상 조회 확인
-- [ ] 로딩/에러 상태 처리 확인
+- [x] Vite, React, TypeScript 사용 확인
+- [ ] 영화 목록 정상 조회 확인 (백엔드 기동 후 수동 확인)
+- [ ] 상영 시간표 정상 조회 확인 (백엔드 기동 후 수동 확인)
+- [x] 로딩/에러 상태 처리 확인
+
+### 백엔드 추가 (Step 9 연동)
+
+- `MovieController` (GET /api/movies, GET /api/movies/{movieId}) — 사용자용 공개 API
+- `ScreeningController` 확장: GET /api/screenings (목록), GET /api/screenings/by-movie?movieId= (영화별 상영)
 
 ### 예상 소요 시간
 

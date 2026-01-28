@@ -1,7 +1,7 @@
 /**
  * 확인 다이얼로그 컴포넌트
  */
-import { Modal } from './Modal';
+import { Modal } from '@/components/common/ui/Modal';
 
 interface ConfirmDialogProps {
   isOpen: boolean;

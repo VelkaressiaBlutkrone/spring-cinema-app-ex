@@ -1,4 +1,7 @@
 /**
  * 타입 정의 모듈 export
  */
-export * from './common.types';
+export * from '@/types/common.types';
+export * from '@/types/movie.types';
+export * from '@/types/auth.types';
+export * from '@/types/api.types';

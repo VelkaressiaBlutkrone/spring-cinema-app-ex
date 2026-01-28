@@ -2,7 +2,7 @@
  * 토스트 메시지 훅
  */
 import { useContext } from 'react';
-import { ToastContext } from '../components/common/ui/ToastContext';
+import { ToastContext } from '@/components/common/ui/ToastContext';
 
 export const useToast = () => {
   const context = useContext(ToastContext);
