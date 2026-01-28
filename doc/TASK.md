@@ -580,37 +580,48 @@ domain/
 
 ### 작업 내용
 
-- [ ] 좌석 맵 컴포넌트 구현:
-  - [ ] Canvas 또는 SVG 선택
-  - [ ] 좌석 배치 렌더링
-  - [ ] 좌석 상태별 시각적 구분 (AVAILABLE, HOLD, PAYMENT_PENDING, RESERVED, CANCELLED, BLOCKED, DISABLED)
-- [ ] 좌석 선택 기능:
-  - [ ] 좌석 클릭 이벤트 처리
-  - [ ] 다중 좌석 선택
-  - [ ] 선택 좌석 표시
-- [ ] 좌석 HOLD API 연동:
-  - [ ] 좌석 클릭 → HOLD 요청
-  - [ ] HOLD Token 저장
-  - [ ] 응답 시간 < 200ms 목표
-- [ ] HOLD 타이머 표시:
-  - [ ] 서버 기준 시간 사용
-  - [ ] 타이머 UI 구현
-- [ ] 실시간 좌석 갱신 연동:
-  - [ ] WebSocket/SSE 클라이언트 구현
-  - [ ] 좌석 상태 변경 시 UI 업데이트
-  - [ ] Optimistic UI 및 롤백 로직
-- [ ] 좌석 선택 페이지 전체 플로우 구현
-- [ ] 에러 처리 및 사용자 피드백
+- [x] 좌석 맵 컴포넌트 구현:
+  - [x] Canvas 또는 SVG 선택 → **SVG** 사용
+  - [x] 좌석 배치 렌더링 (rowLabel·seatNo 기준 그리드)
+  - [x] 좌석 상태별 시각적 구분 (AVAILABLE, HOLD, PAYMENT_PENDING, RESERVED, CANCELLED, BLOCKED, DISABLED)
+- [x] 좌석 선택 기능:
+  - [x] 좌석 클릭 이벤트 처리
+  - [x] 다중 좌석 선택 (내 HOLD 목록 유지)
+  - [x] 선택 좌석 표시 (SeatMap + 선택한 좌석 목록)
+- [x] 좌석 HOLD API 연동:
+  - [x] 좌석 클릭 → HOLD 요청 (POST /api/screenings/{screeningId}/seats/{seatId}/hold)
+  - [x] HOLD Token 저장 (heldSeats 상태)
+  - [ ] 응답 시간 < 200ms 목표 (수동/부하 테스트로 확인)
+- [x] HOLD 타이머 표시:
+  - [x] 서버 기준 시간 사용 (holdExpireAt, ttlSeconds)
+  - [x] 타이머 UI 구현 (HoldTimer 컴포넌트)
+- [x] 실시간 좌석 갱신 연동:
+  - [x] SSE 클라이언트 구현 (useSeatEvents, GET /api/screenings/{screeningId}/seat-events)
+  - [x] 좌석 상태 변경 시 UI 업데이트 (이벤트 수신 시 loadSeats 재호출)
+  - [x] Optimistic UI (HOLD 직후 로컬 상태 반영) 및 롤백(에러 시 재조회)
+- [x] 좌석 선택 페이지 전체 플로우 구현 (SeatSelectPage, /book/:screeningId)
+- [x] 에러 처리 및 사용자 피드백 (useToast, getErrorMessage)
+- [x] 영화 목록 모달에서 "예매하기" → 좌석 선택 → "결제하기" → 결제 페이지(Step 11 연동 예정)
 
 ### 체크리스트
 
-- [ ] Canvas/SVG 렌더링 사용 확인
-- [ ] 좌석 상태별 시각적 명확 분리 확인
-- [ ] HOLD 타이머는 서버 기준 시간 사용 확인
-- [ ] 좌석 클릭 반응 속도 < 200ms 확인
-- [ ] 실시간 좌석 갱신 정상 동작 확인
-- [ ] Optimistic UI 롤백 로직 확인
-- [ ] 새로고침 없이 좌석 갱신 확인
+- [x] Canvas/SVG 렌더링 사용 확인 (SVG)
+- [x] 좌석 상태별 시각적 명확 분리 확인
+- [x] HOLD 타이머는 서버 기준 시간 사용 확인
+- [ ] 좌석 클릭 반응 속도 < 200ms 확인 (수동/부하 테스트)
+- [ ] 실시간 좌석 갱신 정상 동작 확인 (수동 확인)
+- [x] Optimistic UI 롤백 로직 확인
+- [x] 새로고침 없이 좌석 갱신 확인 (SSE 반영)
+
+### 구현된 모듈
+
+- `src/types/seat.types.ts`: SeatStatus, SeatStatusItem, SeatLayoutResponse, SeatHoldResponse, SeatReleaseRequest
+- `src/api/seats.ts`: getSeatLayout, holdSeat, releaseHold
+- `src/hooks/useSeatEvents.ts`: SSE 구독 (seat-status-changed)
+- `src/components/booking/SeatMap.tsx`: SVG 좌석 맵
+- `src/components/booking/HoldTimer.tsx`: 서버 기준 만료 타이머
+- `src/pages/SeatSelectPage.tsx`: 좌석 선택 페이지
+- 라우트: `/book/:screeningId`, `/payment/:screeningId`(Step 11 placeholder)
 
 ### 예상 소요 시간
 

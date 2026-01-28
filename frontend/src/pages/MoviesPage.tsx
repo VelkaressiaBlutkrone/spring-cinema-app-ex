@@ -2,6 +2,7 @@
  * 영화 목록 페이지: 영화 카드 목록, 영화 상세 모달, 상영 시간표
  */
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { moviesApi, screeningsApi } from '@/api/movies';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
 import { EmptyState } from '@/components/common/ui/EmptyState';
@@ -140,13 +141,20 @@ export function MoviesPage() {
                   {schedules.map((s) => (
                     <li
                       key={s.id}
-                      className="flex items-center justify-between rounded bg-gray-50 px-3 py-2 text-sm"
+                      className="flex items-center justify-between gap-2 rounded bg-gray-50 px-3 py-2 text-sm"
                     >
                       <span>{s.screenName}</span>
                       <span className="text-gray-600">
                         {formatDate(s.startTime, 'YYYY-MM-DD HH:mm')} ~{' '}
                         {formatDate(s.endTime, 'HH:mm')}
                       </span>
+                      <Link
+                        to={`/book/${s.id}`}
+                        state={{ screening: s }}
+                        className="shrink-0 rounded bg-indigo-600 px-2 py-1 text-xs font-medium text-white hover:bg-indigo-700"
+                      >
+                        예매하기
+                      </Link>
                     </li>
                   ))}
                 </ul>
