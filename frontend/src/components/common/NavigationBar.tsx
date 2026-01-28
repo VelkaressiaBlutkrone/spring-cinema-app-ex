@@ -40,6 +40,12 @@ export function NavigationBar() {
               예매 내역
             </Link>
           )}
+          <Link
+            to="/admin"
+            className="text-gray-600 hover:text-gray-900"
+          >
+            관리자
+          </Link>
           {isAuthenticated ? (
             <button
               type="button"

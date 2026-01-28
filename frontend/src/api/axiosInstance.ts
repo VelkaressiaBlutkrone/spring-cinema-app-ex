@@ -23,13 +23,20 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// 응답 인터셉터: 401 시 로그아웃 및 로그인 페이지로 이동
+// 응답 인터셉터: 401 로그아웃·로그인 유도, 403 관리자 API 시 /admin/login
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const status = error.response?.status;
+    if (status === 401) {
       useAuthStore.getState().clearAuth();
-      window.location.href = '/login';
+      const isAdminPath = typeof window !== 'undefined' && window.location.pathname.startsWith('/admin');
+      window.location.href = isAdminPath ? '/admin/login' : '/login';
+    } else if (status === 403) {
+      const url = error.config?.url ?? '';
+      if (String(url).includes('/admin/')) {
+        window.location.href = '/admin/login';
+      }
     }
     return Promise.reject(error);
   }

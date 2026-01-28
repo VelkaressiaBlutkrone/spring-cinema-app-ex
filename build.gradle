@@ -67,8 +67,12 @@ dependencies {
 
     /* ===============================
      * Redis - Redisson (분산 락)
+     * Spring Boot 4와 redisson-spring-boot-starter 호환 이슈로
+     * 코어 라이브러리만 사용. RedissonConfig에서 RedissonClient 빈 수동 등록.
+     * redisson-spring-boot-starter 는 RedisAutoConfiguration 등을 참조해
+     * Spring Boot 4에서 ClassNotFoundException 을 일으키므로 사용하지 않음.
      * =============================== */
-    implementation 'org.redisson:redisson-spring-boot-starter:3.40.2'
+    implementation 'org.redisson:redisson:3.40.2'
 
     /* ===============================
      * Lombok

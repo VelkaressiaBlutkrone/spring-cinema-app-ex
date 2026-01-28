@@ -696,24 +696,41 @@ domain/
 
 ### 작업 내용
 
-- [ ] 관리자 웹 프로젝트 생성 (별도 또는 통합)
-- [ ] 관리자 라우팅 설정 (`/admin/**`)
-- [ ] 관리자 인증 구현:
-  - [ ] 관리자 로그인 페이지
-  - [ ] JWT 토큰 관리
-  - [ ] Role 기반 접근 제어
-- [ ] 관리자 레이아웃 구현:
-  - [ ] 사이드바 네비게이션
-  - [ ] 헤더
-  - [ ] 컨텐츠 영역
-- [ ] 관리자 API 클라이언트 설정
-- [ ] 인증 실패 시 리다이렉트 처리
+- [x] 관리자 웹 프로젝트 생성 (별도 또는 통합) → **통합** (같은 frontend에 /admin 라우트)
+- [x] 관리자 라우팅 설정 (`/admin/**`)
+  - [x] `/admin` 대시보드, `/admin/login` 로그인, `/admin/movies` 등 placeholder
+- [x] 관리자 인증 구현:
+  - [x] 관리자 로그인 페이지 (AdminLoginPage, /admin/login)
+  - [x] JWT 토큰 관리 (기존 authStore·authApi 활용)
+  - [x] Role 기반 접근 제어 (JWT payload role === 'ADMIN' → useIsAdmin, AdminLayout에서 비관리자 시 / 리다이렉트)
+- [x] 관리자 레이아웃 구현:
+  - [x] 사이드바 네비게이션 (대시보드, 영화/영화관/상영관/상영스케줄/좌석 관리 링크)
+  - [x] 헤더 (로고, “사용자 사이트” 링크, 로그아웃)
+  - [x] 컨텐츠 영역 (Outlet)
+- [x] 관리자 API 클라이언트 설정 (동일 axiosInstance, path `/admin/...` → Step 13에서 실제 API 호출)
+- [x] 인증 실패 시 리다이렉트 처리:
+  - [x] 비인증 → /admin/login
+  - [x] 비관리자(USER 등) → /
+  - [x] 401 시 clearAuth 후 /admin/login (관리자 경로인 경우)
+  - [x] 403 + admin API 요청 시 /admin/login
 
 ### 체크리스트
 
-- [ ] 관리자 API 인증/권한 검사 확인
-- [ ] 일반 사용자는 관리자 페이지 접근 불가 확인
-- [ ] 관리자 레이아웃 정상 동작 확인
+- [x] 관리자 API 인증/권한 검사 확인 (관리자 전용 라우트는 AdminLayout에서 isAdmin 검사)
+- [x] 일반 사용자는 관리자 페이지 접근 불가 확인 (isAdmin false → Navigate to /)
+- [x] 관리자 레이아웃 정상 동작 확인
+
+### 구현된 모듈
+
+- `src/utils/jwt.ts`: parseJwtPayload, getRoleFromToken, isAdminFromToken (JWT role 클라이언트 파싱)
+- `src/hooks/useIsAdmin.ts`: JWT role === 'ADMIN' 여부
+- `src/layouts/AdminLayout.tsx`: 사이드바·헤더·Outlet, /admin/login 제외 시 인증·ADMIN 검사
+- `src/pages/admin/AdminLoginPage.tsx`: 관리자 로그인, ADMIN이 아니면 clearAuth 후 “관리자 계정으로 로그인해 주세요” 토스트
+- `src/pages/admin/AdminDashboardPage.tsx`: 대시보드 placeholder
+- `src/pages/admin/AdminPlaceholderPage.tsx`: 영화/영화관/상영관/상영스케줄/좌석 메뉴 placeholder (Step 13에서 교체)
+- 라우트: `/admin`, `/admin/login`, `/admin/movies`, `/admin/theaters`, `/admin/screens`, `/admin/screenings`, `/admin/seats`
+- 네비게이션 바: “관리자” 링크 → /admin (비관리자 시 / 로 리다이렉트)
+- `src/api/axiosInstance.ts`: 401 시 경로에 따라 /admin/login 또는 /login, 403+admin API 시 /admin/login
 
 ### 예상 소요 시간
 

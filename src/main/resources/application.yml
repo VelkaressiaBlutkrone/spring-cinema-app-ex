@@ -5,6 +5,11 @@ spring:
   application:
     name: prodwebapp
 
+  # Redisson 스타터 자동 설정 비활성화 (Spring Boot 4와 호환되지 않음, RedissonConfig에서 수동 빈 등록)
+  autoconfigure:
+    exclude:
+      - org.redisson.spring.starter.RedissonAutoConfigurationV2
+
   # 콘솔에 ANSI 컬러 항상 사용
   output:
     ansi:

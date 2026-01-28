@@ -32,14 +32,14 @@
 
 ### 문제 해결 체크리스트
 
-- [ ] 에러 메시지를 정확히 읽고 이해했는가?
-- [ ] 관련 로그 파일을 확인했는가?
-- [ ] 의존성 버전이 호환되는가?
-- [ ] 캐시를 정리했는가?
-- [ ] 서버/개발 서버를 재시작했는가?
-- [ ] 환경 변수 설정이 올바른가?
-- [ ] 포트가 충돌하지 않는가?
-- [ ] 데이터베이스 연결이 정상인가?
+- [X] 에러 메시지를 정확히 읽고 이해했는가?
+- [X] 관련 로그 파일을 확인했는가?
+- [X] 의존성 버전이 호환되는가?
+- [X] 캐시를 정리했는가?
+- [X] 서버/개발 서버를 재시작했는가?
+- [X] 환경 변수 설정이 올바른가?
+- [X] 포트가 충돌하지 않는가?
+- [X] 데이터베이스 연결이 정상인가?
 
 ---
 
@@ -958,25 +958,204 @@ if (paramNames != null && paramNames.hasNext()) {
 
 ## 문제 해결 이력
 
-| 날짜 | 문제 | 해결 방법 | 작성자 |
-|------|------|----------|--------|
-| 2024-01-XX | JSX 태그에 'react/jsx-runtime' 모듈 경로 오류 | tsconfig.app.json에 jsxImportSource 추가 | - |
-| 2024-01-XX | spring-boot-starter-aop를 찾을 수 없음 | spring-boot-starter-aspectj로 변경 (Spring Boot 4.0 변경사항) | - |
-| 2024-01-XX | JSON 직렬화 라이브러리 변경 | Jackson → Gson으로 변경, GsonConfig 추가 | - |
-| 2024-01-XX | WebRequest.getParameterNames() 타입 불일치 | Iterator<String>로 변경 (Spring Boot 4.0 변경사항) | - |
-| 2024-01-XX | TypeScript 모듈 export 런타임 오류 | Vite 캐시 삭제 및 개발 서버 재시작 | - |
-| 2024-01-XX | erasableSyntaxOnly로 인한 enum 사용 불가 | tsconfig.app.json에서 erasableSyntaxOnly 옵션 제거 | - |
-| 2024-01-XX | TypeScript Import Path Alias 설정 | tsconfig.app.json과 vite.config.ts에 alias 설정 추가 | - |
-| 2024-01-XX | verbatimModuleSyntax로 인한 타입 import 오류 | 타입만 import하는 경우 `import type` 사용 | - |
-| 2024-01-XX | front_end에서 gradle 명령어 실행 오류 | 백엔드 빌드는 프로젝트 루트에서, 프론트엔드는 npm 사용 | - |
-| 2024-01-XX | 테스트 실패: NoSuchBeanDefinitionException | 테스트용 H2 인메모리 DB 설정 추가 | - |
-| 2026-01-23 | spring-boot-starter-aop 찾을 수 없음 | Spring Milestone Repository 추가 및 AOP 의존성 변경 | - |
-| 2026-01-23 | DDD 패키지 구조 정리 | screen → screening 패키지 통합, 도메인별 분리 | - |
-| 2026-01-23 | 도메인 예외 처리 통합 | IllegalStateException → 도메인별 공통 예외 클래스로 전환 | - |
+| 날짜       | 문제                                                                        | 해결 방법                                                                                                         | 작성자 |
+| ---------- | --------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ------ |
+| 2024-01-XX | JSX 태그에 'react/jsx-runtime' 모듈 경로 오류                               | tsconfig.app.json에 jsxImportSource 추가                                                                          | -      |
+| 2024-01-XX | spring-boot-starter-aop를 찾을 수 없음                                      | spring-boot-starter-aspectj로 변경 (Spring Boot 4.0 변경사항)                                                     | -      |
+| 2024-01-XX | JSON 직렬화 라이브러리 변경                                                 | Jackson → Gson으로 변경, GsonConfig 추가                                                                         | -      |
+| 2024-01-XX | WebRequest.getParameterNames() 타입 불일치                                  | Iterator `<String>`로 변경 (Spring Boot 4.0 변경사항)                                                           | -      |
+| 2024-01-XX | TypeScript 모듈 export 런타임 오류                                          | Vite 캐시 삭제 및 개발 서버 재시작                                                                                | -      |
+| 2024-01-XX | erasableSyntaxOnly로 인한 enum 사용 불가                                    | tsconfig.app.json에서 erasableSyntaxOnly 옵션 제거                                                                | -      |
+| 2024-01-XX | TypeScript Import Path Alias 설정                                           | tsconfig.app.json과 vite.config.ts에 alias 설정 추가                                                              | -      |
+| 2024-01-XX | verbatimModuleSyntax로 인한 타입 import 오류                                | 타입만 import하는 경우 `import type` 사용                                                                       | -      |
+| 2024-01-XX | front_end에서 gradle 명령어 실행 오류                                       | 백엔드 빌드는 프로젝트 루트에서, 프론트엔드는 npm 사용                                                            | -      |
+| 2024-01-XX | 테스트 실패: NoSuchBeanDefinitionException                                  | 테스트용 H2 인메모리 DB 설정 추가                                                                                 | -      |
+| 2026-01-23 | spring-boot-starter-aop 찾을 수 없음                                        | Spring Milestone Repository 추가 및 AOP 의존성 변경                                                               | -      |
+| 2026-01-23 | DDD 패키지 구조 정리                                                        | screen → screening 패키지 통합, 도메인별 분리                                                                    | -      |
+| 2026-01-23 | 도메인 예외 처리 통합                                                       | IllegalStateException → 도메인별 공통 예외 클래스로 전환                                                         | -      |
+| 2026-01-28 | RedissonAutoConfigurationV2 / RedisAutoConfiguration ClassNotFoundException | redisson-spring-boot-starter 제거, redisson 코어(3.40.2)만 사용. RedissonConfig에서 RedissonClient 수동 등록 유지 | -      |
+| 2026-01-28 | Vite에서 react-router-dom·clsx 등 의존성 해석 실패                         | frontend 디렉터리에서 `npm install` 실행 후 개발 서버 재시작                                                    | -      |
+| 2026-01-28 | CSS/Tailwind가 적용되지 않는 것처럼 보이는 현상                             | `frontend/src/index.css`에 `@import "tailwindcss";` 추가, `main.tsx`에서 `import '@/index.css';` 추가     | -      |
+| 2026-01-28 | QueryDSL Q클래스 "The type Q... is already defined" 중복 정의               | `bin` 폴더 삭제, Gradle만 사용해 빌드(`.\gradlew clean compileJava`), IDE에서 Gradle 빌드 사용                | -      |
 
 ---
 
 ## Cinema App 프로젝트 관련 문제
+
+### 문제: QueryDSL Q클래스 "The type Q... is already defined" 중복 정의
+
+**에러 메시지:**
+
+```
+The type QMember is already defined
+The type QMovie is already defined
+... (QPayment, QReservation, QScreen, QScreening, QSeat 등)
+```
+
+**발생 경로 예:**
+
+- `bin\generated-sources\annotations\com\cinema\domain\...\entity\Q*.java`
+
+**원인:**
+
+- Gradle은 `build/generated/querydsl`에 Q클래스를 생성하고, IDE(Eclipse/일부 Java 확장)는 `bin/generated-sources/annotations`에 별도로 생성함
+- 두 경로가 모두 소스/클래스패스에 포함되면 같은 Q 타입이 두 번 정의되어 "already defined" 발생
+
+**해결 방법:**
+
+1. **`bin` 폴더 삭제**  
+   로컬에 있는 `bin` 폴더를 삭제해 IDE가 만든 생성소스만 제거합니다.
+
+   ```powershell
+   # 프로젝트 루트에서
+   Remove-Item -Recurse -Force bin -ErrorAction SilentlyContinue
+   ```
+
+2. **Gradle로만 빌드**  
+   Q클래스는 Gradle의 `compileJava` 결과인 `build/generated/querydsl`만 사용해야 합니다.
+
+   ```powershell
+   .\gradlew clean compileJava
+   ```
+
+3. **IDE에서 Gradle 사용**
+   - **Cursor/VS Code**: `Ctrl+Shift+P` → **"Java: Clean Java Language Server Workspace"** 실행 후 창 새로고침. 빌드는 Gradle 뷰에서 "Build" 또는 "compileJava" 사용.
+   - IntelliJ: "Build → Rebuild Project" 시 Gradle 사용, 또는 "Use Gradle for build" 옵션 사용.
+   - Eclipse: `.\gradlew eclipse` 후 프로젝트 다시 import하면 `.classpath`가 `build/generated/querydsl`을 참조.
+
+4. **`bin`이 다시 생기지 않게**  
+   `bin/`은 `.gitignore`에 들어 있음. `.vscode/settings.json`에 `java.import.exclusions`로 `bin`을 Java 임포트에서 제외해 두었으므로, "Java: Clean Java Language Server Workspace" 후에는 `bin`이 클래스패스에 들어오지 않도록 할 수 있음.
+
+**참고:**
+
+- 이 프로젝트의 Q클래스 생성 위치는 `build.gradle`의 `querydslDir` = `build/generated/querydsl` 하나뿐입니다.
+
+---
+
+### 문제: Vite 개발 서버에서 의존성 해석 실패 (react-router-dom, clsx 등)
+
+**에러 메시지:**
+
+```
+Could not resolve "react-router-dom"
+Could not resolve "clsx"
+```
+
+**원인:**
+
+- `package.json`에 선언은 되어 있으나 `node_modules`에 실제로 설치되지 않음
+- `npm install`을 하지 않았거나, 중간에 의존성이 추가된 후 설치를 건너뜀
+
+**해결 방법:**
+
+프론트엔드 디렉토리에서 의존성 재설치:
+
+```bash
+cd frontend
+npm install
+```
+
+또는 Windows PowerShell:
+
+```powershell
+cd frontend
+npm install
+```
+
+그 후 개발 서버 재시작:
+
+```bash
+npm run dev
+```
+
+**참고:**
+
+- 프로젝트 루트가 아닌 `frontend/` 디렉터리에서 실행해야 함
+- `package-lock.json`이 있으면 버전이 고정되어 일관된 설치가 가능함
+
+---
+
+### 문제: CSS가 적용되지 않는 것처럼 보이는 현상 (Tailwind 미로드)
+
+**증상:**
+
+- 버튼·레이아웃 등 Tailwind 클래스가 적용되지 않은 것처럼 보임
+- 개발자 도구에서 해당 클래스가 인식되지 않음
+
+**원인:**
+
+- Tailwind CSS를 불러오는 진입점이 없음
+- `main.tsx`에서 전역 CSS를 import하지 않았거나, Tailwind용 CSS 파일이 없음
+
+**해결 방법:**
+
+#### 1. Tailwind 진입 CSS 파일 생성
+
+`frontend/src/index.css` 파일을 만들고 다음을 추가:
+
+```css
+@import "tailwindcss";
+```
+
+(또는 사용 중인 Tailwind 버전에 맞게 `@tailwind base; @tailwind components; @tailwind utilities;` 등 사용)
+
+#### 2. main.tsx에서 전역 CSS import
+
+`frontend/src/main.tsx` 최상단에 추가:
+
+```tsx
+import '@/index.css';
+```
+
+그 후 개발 서버를 재시작하여 확인.
+
+**참고:**
+
+- Vite + Tailwind 4 구성에서는 `@import "tailwindcss";` 형태를 사용할 수 있음
+- Tailwind 3 이하일 경우 `tailwind.config.js`와 `@tailwind` 디렉티브 조합 확인
+
+---
+
+### 문제: Redisson Spring Boot 스타터로 인한 ApplicationContext 기동 실패 (Spring Boot 4)
+
+**에러 메시지:**
+
+```
+Application run failed
+java.lang.IllegalStateException: Failed to generate bean name for imported class 'org.redisson.spring.starter.RedissonAutoConfigurationV2'
+	...
+Caused by: java.lang.ClassNotFoundException: org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+```
+
+**원인:**
+
+- `redisson-spring-boot-starter`(3.40.x)는 **Spring Boot 3** 기준으로 빌드되어, 내부에서 `org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration`을 참조합니다.
+- **Spring Boot 4.x**에서는 자동 설정 모듈 구조/패키지가 바뀌어 위 클래스를 찾지 못해 `ClassNotFoundException`이 발생합니다.
+- 이 프로젝트는 이미 `RedissonConfig`에서 `RedissonClient` 빈을 수동 등록하고 있어, 스타터의 자동 설정은 필수가 아닙니다.
+
+**해결 방법:**
+
+#### build.gradle 수정
+
+`redisson-spring-boot-starter` 대신 **Redisson 코어만** 사용하도록 변경합니다.
+
+```gradle
+// 변경 전 (Spring Boot 4에서 오류 발생)
+implementation 'org.redisson:redisson-spring-boot-starter:3.40.2'
+
+// 변경 후
+implementation 'org.redisson:redisson:3.40.2'
+```
+
+- `RedissonConfig`(`RedissonClient` 빈 수동 등록)와 `application.yml`의 `redisson.single-server-config.*` 설정은 그대로 두면 됩니다.
+- 분산 락 등 기존 Redisson 사용 방식은 동일하게 동작합니다.
+
+**참고:**
+
+- Spring Boot 4 전용 Redisson 스타터(예: 4.1.x)가 나온다면, 호환 버전으로 스타터를 다시 사용하는 방법도 있습니다.
+- 현재는 “스타터 제거 + 코어만 사용”이 가장 안정적인 우회 방법입니다.
+
+---
 
 ### 문제: Spring Boot 4.0.2에서 spring-boot-starter-aop 찾을 수 없음
 
@@ -1226,7 +1405,7 @@ public void cancel() {
 // 변경 후
 public void cancel() {
     if (this.payStatus != PaymentStatus.SUCCESS) {
-        throw new PaymentException(ErrorCode.PAYMENT_CANNOT_CANCEL, 
+        throw new PaymentException(ErrorCode.PAYMENT_CANNOT_CANCEL,
                 String.format("paymentId=%d, 현재 상태: %s", this.id, this.payStatus));
     }
     // ...
@@ -1518,10 +1697,9 @@ import { formatDate } from '@/utils/dateUtils';
    // ✅ 다른 폴더로 이동
    import { ProductResponse } from '@/types/product.types';
    ```
-
 2. **IDE 자동완성**: IDE(VS Code 등)에서 TypeScript 서버를 재시작하면 자동완성이 정상 작동합니다.
-   - `Ctrl + Shift + P` → "TypeScript: Restart TS Server"
 
+   - `Ctrl + Shift + P` → "TypeScript: Restart TS Server"
 3. **빌드 확인**: 설정 후 빌드가 정상적으로 되는지 확인:
 
    ```bash
@@ -1539,23 +1717,22 @@ import { formatDate } from '@/utils/dateUtils';
 Path alias가 작동하지 않는 경우:
 
 1. **TypeScript 서버 재시작**
-   - `Ctrl + Shift + P` → "TypeScript: Restart TS Server"
 
+   - `Ctrl + Shift + P` → "TypeScript: Restart TS Server"
 2. **Vite 개발 서버 재시작**
 
    ```bash
    # Ctrl+C로 중지 후
    npm run dev
    ```
-
 3. **캐시 삭제**
 
    ```powershell
    Remove-Item -Recurse -Force node_modules\.vite
    npm run dev
    ```
-
 4. **설정 확인**
+
    - `tsconfig.app.json`에 `baseUrl`과 `paths` 설정이 있는지 확인
    - `vite.config.ts`에 `resolve.alias` 설정이 있는지 확인
 

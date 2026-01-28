@@ -3,3 +3,4 @@
  */
 export { useToast } from '@/hooks/useToast';
 export { useSeatEvents } from '@/hooks/useSeatEvents';
+export { useIsAdmin } from '@/hooks/useIsAdmin';
