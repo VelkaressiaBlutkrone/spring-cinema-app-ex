@@ -1,8 +1,10 @@
 package com.cinema.infrastructure.redis;
 
 import java.time.Duration;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,9 @@ public class RedisService {
     
     /** Redis 연결 가용 여부 (런타임에 동적으로 확인) */
     private volatile boolean redisAvailable = true;
+
+    /** Redis 미연결 시 로컬(인메모리) HOLD 폴백 (개발/로컬 용도) */
+    private final Map<String, LocalHold> localHolds = new ConcurrentHashMap<>();
 
     // Key Prefix
     private static final String SEAT_HOLD_PREFIX = "seat:hold:";
@@ -76,7 +81,12 @@ public class RedisService {
             redisAvailable = false;
             log.error("[Redis] HOLD 저장 실패 - screeningId={}, seatId={}, error={}",
                     screeningId, seatId, e.getMessage());
-            return null;
+            // Redis 장애 시 로컬 폴백 저장 (TTL 포함)
+            long expireAtMillis = System.currentTimeMillis() + Duration.ofMinutes(ttlMinutes).toMillis();
+            localHolds.put(key, new LocalHold(holdInfo, expireAtMillis));
+            log.warn("[Redis] (LOCAL) HOLD 저장 폴백 - screeningId={}, seatId={}, memberId={}, ttl={}분",
+                    screeningId, seatId, memberId, ttlMinutes);
+            return holdToken;
         }
     }
 
@@ -99,7 +109,7 @@ public class RedisService {
             redisAvailable = false;
             log.warn("[Redis] HOLD 조회 실패 - screeningId={}, seatId={}, error={}",
                     screeningId, seatId, e.getMessage());
-            return Optional.empty();
+            return getLocalHold(key);
         }
     }
 
@@ -129,6 +139,7 @@ public class RedisService {
             redisAvailable = false;
             log.warn("[Redis] HOLD 삭제 실패 - screeningId={}, seatId={}, error={}",
                     screeningId, seatId, e.getMessage());
+            localHolds.remove(key);
         }
     }
 
@@ -146,7 +157,7 @@ public class RedisService {
             redisAvailable = false;
             log.warn("[Redis] HOLD TTL 조회 실패 - screeningId={}, seatId={}, error={}",
                     screeningId, seatId, e.getMessage());
-            return -1L;
+            return getLocalHoldTtlSeconds(key);
         }
     }
 
@@ -284,6 +295,29 @@ public class RedisService {
     // ========================================
     // Inner Classes
     // ========================================
+
+    private Optional<HoldInfo> getLocalHold(String key) {
+        LocalHold local = localHolds.get(key);
+        if (local == null) return Optional.empty();
+        if (System.currentTimeMillis() > local.expireAtMillis) {
+            localHolds.remove(key);
+            return Optional.empty();
+        }
+        return Optional.of(local.info);
+    }
+
+    private Long getLocalHoldTtlSeconds(String key) {
+        LocalHold local = localHolds.get(key);
+        if (local == null) return -1L;
+        long remainMillis = local.expireAtMillis - System.currentTimeMillis();
+        if (remainMillis <= 0) {
+            localHolds.remove(key);
+            return -1L;
+        }
+        return Math.max(0L, remainMillis / 1000);
+    }
+
+    private record LocalHold(HoldInfo info, long expireAtMillis) {}
 
     /**
      * HOLD 정보 레코드

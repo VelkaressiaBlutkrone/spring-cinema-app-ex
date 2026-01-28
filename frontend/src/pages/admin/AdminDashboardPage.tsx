@@ -1,6 +1,5 @@
 /**
- * 관리자 대시보드 (placeholder)
- * Step 13에서 영화/상영관 관리 페이지로 대체 가능
+ * 관리자 대시보드
  */
 import { Link } from 'react-router-dom';
 
@@ -9,7 +8,7 @@ export function AdminDashboardPage() {
     <div>
       <h1 className="mb-6 text-2xl font-bold text-gray-900">관리자 대시보드</h1>
       <p className="mb-6 text-gray-600">
-        영화, 상영관, 상영 스케줄, 좌석 관리는 Step 13에서 구현됩니다.
+        아래 메뉴에서 영화, 영화관, 상영관, 상영 스케줄, 좌석을 관리할 수 있습니다.
       </p>
       <div className="flex flex-wrap gap-4">
         <Link

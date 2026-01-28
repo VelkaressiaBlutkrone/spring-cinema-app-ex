@@ -1,6 +1,8 @@
 package com.cinema.infrastructure.lock;
 
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -27,6 +29,9 @@ public class DistributedLockManager {
 
     /** RedissonClient (Redis 연결 실패 시 null일 수 있음) */
     private final RedissonClient redissonClient;
+
+    /** Redis 미연결 시 로컬(인메모리) 락 폴백 */
+    private final ConcurrentHashMap<String, ReentrantLock> localLocks = new ConcurrentHashMap<>();
 
     private static final String LOCK_PREFIX = "lock:";
     private static final long DEFAULT_WAIT_TIME = 0L; // 즉시 실패 (Fail Fast)
@@ -66,26 +71,40 @@ public class DistributedLockManager {
      * @return 락 획득 성공 여부
      */
     public boolean tryLock(String lockKey, long waitTime, long leaseTime) {
-        if (redissonClient == null) {
-            log.warn("[Lock] Redis 미연결 상태로 락 획득 실패: {}", lockKey);
-            return false;
+        // 1) Redis 분산락 우선
+        if (redissonClient != null) {
+            try {
+                RLock lock = redissonClient.getLock(lockKey);
+                boolean acquired = lock.tryLock(waitTime, leaseTime, TimeUnit.MILLISECONDS);
+                if (acquired) {
+                    log.debug("[Lock] 락 획득 성공: {}", lockKey);
+                } else {
+                    log.warn("[Lock] 락 획득 실패: {}", lockKey);
+                }
+                return acquired;
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                log.error("[Lock] 락 획득 중 인터럽트: {}", lockKey, e);
+                return false;
+            } catch (Exception e) {
+                log.error("[Lock] 락 획득 중 예외 발생: {}, error={}", lockKey, e.getMessage());
+                // Redis 장애 시 로컬 락 폴백
+            }
         }
 
+        // 2) Redis 미연결/장애 시 로컬 락 폴백 (로컬 개발 편의용)
+        ReentrantLock local = localLocks.computeIfAbsent(lockKey, k -> new ReentrantLock());
         try {
-            RLock lock = redissonClient.getLock(lockKey);
-            boolean acquired = lock.tryLock(waitTime, leaseTime, TimeUnit.MILLISECONDS);
+            boolean acquired = waitTime <= 0 ? local.tryLock() : local.tryLock(waitTime, TimeUnit.MILLISECONDS);
             if (acquired) {
-                log.debug("[Lock] 락 획득 성공: {}", lockKey);
+                log.debug("[Lock] (LOCAL) 락 획득 성공: {}", lockKey);
             } else {
-                log.warn("[Lock] 락 획득 실패: {}", lockKey);
+                log.warn("[Lock] (LOCAL) 락 획득 실패: {}", lockKey);
             }
             return acquired;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            log.error("[Lock] 락 획득 중 인터럽트: {}", lockKey, e);
-            return false;
-        } catch (Exception e) {
-            log.error("[Lock] 락 획득 중 예외 발생: {}, error={}", lockKey, e.getMessage());
+            log.error("[Lock] (LOCAL) 락 획득 중 인터럽트: {}", lockKey, e);
             return false;
         }
     }
@@ -118,19 +137,30 @@ public class DistributedLockManager {
      * @param lockKey 락 키
      */
     public void unlock(String lockKey) {
-        if (redissonClient == null) {
-            log.debug("[Lock] Redis 미연결 상태로 락 해제 스킵: {}", lockKey);
-            return;
+        // Redis 락 해제
+        if (redissonClient != null) {
+            try {
+                RLock lock = redissonClient.getLock(lockKey);
+                if (lock.isHeldByCurrentThread()) {
+                    lock.unlock();
+                    log.debug("[Lock] 락 해제: {}", lockKey);
+                    return;
+                }
+            } catch (Exception e) {
+                log.warn("[Lock] 락 해제 중 예외 발생: {}, error={}", lockKey, e.getMessage());
+                // fallthrough
+            }
         }
 
-        try {
-            RLock lock = redissonClient.getLock(lockKey);
-            if (lock.isHeldByCurrentThread()) {
-                lock.unlock();
-                log.debug("[Lock] 락 해제: {}", lockKey);
+        // 로컬 락 해제
+        ReentrantLock local = localLocks.get(lockKey);
+        if (local != null && local.isHeldByCurrentThread()) {
+            try {
+                local.unlock();
+                log.debug("[Lock] (LOCAL) 락 해제: {}", lockKey);
+            } catch (Exception e) {
+                log.warn("[Lock] (LOCAL) 락 해제 중 예외 발생: {}, error={}", lockKey, e.getMessage());
             }
-        } catch (Exception e) {
-            log.warn("[Lock] 락 해제 중 예외 발생: {}, error={}", lockKey, e.getMessage());
         }
     }
 
