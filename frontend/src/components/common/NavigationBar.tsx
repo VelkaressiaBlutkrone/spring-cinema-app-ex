@@ -32,6 +32,14 @@ export function NavigationBar() {
           >
             영화 목록
           </Link>
+          {isAuthenticated && (
+            <Link
+              to="/reservations"
+              className="text-gray-600 hover:text-gray-900"
+            >
+              예매 내역
+            </Link>
+          )}
           {isAuthenticated ? (
             <button
               type="button"

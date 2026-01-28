@@ -639,35 +639,46 @@ domain/
 
 ### 작업 내용
 
-- [ ] 결제 페이지 레이아웃 구현
-- [ ] 예매 정보 표시:
-  - [ ] 영화 정보
-  - [ ] 상영 정보
-  - [ ] 좌석 정보
-  - [ ] 가격 정보 (서버에서 받은 값만 표시)
-- [ ] 결제 정보 입력 UI (Mock):
-  - [ ] 결제 수단 선택
-  - [ ] 결제 정보 입력 폼
-- [ ] 결제 API 연동:
-  - [ ] HOLD Token 전달
-  - [ ] 결제 요청
-  - [ ] 결제 성공/실패 처리
-- [ ] 결제 실패 처리:
-  - [ ] 에러 메시지 표시
-  - [ ] 재시도 옵션 제공
-- [ ] 결제 완료 페이지:
-  - [ ] 예매 확인 정보
-  - [ ] 예매 번호 표시
-- [ ] 로딩 상태 처리
-- [ ] UX 개선 (로딩, 애니메이션 등)
+- [x] 결제 페이지 레이아웃 구현
+- [x] 예매 정보 표시:
+  - [x] 영화 정보 (movieTitle, screenName, startTime)
+  - [x] 상영 정보
+  - [x] 좌석 정보 (heldSeats: rowLabel-seatNo)
+  - [x] 가격 정보 (서버에서 받은 값만 표시 — 결제 완료 화면에서 totalAmount, 예매 상세에서 좌석별 price)
+- [x] 결제 정보 입력 UI (Mock):
+  - [x] 결제 수단 선택 (CARD, KAKAO_PAY, NAVER_PAY, TOSS, BANK_TRANSFER)
+  - [x] 결제하기 버튼 (Mock 결제)
+- [x] 결제 API 연동:
+  - [x] HOLD Token 전달 (seatHoldItems: seatId, holdToken)
+  - [x] POST /api/reservations/pay
+  - [x] 결제 성공/실패 처리
+- [x] 결제 실패 처리:
+  - [x] 에러 메시지 표시 (useToast.showError)
+  - [x] 재시도 옵션 (결제하기 버튼 유지, 좌석 다시 고르기 링크)
+- [x] 결제 완료 페이지:
+  - [x] 예매 확인 정보 (reservationNo, totalSeats, totalAmount)
+  - [x] 예매 번호 표시
+  - [x] 예매 내역 / 영화 목록 링크
+- [x] 로딩 상태 처리 (LoadingSpinner)
+- [x] UX: 로그인 필요 시 로그인 유도, state 없으면 좌석 선택 유도
 
 ### 체크리스트
 
-- [ ] 결제 페이지 UX 안정성 확인
-- [ ] 가격 정보는 서버에서 받은 값만 표시 확인
-- [ ] 결제 실패 시 재시도 옵션 제공 확인
-- [ ] HOLD Token 검증 확인
-- [ ] 결제 플로우 정상 동작 확인
+- [x] 결제 페이지 UX 안정성 확인
+- [x] 가격 정보는 서버에서 받은 값만 표시 확인
+- [x] 결제 실패 시 재시도 옵션 제공 확인
+- [x] HOLD Token 검증 확인 (서버 검증, 클라이언트는 seatHoldItems 전달)
+- [ ] 결제 플로우 정상 동작 확인 (수동 확인)
+
+### 구현된 모듈
+
+- `src/types/reservation.types.ts`: PaymentRequest, PaymentResponse, PaymentMethod, ReservationDetailResponse 등
+- `src/api/reservations.ts`: pay, getMyReservations, getReservationDetail, cancelReservation
+- `src/pages/PaymentPage.tsx`: 결제 입력 → 결제 완료 화면
+- `src/pages/ReservationsPage.tsx`: 예매 내역 목록 (GET /api/reservations)
+- `src/pages/ReservationDetailPage.tsx`: 예매 상세 (GET /api/reservations/:id), 좌석별 금액·총액(서버값)
+- 라우트: `/payment/:screeningId`, `/reservations`, `/reservations/:reservationId`
+- 네비게이션 바: 로그인 시 "예매 내역" 링크 추가
 
 ### 예상 소요 시간
 

@@ -5,3 +5,4 @@ export { axiosInstance } from '@/api/axiosInstance';
 export { authApi } from '@/api/auth';
 export { moviesApi, screeningsApi } from '@/api/movies';
 export { seatsApi } from '@/api/seats';
+export { reservationsApi } from '@/api/reservations';
