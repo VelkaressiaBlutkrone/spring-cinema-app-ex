@@ -977,6 +977,7 @@ if (paramNames != null && paramNames.hasNext()) {
 | 2026-01-28 | Vite에서 react-router-dom·clsx 등 의존성 해석 실패                         | frontend 디렉터리에서 `npm install` 실행 후 개발 서버 재시작                                                    | -      |
 | 2026-01-28 | CSS/Tailwind가 적용되지 않는 것처럼 보이는 현상                             | `frontend/src/index.css`에 `@import "tailwindcss";` 추가, `main.tsx`에서 `import '@/index.css';` 추가     | -      |
 | 2026-01-28 | QueryDSL Q클래스 "The type Q... is already defined" 중복 정의               | `bin` 폴더 삭제, Gradle만 사용해 빌드(`.\gradlew clean compileJava`), IDE에서 Gradle 빌드 사용                | -      |
+| 2026-01-28 | Could not find or load main class com.cinema.CinemaApplication              | `.\gradlew clean bootRun` 또는 Gradle 뷰에서 bootRun 실행. 필요 시 "Java: Clean Java Language Server Workspace" 후 launch/디버그 사용 | -      |
 
 ---
 
@@ -1029,6 +1030,53 @@ The type QMovie is already defined
 **참고:**
 
 - 이 프로젝트의 Q클래스 생성 위치는 `build.gradle`의 `querydslDir` = `build/generated/querydsl` 하나뿐입니다.
+
+---
+
+### 문제: Could not find or load main class com.cinema.CinemaApplication
+
+**에러 메시지:**
+
+```
+Error: Could not find or load main class com.cinema.CinemaApplication
+Caused by: java.lang.ClassNotFoundException: com.cinema.CinemaApplication
+```
+
+**원인:**
+
+- 실행 시 사용하는 클래스패스에 `build/classes/java/main`(또는 해당 메인 클래스가 들어 있는 출력 디렉터리)이 포함되지 않음
+- IDE가 Gradle이 아닌 다른 방식(예: 빈 `bin/`)으로 프로젝트를 인식해 잘못된 출력 경로를 쓰는 경우
+- 아직 빌드를 하지 않아 `CinemaApplication.class`가 없음
+
+**해결 방법:**
+
+1. **Gradle로 빌드 후 `bootRun`으로 실행 (가장 안정적)**
+
+   ```powershell
+   .\gradlew clean bootRun
+   ```
+
+   또는 터미널에서 `.\gradlew bootRun`만 실행해도 됨. Gradle이 클래스패스를 맞춰서 실행함.
+
+2. **VS Code/Cursor에서 실행**
+   - **실행(디버그 없음)**: `Ctrl+Shift+P` → **"Tasks: Run Task"** → **bootRun** 선택. 또는 Gradle 뷰 → **Tasks** → **application** → **bootRun**.
+   - **디버깅**(Run 버튼/F5로 ClassNotFoundException 나는 경우):
+     1. `Ctrl+Shift+P` → **"Tasks: Run Task"** → **bootRunDebug** 선택
+     2. 터미널에 `Started CinemaApplication` 등이 뜰 때까지 대기
+     3. `F5` 또는 Run > Start Debugging → 구성 **"Attach to Spring Boot (Gradle bootRun)"** 선택
+   - Gradle이 클래스패스를 맞춰 주므로, 위 방식이 ClassNotFoundException 없이 동작함.
+
+3. **Java Language Server 초기화**
+   - Run으로 실행했는데 위 오류가 나면: `Ctrl+Shift+P` → **"Java: Clean Java Language Server Workspace"** 실행 후 창 새로고침
+   - 그러면 Gradle 기준으로 프로젝트를 다시 불러와, 클래스패스에 `build/classes`가 포함됨
+
+4. **launch 구성 확인**
+   - `.vscode/launch.json`에 **Spring Boot-CinemaApplication** 구성이 있고, `mainClass`가 `com.cinema.CinemaApplication`, `projectName`이 `cinema-backend`인지 확인
+
+**참고:**
+
+- 메인 클래스 파일은 Gradle 빌드 시 `build/classes/java/main/com/cinema/CinemaApplication.class`에 생성됨.
+- `.\gradlew bootRun`은 이 경로를 클래스패스에 넣고 실행하므로, IDE 설정이 꼬여 있어도 터미널에서만 실행할 때는 이 방법이 가장 확실함.
 
 ---
 
