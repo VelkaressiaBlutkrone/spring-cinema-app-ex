@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cinema.domain.admin.service.AdminScreeningService;
 import com.cinema.domain.screening.dto.SeatLayoutResponse;
 import com.cinema.domain.screening.dto.SeatStatusItem;
 import com.cinema.domain.screening.entity.Screening;
@@ -35,6 +36,7 @@ public class SeatStatusQueryService {
 
     private final RedisService redisService;
     private final ScreeningRepository screeningRepository;
+    private final AdminScreeningService adminScreeningService;
 
     @Value("${seat.status.cache-ttl-minutes:5}")
     private long cacheTtlMinutes;
@@ -95,6 +97,13 @@ public class SeatStatusQueryService {
         // 1. Screening/ScreeningSeat 엔티티를 일괄 조회 (좌석+상태)
         Screening screening = screeningRepository.findByIdWithScreeningSeats(screeningId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.SCREENING_NOT_FOUND));
+
+        // 1-1. ScreeningSeat이 없으면 해당 상영관 좌석으로 초기화 (과거 등록 상영 보정)
+        if (screening.getScreeningSeats().isEmpty()) {
+            adminScreeningService.ensureScreeningSeats(screeningId);
+            screening = screeningRepository.findByIdWithScreeningSeats(screeningId)
+                    .orElseThrow(() -> new BusinessException(ErrorCode.SCREENING_NOT_FOUND));
+        }
 
         // 2. ScreeningSeat → SeatStatusItem DTO list 변환
         List<SeatStatusItem> items = screening.getScreeningSeats().stream()

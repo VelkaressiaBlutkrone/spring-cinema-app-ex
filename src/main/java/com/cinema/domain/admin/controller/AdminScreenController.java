@@ -58,7 +58,7 @@ public class AdminScreenController {
      */
     @PutMapping("/{screenId}")
     public ResponseEntity<ApiResponse<Void>> updateScreen(
-            @PathVariable Long screenId,
+            @PathVariable("screenId") Long screenId,
             @Validated @RequestBody ScreenUpdateRequest request) {
         adminScreenService.updateScreen(screenId, request);
         return ResponseEntity.ok(ApiResponse.success(null));
@@ -68,7 +68,7 @@ public class AdminScreenController {
      * 상영관 삭제
      */
     @DeleteMapping("/{screenId}")
-    public ResponseEntity<ApiResponse<Void>> deleteScreen(@PathVariable Long screenId) {
+    public ResponseEntity<ApiResponse<Void>> deleteScreen(@PathVariable("screenId") Long screenId) {
         adminScreenService.deleteScreen(screenId);
         return ResponseEntity.ok(ApiResponse.success(null));
     }
@@ -88,7 +88,7 @@ public class AdminScreenController {
      * 상영관 상세 조회
      */
     @GetMapping("/{screenId}")
-    public ResponseEntity<ApiResponse<ScreenResponse>> getScreen(@PathVariable Long screenId) {
+    public ResponseEntity<ApiResponse<ScreenResponse>> getScreen(@PathVariable("screenId") Long screenId) {
         ScreenResponse screen = adminScreenService.getScreen(screenId);
         return ResponseEntity.ok(ApiResponse.success(screen));
     }
@@ -98,7 +98,7 @@ public class AdminScreenController {
      */
     @GetMapping("/by-theater")
     public ResponseEntity<ApiResponse<List<ScreenResponse>>> getScreensByTheater(
-            @RequestParam Long theaterId) {
+            @RequestParam("theaterId") Long theaterId) {
         List<ScreenResponse> screens = adminScreenService.getScreensByTheater(theaterId);
         return ResponseEntity.ok(ApiResponse.success(screens));
     }

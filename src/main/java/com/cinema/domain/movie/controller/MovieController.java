@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.cinema.domain.admin.dto.MovieResponse;
 import com.cinema.domain.admin.service.AdminMovieService;
 import com.cinema.global.dto.ApiResponse;
+import com.cinema.global.dto.PageResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,19 +29,20 @@ public class MovieController {
 
     /**
      * 영화 목록 조회 (페이징)
+     * Page 대신 PageResponse 사용 (Gson이 PageImpl을 올바르게 직렬화하지 못하는 문제 회피)
      */
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<MovieResponse>>> getMovies(
+    public ResponseEntity<ApiResponse<PageResponse<MovieResponse>>> getMovies(
             @PageableDefault(size = 20) Pageable pageable) {
         Page<MovieResponse> movies = adminMovieService.getMovies(pageable);
-        return ResponseEntity.ok(ApiResponse.success(movies));
+        return ResponseEntity.ok(ApiResponse.success(PageResponse.of(movies)));
     }
 
     /**
      * 영화 상세 조회
      */
     @GetMapping("/{movieId}")
-    public ResponseEntity<ApiResponse<MovieResponse>> getMovie(@PathVariable Long movieId) {
+    public ResponseEntity<ApiResponse<MovieResponse>> getMovie(@PathVariable("movieId") Long movieId) {
         MovieResponse movie = adminMovieService.getMovie(movieId);
         return ResponseEntity.ok(ApiResponse.success(movie));
     }

@@ -55,7 +55,7 @@ public class AdminMovieController {
      */
     @PutMapping("/{movieId}")
     public ResponseEntity<ApiResponse<Void>> updateMovie(
-            @PathVariable Long movieId,
+            @PathVariable("movieId") Long movieId,
             @Validated @RequestBody MovieUpdateRequest request) {
         adminMovieService.updateMovie(movieId, request);
         return ResponseEntity.ok(ApiResponse.success(null));
@@ -65,7 +65,7 @@ public class AdminMovieController {
      * 영화 삭제
      */
     @DeleteMapping("/{movieId}")
-    public ResponseEntity<ApiResponse<Void>> deleteMovie(@PathVariable Long movieId) {
+    public ResponseEntity<ApiResponse<Void>> deleteMovie(@PathVariable("movieId") Long movieId) {
         adminMovieService.deleteMovie(movieId);
         return ResponseEntity.ok(ApiResponse.success(null));
     }
@@ -85,7 +85,7 @@ public class AdminMovieController {
      * 영화 상세 조회
      */
     @GetMapping("/{movieId}")
-    public ResponseEntity<ApiResponse<MovieResponse>> getMovie(@PathVariable Long movieId) {
+    public ResponseEntity<ApiResponse<MovieResponse>> getMovie(@PathVariable("movieId") Long movieId) {
         MovieResponse movie = adminMovieService.getMovie(movieId);
         return ResponseEntity.ok(ApiResponse.success(movie));
     }

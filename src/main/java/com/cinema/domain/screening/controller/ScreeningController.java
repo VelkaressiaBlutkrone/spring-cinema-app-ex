@@ -28,6 +28,7 @@ import com.cinema.domain.screening.dto.SeatReleaseRequest;
 import com.cinema.domain.screening.service.SeatCommandService;
 import com.cinema.domain.screening.service.SeatStatusQueryService;
 import com.cinema.global.dto.ApiResponse;
+import com.cinema.global.dto.PageResponse;
 import com.cinema.global.exception.BusinessException;
 import com.cinema.global.exception.ErrorCode;
 import com.cinema.infrastructure.sse.SeatSseBroadcaster;
@@ -60,12 +61,13 @@ public class ScreeningController {
 
     /**
      * 상영 목록 조회 (사용자용 공개, 페이징)
+     * Page 대신 PageResponse 사용 (Gson 직렬화 문제 회피)
      */
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<ScreeningResponse>>> getScreenings(
+    public ResponseEntity<ApiResponse<PageResponse<ScreeningResponse>>> getScreenings(
             @PageableDefault(size = 20) Pageable pageable) {
         Page<ScreeningResponse> page = adminScreeningService.getScreenings(pageable);
-        return ResponseEntity.ok(ApiResponse.success(page));
+        return ResponseEntity.ok(ApiResponse.success(PageResponse.of(page)));
     }
 
     /**
@@ -73,7 +75,7 @@ public class ScreeningController {
      */
     @GetMapping("/by-movie")
     public ResponseEntity<ApiResponse<java.util.List<ScreeningResponse>>> getScreeningsByMovie(
-            @RequestParam Long movieId) {
+            @RequestParam("movieId") Long movieId) {
         java.util.List<ScreeningResponse> list = adminScreeningService.getScreeningsByMovie(movieId);
         return ResponseEntity.ok(ApiResponse.success(list));
     }
@@ -85,7 +87,7 @@ public class ScreeningController {
      */
     @GetMapping("/{screeningId}/seats")
     public ResponseEntity<ApiResponse<SeatLayoutResponse>> getSeatLayout(
-            @PathVariable Long screeningId) {
+            @PathVariable("screeningId") Long screeningId) {
         SeatLayoutResponse layout = seatStatusQueryService.getSeatLayout(screeningId);
         return ResponseEntity.ok(ApiResponse.success(layout));
     }
@@ -96,7 +98,7 @@ public class ScreeningController {
      * 인증 불필요 (GET /api/screenings/** permitAll)
      */
     @GetMapping(value = "/{screeningId}/seat-events", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public SseEmitter streamSeatEvents(@PathVariable Long screeningId) {
+    public SseEmitter streamSeatEvents(@PathVariable("screeningId") Long screeningId) {
         return seatSseBroadcaster.register(screeningId);
     }
 
@@ -106,8 +108,8 @@ public class ScreeningController {
      */
     @PostMapping("/{screeningId}/seats/{seatId}/hold")
     public ResponseEntity<ApiResponse<SeatHoldResponse>> hold(
-            @PathVariable Long screeningId,
-            @PathVariable Long seatId,
+            @PathVariable("screeningId") Long screeningId,
+            @PathVariable("seatId") Long seatId,
             Authentication authentication) {
         Long memberId = resolveMemberId(authentication);
         SeatHoldResponse response = seatCommandService.hold(screeningId, seatId, memberId);

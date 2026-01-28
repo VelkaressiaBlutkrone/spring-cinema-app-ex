@@ -58,7 +58,7 @@ public class AdminSeatController {
      */
     @PutMapping("/{seatId}")
     public ResponseEntity<ApiResponse<Void>> updateSeat(
-            @PathVariable Long seatId,
+            @PathVariable("seatId") Long seatId,
             @Validated @RequestBody SeatUpdateRequest request) {
         adminSeatService.updateSeat(seatId, request);
         return ResponseEntity.ok(ApiResponse.success(null));
@@ -68,7 +68,7 @@ public class AdminSeatController {
      * 좌석 삭제
      */
     @DeleteMapping("/{seatId}")
-    public ResponseEntity<ApiResponse<Void>> deleteSeat(@PathVariable Long seatId) {
+    public ResponseEntity<ApiResponse<Void>> deleteSeat(@PathVariable("seatId") Long seatId) {
         adminSeatService.deleteSeat(seatId);
         return ResponseEntity.ok(ApiResponse.success(null));
     }
@@ -88,7 +88,7 @@ public class AdminSeatController {
      * 좌석 상세 조회
      */
     @GetMapping("/{seatId}")
-    public ResponseEntity<ApiResponse<SeatResponse>> getSeat(@PathVariable Long seatId) {
+    public ResponseEntity<ApiResponse<SeatResponse>> getSeat(@PathVariable("seatId") Long seatId) {
         SeatResponse seat = adminSeatService.getSeat(seatId);
         return ResponseEntity.ok(ApiResponse.success(seat));
     }
@@ -98,7 +98,7 @@ public class AdminSeatController {
      */
     @GetMapping("/by-screen")
     public ResponseEntity<ApiResponse<List<SeatResponse>>> getSeatsByScreen(
-            @RequestParam Long screenId) {
+            @RequestParam("screenId") Long screenId) {
         List<SeatResponse> seats = adminSeatService.getSeatsByScreen(screenId);
         return ResponseEntity.ok(ApiResponse.success(seats));
     }

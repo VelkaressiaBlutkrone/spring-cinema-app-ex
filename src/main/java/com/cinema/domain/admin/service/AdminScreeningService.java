@@ -14,8 +14,12 @@ import com.cinema.domain.movie.entity.Movie;
 import com.cinema.domain.movie.repository.MovieRepository;
 import com.cinema.domain.screening.entity.Screen;
 import com.cinema.domain.screening.entity.Screening;
+import com.cinema.domain.screening.entity.ScreeningSeat;
+import com.cinema.domain.screening.entity.Seat;
+import com.cinema.domain.screening.entity.SeatStatus;
 import com.cinema.domain.screening.repository.ScreenRepository;
 import com.cinema.domain.screening.repository.ScreeningRepository;
+import com.cinema.domain.screening.repository.SeatRepository;
 import com.cinema.global.exception.BusinessException;
 import com.cinema.global.exception.ErrorCode;
 import com.cinema.global.exception.ScreeningException;
@@ -33,6 +37,7 @@ public class AdminScreeningService {
     private final ScreeningRepository screeningRepository;
     private final MovieRepository movieRepository;
     private final ScreenRepository screenRepository;
+    private final SeatRepository seatRepository;
 
     /**
      * 상영 스케줄 등록
@@ -54,7 +59,7 @@ public class AdminScreeningService {
             throw ScreeningException.timeOverlap(request.getScreenId());
         }
 
-        // 4. 저장
+        // 4. 상영 저장
         Screening screening = Screening.builder()
                 .movie(movie)
                 .screen(screen)
@@ -62,7 +67,22 @@ public class AdminScreeningService {
                 .endTime(endTime)
                 .build();
 
-        return screeningRepository.save(screening).getId();
+        screening = screeningRepository.save(screening);
+
+        // 5. 해당 상영관(Screen)의 좌석으로 ScreeningSeat 생성 → 예약 화면에서 좌석 노출
+        List<Seat> seats = seatRepository.findByScreenIdOrderByRowLabelAscSeatNoAsc(screen.getId());
+        for (Seat seat : seats) {
+            SeatStatus initialStatus = SeatStatus.valueOf(seat.getBaseStatus().name());
+            ScreeningSeat screeningSeat = ScreeningSeat.builder()
+                    .screening(screening)
+                    .seat(seat)
+                    .status(initialStatus)
+                    .build();
+            screening.addScreeningSeat(screeningSeat);
+        }
+        screeningRepository.save(screening);
+
+        return screening.getId();
     }
 
     /**
@@ -139,5 +159,30 @@ public class AdminScreeningService {
         return screeningRepository.findByScreenId(screenId).stream()
                 .map(ScreeningResponse::new)
                 .toList();
+    }
+
+    /**
+     * 상영에 ScreeningSeat이 없을 때 해당 상영관 좌석으로 초기화한다.
+     * (과거에 등록된 상영은 좌석이 없을 수 있으므로, 예약 화면 조회 시 자동 보정)
+     */
+    @Transactional
+    public void ensureScreeningSeats(Long screeningId) {
+        Screening screening = screeningRepository.findById(screeningId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.SCREENING_NOT_FOUND));
+        if (!screening.getScreeningSeats().isEmpty()) {
+            return;
+        }
+        Screen screen = screening.getScreen();
+        List<Seat> seats = seatRepository.findByScreenIdOrderByRowLabelAscSeatNoAsc(screen.getId());
+        for (Seat seat : seats) {
+            SeatStatus initialStatus = SeatStatus.valueOf(seat.getBaseStatus().name());
+            ScreeningSeat screeningSeat = ScreeningSeat.builder()
+                    .screening(screening)
+                    .seat(seat)
+                    .status(initialStatus)
+                    .build();
+            screening.addScreeningSeat(screeningSeat);
+        }
+        screeningRepository.save(screening);
     }
 }

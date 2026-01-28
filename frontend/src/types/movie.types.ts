@@ -21,7 +21,7 @@ export interface Movie {
   updatedAt?: string;
 }
 
-export type ScreeningStatus = 'SCHEDULED' | 'ONGOING' | 'ENDED' | 'CANCELLED';
+export type ScreeningStatus = 'SCHEDULED' | 'NOW_SHOWING' | 'ONGOING' | 'ENDED' | 'CANCELLED';
 
 export interface Screening {
   id: number;
@@ -29,9 +29,19 @@ export interface Screening {
   movieTitle: string;
   screenId: number;
   screenName: string;
+  theaterName?: string;
   startTime: string;
   endTime: string;
   status: ScreeningStatus;
   createdAt?: string;
   updatedAt?: string;
 }
+
+/** 상영 상태 라벨 (표시용) */
+export const SCREENING_STATUS_LABEL: Record<string, string> = {
+  SCHEDULED: '상영 예정',
+  NOW_SHOWING: '상영 중',
+  ONGOING: '상영 중',
+  ENDED: '상영 종료',
+  CANCELLED: '상영 취소',
+};

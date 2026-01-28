@@ -66,7 +66,7 @@ public class ReservationController {
      */
     @GetMapping("/{reservationId}")
     public ResponseEntity<ApiResponse<ReservationDetailResponse>> getReservationDetail(
-            @PathVariable Long reservationId,
+            @PathVariable("reservationId") Long reservationId,
             Authentication authentication) {
         Long memberId = resolveMemberId(authentication);
         ReservationDetailResponse detail = reservationPaymentService.getReservationDetail(memberId, reservationId);
@@ -78,7 +78,7 @@ public class ReservationController {
      */
     @PostMapping("/{reservationId}/cancel")
     public ResponseEntity<ApiResponse<Void>> cancelReservation(
-            @PathVariable Long reservationId,
+            @PathVariable("reservationId") Long reservationId,
             Authentication authentication) {
         Long memberId = resolveMemberId(authentication);
         reservationPaymentService.cancelReservation(memberId, reservationId);

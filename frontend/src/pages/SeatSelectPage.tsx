@@ -14,6 +14,7 @@ import { getErrorMessage } from '@/utils/errorHandler';
 import { formatDate } from '@/utils/dateUtils';
 import type { SeatStatusItem } from '@/types/seat.types';
 import type { Screening } from '@/types/movie.types';
+import { SCREENING_STATUS_LABEL } from '@/types/movie.types';
 
 interface HeldSeat {
   seat: SeatStatusItem;
@@ -168,7 +169,11 @@ export function SeatSelectPage() {
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">
-            {screening ? `${screening.movieTitle} - ${screening.screenName}` : `상영 #${id} 좌석 선택`}
+            {screening
+              ? ([screening.theaterName, screening.screenName, SCREENING_STATUS_LABEL[screening.status] ?? screening.status]
+                  .filter(Boolean)
+                  .join(' - ') || `${screening.movieTitle} - ${screening.screenName}`)
+              : `상영 #${id} 좌석 선택`}
           </h1>
           {screening && (
             <p className="mt-1 text-gray-600">

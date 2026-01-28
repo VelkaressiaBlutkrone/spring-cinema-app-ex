@@ -58,7 +58,7 @@ public class AdminScreeningController {
      */
     @PutMapping("/{screeningId}")
     public ResponseEntity<ApiResponse<Void>> updateScreening(
-            @PathVariable Long screeningId,
+            @PathVariable("screeningId") Long screeningId,
             @Validated @RequestBody ScreeningUpdateRequest request) {
         adminScreeningService.updateScreening(screeningId, request);
         return ResponseEntity.ok(ApiResponse.success(null));
@@ -68,7 +68,7 @@ public class AdminScreeningController {
      * 상영 스케줄 삭제
      */
     @DeleteMapping("/{screeningId}")
-    public ResponseEntity<ApiResponse<Void>> deleteScreening(@PathVariable Long screeningId) {
+    public ResponseEntity<ApiResponse<Void>> deleteScreening(@PathVariable("screeningId") Long screeningId) {
         adminScreeningService.deleteScreening(screeningId);
         return ResponseEntity.ok(ApiResponse.success(null));
     }
@@ -88,7 +88,7 @@ public class AdminScreeningController {
      * 상영 스케줄 상세 조회
      */
     @GetMapping("/{screeningId}")
-    public ResponseEntity<ApiResponse<ScreeningResponse>> getScreening(@PathVariable Long screeningId) {
+    public ResponseEntity<ApiResponse<ScreeningResponse>> getScreening(@PathVariable("screeningId") Long screeningId) {
         ScreeningResponse screening = adminScreeningService.getScreening(screeningId);
         return ResponseEntity.ok(ApiResponse.success(screening));
     }
@@ -98,7 +98,7 @@ public class AdminScreeningController {
      */
     @GetMapping("/by-movie")
     public ResponseEntity<ApiResponse<List<ScreeningResponse>>> getScreeningsByMovie(
-            @RequestParam Long movieId) {
+            @RequestParam("movieId") Long movieId) {
         List<ScreeningResponse> screenings = adminScreeningService.getScreeningsByMovie(movieId);
         return ResponseEntity.ok(ApiResponse.success(screenings));
     }
@@ -108,7 +108,7 @@ public class AdminScreeningController {
      */
     @GetMapping("/by-screen")
     public ResponseEntity<ApiResponse<List<ScreeningResponse>>> getScreeningsByScreen(
-            @RequestParam Long screenId) {
+            @RequestParam("screenId") Long screenId) {
         List<ScreeningResponse> screenings = adminScreeningService.getScreeningsByScreen(screenId);
         return ResponseEntity.ok(ApiResponse.success(screenings));
     }

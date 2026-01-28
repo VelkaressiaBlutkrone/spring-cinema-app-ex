@@ -18,6 +18,7 @@ public class ScreeningResponse {
     private String movieTitle;
     private Long screenId;
     private String screenName;
+    private String theaterName;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private ScreeningStatus status;
@@ -30,6 +31,7 @@ public class ScreeningResponse {
         this.movieTitle = screening.getMovie().getTitle();
         this.screenId = screening.getScreen().getId();
         this.screenName = screening.getScreen().getName();
+        this.theaterName = screening.getScreen().getTheater().getName();
         this.startTime = screening.getStartTime();
         this.endTime = screening.getEndTime();
         this.status = screening.getStatus();

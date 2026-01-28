@@ -11,6 +11,7 @@ import { useToast } from '@/hooks';
 import { getErrorMessage } from '@/utils/errorHandler';
 import { formatDate } from '@/utils/dateUtils';
 import type { Movie, Screening } from '@/types/movie.types';
+import { SCREENING_STATUS_LABEL } from '@/types/movie.types';
 import type { SpringPage } from '@/types/api.types';
 
 export function MoviesPage() {
@@ -143,7 +144,11 @@ export function MoviesPage() {
                       key={s.id}
                       className="flex items-center justify-between gap-2 rounded bg-gray-50 px-3 py-2 text-sm"
                     >
-                      <span>{s.screenName}</span>
+                      <span>
+                        {[s.theaterName, s.screenName, SCREENING_STATUS_LABEL[s.status] ?? s.status]
+                          .filter(Boolean)
+                          .join(' - ')}
+                      </span>
                       <span className="text-gray-600">
                         {formatDate(s.startTime, 'YYYY-MM-DD HH:mm')} ~{' '}
                         {formatDate(s.endTime, 'HH:mm')}

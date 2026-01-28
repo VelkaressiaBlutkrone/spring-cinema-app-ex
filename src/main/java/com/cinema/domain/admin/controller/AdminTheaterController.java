@@ -55,7 +55,7 @@ public class AdminTheaterController {
      */
     @PutMapping("/{theaterId}")
     public ResponseEntity<ApiResponse<Void>> updateTheater(
-            @PathVariable Long theaterId,
+            @PathVariable("theaterId") Long theaterId,
             @Validated @RequestBody TheaterUpdateRequest request) {
         adminTheaterService.updateTheater(theaterId, request);
         return ResponseEntity.ok(ApiResponse.success(null));
@@ -65,7 +65,7 @@ public class AdminTheaterController {
      * 영화관 삭제
      */
     @DeleteMapping("/{theaterId}")
-    public ResponseEntity<ApiResponse<Void>> deleteTheater(@PathVariable Long theaterId) {
+    public ResponseEntity<ApiResponse<Void>> deleteTheater(@PathVariable("theaterId") Long theaterId) {
         adminTheaterService.deleteTheater(theaterId);
         return ResponseEntity.ok(ApiResponse.success(null));
     }
@@ -85,7 +85,7 @@ public class AdminTheaterController {
      * 영화관 상세 조회
      */
     @GetMapping("/{theaterId}")
-    public ResponseEntity<ApiResponse<TheaterResponse>> getTheater(@PathVariable Long theaterId) {
+    public ResponseEntity<ApiResponse<TheaterResponse>> getTheater(@PathVariable("theaterId") Long theaterId) {
         TheaterResponse theater = adminTheaterService.getTheater(theaterId);
         return ResponseEntity.ok(ApiResponse.success(theater));
     }
