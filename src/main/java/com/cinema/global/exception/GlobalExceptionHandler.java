@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -140,6 +141,26 @@ public class GlobalExceptionHandler {
         log.warn("[NoResourceFoundException] path={}", e.getResourcePath());
         return ErrorResponse.of(HttpStatus.NOT_FOUND, "NOT_FOUND",
                 "요청한 리소스를 찾을 수 없습니다: " + e.getResourcePath());
+    }
+
+    /**
+     * 요청 메서드 미지원 예외 처리 (GET/POST 혼동 등)
+     */
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ErrorResponse> handleHttpRequestMethodNotSupportedException(
+            HttpRequestMethodNotSupportedException e) {
+        String supported = e.getSupportedHttpMethods() == null ? ""
+                : e.getSupportedHttpMethods().stream().map(org.springframework.http.HttpMethod::name)
+                        .collect(Collectors.joining(", "));
+
+        log.warn("[MethodNotSupported] method={}, supported={}, message={}",
+                e.getMethod(), supported, e.getMessage());
+
+        String message = supported.isBlank()
+                ? "요청 메서드가 지원되지 않습니다."
+                : "요청 메서드가 지원되지 않습니다. 지원 메서드: " + supported;
+
+        return ErrorResponse.of(HttpStatus.METHOD_NOT_ALLOWED, "METHOD_NOT_ALLOWED", message);
     }
 
     /**

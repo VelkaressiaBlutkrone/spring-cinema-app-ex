@@ -1,8 +1,9 @@
+-- 비밀번호: password123 (BCrypt 해시 - BCryptPasswordEncoder 기본 설정으로 생성)
 INSERT INTO member (login_id, password_hash, name, phone, email, role, status, created_at, updated_at) VALUES
-('admin', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZRGdjGj/n3.TgvJLxJH7JpK3K8W7K', '관리자', '010-0000-0000', 'admin@cinema.com', 'ADMIN', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('user1', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZRGdjGj/n3.TgvJLxJH7JpK3K8W7K', '테스트유저1', '010-1111-1111', 'user1@test.com', 'USER', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('user2', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZRGdjGj/n3.TgvJLxJH7JpK3K8W7K', '테스트유저2', '010-2222-2222', 'user2@test.com', 'USER', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('user3', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZRGdjGj/n3.TgvJLxJH7JpK3K8W7K', '테스트유저3', '010-3333-3333', 'user3@test.com', 'USER', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+('admin', '$2a$10$Ey4/9UUYGcLkmM36IiSrHuRCCL7A62MLX64kgMfR9W1Q3XiKl9v2K', '관리자', '010-0000-0000', 'admin@cinema.com', 'ADMIN', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('user1', '$2a$10$Ey4/9UUYGcLkmM36IiSrHuRCCL7A62MLX64kgMfR9W1Q3XiKl9v2K', '테스트유저1', '010-1111-1111', 'user1@test.com', 'USER', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('user2', '$2a$10$Ey4/9UUYGcLkmM36IiSrHuRCCL7A62MLX64kgMfR9W1Q3XiKl9v2K', '테스트유저2', '010-2222-2222', 'user2@test.com', 'USER', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('user3', '$2a$10$Ey4/9UUYGcLkmM36IiSrHuRCCL7A62MLX64kgMfR9W1Q3XiKl9v2K', '테스트유저3', '010-3333-3333', 'user3@test.com', 'USER', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 INSERT INTO movie (title, description, running_time, rating, genre, director, actors, poster_url, release_date, status, created_at, updated_at) VALUES
 ('어벤져스: 엔드게임', '마블 시네마틱 유니버스의 대서사시', 181, '12세 이상', 'ACTION', '안소니 루소, 조 루소', '로버트 다우니 주니어, 크리스 에반스', NULL, '2019-04-24', 'SHOWING', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
