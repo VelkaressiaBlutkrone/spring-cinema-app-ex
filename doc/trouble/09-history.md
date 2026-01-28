@@ -21,3 +21,9 @@
 | 2026-01-28 | QueryDSL Q클래스 "The type Q... is already defined" 중복 정의               | `bin` 폴더 삭제, Gradle만 사용해 빌드(`.\gradlew clean compileJava`), IDE에서 Gradle 빌드 사용                | -      |
 | 2026-01-28 | Could not find or load main class com.cinema.CinemaApplication              | `.\gradlew clean bootRun` 또는 Gradle 뷰에서 bootRun 실행. 필요 시 "Java: Clean Java Language Server Workspace" 후 launch/디버그 사용 | -      |
 | 2026-01-28 | Redis 연결 실패 시 서버 종료 문제 (RedisConnectionException)                | RedissonConfig에서 try-catch 처리, DistributedLockManager/RedisService에서 null 안전 처리 (Graceful Degradation) | -      |
+| 2026-01-28 | H2 Console 404 (Spring Boot 4에서 /h2-console 미등록)                        | H2WebConsoleServerConfig로 Web Console 별도 포트(8082) 기동, H2 의존성 implementation으로 변경                 | -      |
+| 2026-01-28 | SQL 초기화(test_data.sql) 미실행                                              | application.yml의 sql.init.mode를 never → embedded로 변경                                                     | -      |
+| 2026-01-28 | admin 로그인 시 passwordEncoder.matches 통과 실패                            | DevDataLoader 추가(dev 기동 후 테스트 계정 비밀번호를 앱 PasswordEncoder로 "password123" 설정), test_data.sql 해시 갱신 | -      |
+| 2026-01-28 | HttpRequestMethodNotSupportedException (GET is not supported)               | GlobalExceptionHandler에 405 핸들러 추가                                                                       | -      |
+| 2026-01-28 | F5 실행 시 cinema-backend not valid java project                             | launch.json에 "Run Spring Boot (Gradle)"(node-terminal) 구성 추가                                             | -      |
+| 2026-01-28 | H2ConsoleConfig JakartaWebServlet 컴파일 오류                                | H2ConsoleConfig 제거, H2 Web Console은 H2WebConsoleServerConfig(8082)로만 제공                                | -      |

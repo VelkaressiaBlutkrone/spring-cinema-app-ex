@@ -24,6 +24,7 @@ import com.cinema.domain.admin.dto.ScreenResponse;
 import com.cinema.domain.admin.dto.ScreenUpdateRequest;
 import com.cinema.domain.admin.service.AdminScreenService;
 import com.cinema.global.dto.ApiResponse;
+import com.cinema.global.dto.PageResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -74,12 +75,13 @@ public class AdminScreenController {
 
     /**
      * 상영관 목록 조회 (페이징)
+     * Page 대신 PageResponse 사용 (Gson이 PageImpl을 올바르게 직렬화하지 못하는 문제 회피)
      */
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<ScreenResponse>>> getScreens(
+    public ResponseEntity<ApiResponse<PageResponse<ScreenResponse>>> getScreens(
             @PageableDefault(size = 20) Pageable pageable) {
         Page<ScreenResponse> screens = adminScreenService.getScreens(pageable);
-        return ResponseEntity.ok(ApiResponse.success(screens));
+        return ResponseEntity.ok(ApiResponse.success(PageResponse.of(screens)));
     }
 
     /**

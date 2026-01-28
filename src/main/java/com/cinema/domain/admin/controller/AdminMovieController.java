@@ -21,6 +21,7 @@ import com.cinema.domain.admin.dto.MovieResponse;
 import com.cinema.domain.admin.dto.MovieUpdateRequest;
 import com.cinema.domain.admin.service.AdminMovieService;
 import com.cinema.global.dto.ApiResponse;
+import com.cinema.global.dto.PageResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -71,12 +72,13 @@ public class AdminMovieController {
 
     /**
      * 영화 목록 조회 (페이징)
+     * Page 대신 PageResponse 사용 (Gson이 PageImpl을 올바르게 직렬화하지 못하는 문제 회피)
      */
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<MovieResponse>>> getMovies(
+    public ResponseEntity<ApiResponse<PageResponse<MovieResponse>>> getMovies(
             @PageableDefault(size = 20) Pageable pageable) {
         Page<MovieResponse> movies = adminMovieService.getMovies(pageable);
-        return ResponseEntity.ok(ApiResponse.success(movies));
+        return ResponseEntity.ok(ApiResponse.success(PageResponse.of(movies)));
     }
 
     /**

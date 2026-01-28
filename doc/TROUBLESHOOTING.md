@@ -17,6 +17,7 @@
 | [07-cinema-app.md](./trouble/07-cinema-app.md) | Cinema App 프로젝트 관련 문제 (QueryDSL, Redis, DDD 등) |
 | [08-config-guide.md](./trouble/08-config-guide.md) | 설정 가이드 (Path Alias 등) |
 | [09-history.md](./trouble/09-history.md) | 문제 해결 이력 테이블 |
+| [10-recent-issues.md](./trouble/10-recent-issues.md) | **최근 해결한 문제점 (2026-01-28)** |
 
 ## 빠른 검색
 

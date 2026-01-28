@@ -21,6 +21,7 @@ import com.cinema.domain.admin.dto.TheaterResponse;
 import com.cinema.domain.admin.dto.TheaterUpdateRequest;
 import com.cinema.domain.admin.service.AdminTheaterService;
 import com.cinema.global.dto.ApiResponse;
+import com.cinema.global.dto.PageResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -71,12 +72,13 @@ public class AdminTheaterController {
 
     /**
      * 영화관 목록 조회 (페이징)
+     * Page 대신 PageResponse 사용 (Gson이 PageImpl을 올바르게 직렬화하지 못하는 문제 회피)
      */
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<TheaterResponse>>> getTheaters(
+    public ResponseEntity<ApiResponse<PageResponse<TheaterResponse>>> getTheaters(
             @PageableDefault(size = 20) Pageable pageable) {
         Page<TheaterResponse> theaters = adminTheaterService.getTheaters(pageable);
-        return ResponseEntity.ok(ApiResponse.success(theaters));
+        return ResponseEntity.ok(ApiResponse.success(PageResponse.of(theaters)));
     }
 
     /**

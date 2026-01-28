@@ -1,3 +1,8 @@
 export { AdminLoginPage } from '@/pages/admin/AdminLoginPage';
 export { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage';
 export { AdminPlaceholderPage } from '@/pages/admin/AdminPlaceholderPage';
+export { AdminMoviesPage } from '@/pages/admin/AdminMoviesPage';
+export { AdminTheatersPage } from '@/pages/admin/AdminTheatersPage';
+export { AdminScreensPage } from '@/pages/admin/AdminScreensPage';
+export { AdminScreeningsPage } from '@/pages/admin/AdminScreeningsPage';
+export { AdminSeatsPage } from '@/pages/admin/AdminSeatsPage';

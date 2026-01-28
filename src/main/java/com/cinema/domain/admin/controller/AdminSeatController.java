@@ -24,6 +24,7 @@ import com.cinema.domain.admin.dto.SeatResponse;
 import com.cinema.domain.admin.dto.SeatUpdateRequest;
 import com.cinema.domain.admin.service.AdminSeatService;
 import com.cinema.global.dto.ApiResponse;
+import com.cinema.global.dto.PageResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -74,12 +75,13 @@ public class AdminSeatController {
 
     /**
      * 좌석 목록 조회 (페이징)
+     * Page 대신 PageResponse 사용 (Gson 직렬화 문제 회피)
      */
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<SeatResponse>>> getSeats(
+    public ResponseEntity<ApiResponse<PageResponse<SeatResponse>>> getSeats(
             @PageableDefault(size = 20) Pageable pageable) {
         Page<SeatResponse> seats = adminSeatService.getSeats(pageable);
-        return ResponseEntity.ok(ApiResponse.success(seats));
+        return ResponseEntity.ok(ApiResponse.success(PageResponse.of(seats)));
     }
 
     /**

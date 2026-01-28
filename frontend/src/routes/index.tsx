@@ -14,7 +14,11 @@ import {
   ReservationDetailPage,
   AdminLoginPage,
   AdminDashboardPage,
-  AdminPlaceholderPage,
+  AdminMoviesPage,
+  AdminTheatersPage,
+  AdminScreensPage,
+  AdminScreeningsPage,
+  AdminSeatsPage,
 } from '@/pages';
 
 export const router = createBrowserRouter([
@@ -38,11 +42,11 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <AdminDashboardPage /> },
       { path: 'login', element: <AdminLoginPage /> },
-      { path: 'movies', element: <AdminPlaceholderPage /> },
-      { path: 'theaters', element: <AdminPlaceholderPage /> },
-      { path: 'screens', element: <AdminPlaceholderPage /> },
-      { path: 'screenings', element: <AdminPlaceholderPage /> },
-      { path: 'seats', element: <AdminPlaceholderPage /> },
+      { path: 'movies', element: <AdminMoviesPage /> },
+      { path: 'theaters', element: <AdminTheatersPage /> },
+      { path: 'screens', element: <AdminScreensPage /> },
+      { path: 'screenings', element: <AdminScreeningsPage /> },
+      { path: 'seats', element: <AdminSeatsPage /> },
     ],
   },
   { path: '*', element: <Navigate to="/" replace /> },
