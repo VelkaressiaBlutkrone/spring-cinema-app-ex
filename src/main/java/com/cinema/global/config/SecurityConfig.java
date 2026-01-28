@@ -49,6 +49,10 @@ public class SecurityConfig {
                 // CSRF 비활성화 (REST API, Stateless)
                 .csrf(AbstractHttpConfigurer::disable)
 
+                // H2 Console은 iframe 사용 - 동일 출처에서만 허용
+                .headers(headers -> headers
+                        .frameOptions(frameOptions -> frameOptions.sameOrigin()))
+
                 // 세션 미사용 (JWT 기반 인증)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
@@ -73,6 +77,9 @@ public class SecurityConfig {
 
                         // Swagger/API 문서
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+
+                        // H2 Console (개발 환경 전용)
+                        .requestMatchers("/h2-console/**").permitAll()
 
                         // ========================================
                         // Admin 전용 엔드포인트

@@ -13,6 +13,18 @@ spring:
       quiet-period: 1s
     livereload:
       enabled: true
+  
+
+  ########################################
+  # H2 Console (DEV 전용)
+  ########################################
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        trace: false          # SQL 트레이스 비활성화
+        web-allow-others: false  # 외부 접속 차단 (보안)
 
   ########################################
   # DataSource (H2)
@@ -32,24 +44,31 @@ spring:
   # JPA (H2)
   ########################################
   jpa:
-    open-in-view: false
-    defer-datasource-initialization: true   # DataSource 초기화 지연
+    open-in-view: true
+    defer-datasource-initialization: true   # JPA 스키마 생성 후 SQL 실행
     hibernate:
-      ddl-auto: update                      # 개발 환경: 자동 스키마 생성
+      ddl-auto: create                      # 개발 환경: 자동 스키마 생성 (매번 새로 생성)
     show-sql: true
     properties:
       hibernate:
         format_sql: true
         dialect: org.hibernate.dialect.H2Dialect  # H2용 dialect
 
+  ########################################
+  # SQL Init (테스트 데이터 로드, DEV 전용)
+  ########################################
+  sql:
+    init:
+      mode: always                          # 항상 SQL 초기화 실행
+      data-locations: classpath:data/test_data.sql
+      continue-on-error: false              # 에러 시 중단 (디버깅용)
+      encoding: UTF-8                       # 한글 인코딩
+
 ########################################
 # Logging (개발 환경)
+# 상세 설정: logback-spring.xml 참조
 ########################################
 logging:
-  level:
-    root: INFO
-    "[com.cinema]": DEBUG
-    "[org.springframework]": INFO
-    "[org.springframework.web]": DEBUG
-    "[org.hibernate.SQL]": DEBUG
-    "[org.hibernate.orm.jdbc.bind]": TRACE
+  charset:
+    console: UTF-8
+    file: UTF-8
