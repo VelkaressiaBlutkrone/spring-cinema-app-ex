@@ -340,6 +340,47 @@ lock:seat:{screeningId}:{seatId}       # 분산 락
 
 ## 9. 보안 규칙
 
+### 9.0 인증·통신 보안 요구사항 (필수)
+
+아래 요구사항은 **모든 인증 관련 기능(회원가입, 로그인, 비밀번호 변경, 토큰 갱신 등)**에 필수 적용한다. 상세 구현·흐름은 `doc/SECURITY_AUTH.md` 참고.
+
+1. **HTTPS 전제**
+   - 인증 관련 통신은 **HTTPS** 위에서만 동작하도록 가정한다.
+   - 운영 환경에서는 `server.ssl` 설정 및 Security 설정에서 `requiresSecure()` 적용을 권장한다.
+
+2. **기밀성(Confidentiality) — Hybrid Encryption (RSA + AES-GCM)**
+   - 비밀번호·개인정보 등 민감 데이터는 **클라이언트 → 서버** 방향으로 Hybrid Encryption을 적용한다.
+   - **서버**: RSA 공개키 제공 (예: `GET /api/public-key`).
+   - **클라이언트**: 일회성 AES-256-GCM 키 생성 → 해당 키로 민감 데이터 암호화 → AES 키를 서버 RSA 공개키로 암호화하여 `encryptedKey`, `iv`, `encryptedData` 형태로 전송.
+   - **서버**: RSA 개인키로 AES 키 복호화 → AES-GCM으로 데이터 복호화.
+
+3. **무결성(Integrity)**
+   - AES-GCM 모드 사용 (인증 태그로 위변조 검증).
+
+4. **가용성(Availability)**
+   - DoS 방어: rate limiting (로그인/회원가입/토큰갱신 등), 회원가입 시 CAPTCHA 검토, 에러 메시지 최소화(정보 유출 방지).
+
+5. **OWASP 준수**
+   - OWASP Authentication Cheat Sheet, OWASP API Security Top 10, OWASP Mobile Top 10을 준수한다.
+
+6. **추가 보안 조치 (필수 또는 강력 추천)**
+   - **비밀번호**: BCrypt 또는 Argon2id 해싱 (Spring Security `PasswordEncoder`).
+   - **JWT**: Access Token 수명 15분, Refresh Token은 HttpOnly + Secure + SameSite=Strict 쿠키 또는 모바일은 secure storage.
+   - **CSRF / XSS**: React + Spring 양쪽에서 방어.
+   - **CORS**: 설정 엄격화 (운영에서 허용 오리진 제한).
+   - **입력 검증·출력 인코딩**: 철저히 적용.
+   - **브루트포스 방어**: 로그인 실패 횟수 제한(계정 잠금 등).
+   - **Flutter**: `flutter_secure_storage` 또는 hive + encryption 사용 권장.
+
+7. **보안 취약점 대응**
+   - 취약점 발견 시 **반드시 지적**하고, **위험 이유**와 **수정 방법**을 문서화·코드에 반영한다.
+
+8. **구현 참고**
+   - **Spring Boot**: Controller, Service, Security Config, RSA 키 관리, Hybrid 복호화, Refresh 쿠키, Rate Limit, Brute-Force 방어 등 → `doc/SECURITY_AUTH.md` 및 `global.security`, `domain.member` 패키지 참고.
+   - **React**: auth API 호출, RSA+AES 암호화(`utils/hybridEncryption`), `withCredentials` 등 → `doc/SECURITY_AUTH.md` 및 `frontend/src/api/auth.ts`, `frontend/src/utils/hybridEncryption.ts` 참고.
+   - **Flutter**: `encrypt`·`pointycastle`·`asn1lib` 기반 Hybrid 암호화, `flutter_secure_storage` → `doc/SECURITY_AUTH.md` 및 `mobile/lib/utils/hybrid_encryption.dart`, `mobile/lib/services/auth_api_service.dart` 참고.
+   - **의존성**: `build.gradle`, `package.json`, `pubspec.yaml` 추가 내용 및 **전체 흐름 다이어그램(Mermaid)** 은 `doc/SECURITY_AUTH.md`에 정리되어 있다.
+
 ### 9.1 인증
 
 - **JWT Access Token 유효시간 ≤ 15분**
@@ -348,6 +389,7 @@ lock:seat:{screeningId}:{seatId}       # 분산 락
 
 - **Refresh Token은 Redis 저장**
   - Refresh Token은 Redis에 저장하여 관리
+  - 웹: HttpOnly + Secure + SameSite=Strict 쿠키로 전달. 모바일: secure storage에 저장 후 Cookie 헤더 또는 동일 정책으로 전달
   - 토큰 무효화 및 세션 관리 용이
 
 ### 9.2 관리자 API
@@ -537,6 +579,7 @@ lock:seat:{screeningId}:{seatId}       # 분산 락
 - [ ] 비동기 이벤트가 멱등성을 보장하는가?
 - [ ] 개인정보가 로그에 기록되지 않는가?
 - [ ] 관리자 API에 인증 및 권한 검사가 있는가?
+- [ ] **인증·통신 보안**: 로그인/회원가입 등 민감 데이터에 Hybrid Encryption(RSA+AES-GCM) 적용, JWT 15분·Refresh 쿠키/secure storage, rate limit·브루트포스 방어 등 `doc/SECURITY_AUTH.md`·`doc/RULE.md` 9.0 준수 여부를 확인했는가?
 - [ ] 예외 처리가 공통 예외(`BusinessException`, `ErrorCode`, 도메인 예외)를 사용하는가?
 - [ ] **다수 조인이 필요한 쿼리는 QueryDSL을 사용하는가?**
 - [ ] **동적 쿼리는 QueryDSL을 사용하는가?**
