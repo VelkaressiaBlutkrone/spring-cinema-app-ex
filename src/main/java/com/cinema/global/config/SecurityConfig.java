@@ -71,6 +71,8 @@ public class SecurityConfig {
                         // 영화 조회 (GET)
                         .requestMatchers(HttpMethod.GET, "/api/movies/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/screenings/**").permitAll()
+                        // 메인 화면 홈 API (Step 10)
+                        .requestMatchers(HttpMethod.GET, "/api/home/**").permitAll()
 
                         // Health Check
                         .requestMatchers("/health", "/actuator/health").permitAll()

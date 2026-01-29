@@ -59,4 +59,14 @@ public interface ScreeningRepositoryCustom {
      * @return 겹치는 상영 스케줄 목록
      */
     List<Screening> findOverlappingScreenings(Long screenId, LocalDateTime startTime, LocalDateTime endTime);
+
+    /**
+     * 기간 내 상영 예정/상영 중 상영 스케줄 조회 (CANCELLED 제외)
+     * startTime >= from, startTime < to
+     *
+     * @param from 시작 시각 (이후)
+     * @param to   종료 시각 (미만)
+     * @return 상영 스케줄 목록
+     */
+    List<Screening> findUpcomingScreenings(LocalDateTime from, LocalDateTime to);
 }

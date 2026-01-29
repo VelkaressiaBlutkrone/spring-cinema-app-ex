@@ -223,12 +223,12 @@ domain/
   - [x] 상영관별 좌석 배치 설정
   - [x] 좌석 타입 설정
   - [x] 좌석 상태 관리 (BLOCKED, DISABLED 설정)
-- [ ] 관리자 API Rate Limit 설정 (Step 16에서 구현 예정)
+- [ ] 관리자 API Rate Limit 설정 (Step 17에서 구현 예정)
 
 ### 체크리스트
 
 - [x] `/api/admin/**` 경로는 Role 기반 접근 필수 확인
-- [ ] 관리자 API 별도 Rate Limit 적용 확인 (Step 16에서 구현 예정)
+- [ ] 관리자 API 별도 Rate Limit 적용 확인 (Step 17에서 구현 예정)
 - [x] 일반 사용자는 관리자 API 접근 불가 확인
 - [x] 모든 관리자 API 인증/권한 검사 확인
 - [x] CRUD 기능 정상 동작 확인
@@ -589,7 +589,42 @@ domain/
 
 ---
 
-## Step 10: 사용자 웹 (React) - 좌석 선택 (Canvas/SVG) 및 예매
+## Step 10: 사용자 메인 화면 개선
+
+### 목표
+
+- 메인 페이지에 예매 목록, 상영 예정 영화, 영화관/상영관 상태 표시 추가
+
+### 작업 내용
+
+- [x] **현재 사용자의 예매 목록** 표시 (메인 화면)
+  - 로그인 사용자에 한해 최근 예매 내역 요약 노출 (최근 5건, "예매 내역" 링크 연결)
+- [x] **현재 일자 기준 3일 이내 상영 예정 영화 목록** 표시 (메인 화면)
+  - 상영 시작일이 오늘 ~ +3일 이내인 영화 목록 (중복 제거)
+  - GET /api/home/upcoming-movies?days=3 신규 API 사용
+- [x] **영화관/상영관 현재 상태** 간단 표시 (메인 화면)
+  - 영화관·상영관 운영 현황 요약 (영화관 수, 상영관 수, 오늘 상영 수)
+
+### 체크리스트
+
+- [x] 로그인 사용자 메인에서 예매 목록(요약) 노출 확인
+- [x] 3일 이내 상영 예정 영화 목록 노출 확인
+- [x] 영화관/상영관 상태 요약 노출 확인
+
+### 구현된 모듈
+
+- **Backend**: `HomeController` (GET /api/home/stats, GET /api/home/upcoming-movies), `HomeService`, `HomeStatsResponse`, `UpcomingMovieItem`
+- **Backend**: `ScreeningRepositoryCustom.findUpcomingScreenings` (기간 내 상영 조회, CANCELLED 제외)
+- **Frontend**: `src/api/home.ts` (homeApi.getStats, homeApi.getUpcomingMovies)
+- **Frontend**: `HomePage` — 영화관 현황, 3일 이내 상영 예정 영화, 나의 최근 예매(로그인 시), 영화 목록 카드
+
+### 예상 소요 시간
+
+2-3일
+
+---
+
+## Step 11: 사용자 웹 (React) - 좌석 선택 (Canvas/SVG) 및 예매
 
 ### 목표
 
@@ -620,7 +655,7 @@ domain/
   - [x] Optimistic UI (HOLD 직후 로컬 상태 반영) 및 롤백(에러 시 재조회)
 - [x] 좌석 선택 페이지 전체 플로우 구현 (SeatSelectPage, /book/:screeningId)
 - [x] 에러 처리 및 사용자 피드백 (useToast, getErrorMessage)
-- [x] 영화 목록 모달에서 "예매하기" → 좌석 선택 → "결제하기" → 결제 페이지(Step 11 연동 예정)
+- [x] 영화 목록 모달에서 "예매하기" → 좌석 선택 → "결제하기" → 결제 페이지(Step 12 연동 예정)
 
 ### 체크리스트
 
@@ -640,7 +675,7 @@ domain/
 - `src/components/booking/SeatMap.tsx`: SVG 좌석 맵
 - `src/components/booking/HoldTimer.tsx`: 서버 기준 만료 타이머
 - `src/pages/SeatSelectPage.tsx`: 좌석 선택 페이지
-- 라우트: `/book/:screeningId`, `/payment/:screeningId`(Step 11 placeholder)
+- 라우트: `/book/:screeningId`, `/payment/:screeningId`(Step 12 placeholder)
 
 ### 예상 소요 시간
 
@@ -648,7 +683,7 @@ domain/
 
 ---
 
-## Step 11: 사용자 웹 (React) - 결제 페이지
+## Step 12: 사용자 웹 (React) - 결제 페이지
 
 ### 목표
 
@@ -705,7 +740,7 @@ domain/
 
 ---
 
-## Step 12: 관리자 웹 (React) - 기본 구조 및 인증
+## Step 13: 관리자 웹 (React) - 기본 구조 및 인증
 
 ### 목표
 
@@ -726,7 +761,7 @@ domain/
   - [x] 사이드바 네비게이션 (대시보드, 영화/영화관/상영관/상영스케줄/좌석 관리 링크)
   - [x] 헤더 (로고, “사용자 사이트” 링크, 로그아웃)
   - [x] 컨텐츠 영역 (Outlet)
-- [x] 관리자 API 클라이언트 설정 (동일 axiosInstance, path `/admin/...` → Step 13에서 실제 API 호출)
+- [x] 관리자 API 클라이언트 설정 (동일 axiosInstance, path `/admin/...` → Step 14에서 실제 API 호출)
 - [x] 인증 실패 시 리다이렉트 처리:
   - [x] 비인증 → /admin/login
   - [x] 비관리자(USER 등) → /
@@ -746,7 +781,7 @@ domain/
 - `src/layouts/AdminLayout.tsx`: 사이드바·헤더·Outlet, /admin/login 제외 시 인증·ADMIN 검사
 - `src/pages/admin/AdminLoginPage.tsx`: 관리자 로그인, ADMIN이 아니면 clearAuth 후 “관리자 계정으로 로그인해 주세요” 토스트
 - `src/pages/admin/AdminDashboardPage.tsx`: 대시보드 placeholder
-- `src/pages/admin/AdminPlaceholderPage.tsx`: 영화/영화관/상영관/상영스케줄/좌석 메뉴 placeholder (Step 13에서 교체)
+- `src/pages/admin/AdminPlaceholderPage.tsx`: 영화/영화관/상영관/상영스케줄/좌석 메뉴 placeholder (Step 14에서 교체)
 - 라우트: `/admin`, `/admin/login`, `/admin/movies`, `/admin/theaters`, `/admin/screens`, `/admin/screenings`, `/admin/seats`
 - 네비게이션 바: “관리자” 링크 → /admin (비관리자 시 / 로 리다이렉트)
 - `src/api/axiosInstance.ts`: 401 시 경로에 따라 /admin/login 또는 /login, 403+admin API 시 /admin/login
@@ -757,7 +792,7 @@ domain/
 
 ---
 
-## Step 13: 관리자 웹 (React) - 영화/상영관 관리
+## Step 14: 관리자 웹 (React) - 영화/상영관 관리
 
 ### 목표
 
@@ -813,7 +848,7 @@ domain/
 
 ---
 
-## Step 14: 관리자 웹 (React) - 예매/결제 조회
+## Step 15: 관리자 웹 (React) - 예매/결제 조회
 
 ### 목표
 
@@ -854,7 +889,7 @@ domain/
 
 ---
 
-## Step 15: 모바일 앱 (Flutter) - 핵심 플로우 구현
+## Step 16: 모바일 앱 (Flutter) - 핵심 플로우 구현
 
 ### 목표
 
@@ -906,7 +941,7 @@ domain/
 
 ---
 
-## Step 16: API Rate Limit 및 보안 강화
+## Step 17: API Rate Limit 및 보안 강화
 
 ### 목표
 
@@ -948,7 +983,7 @@ domain/
 
 ---
 
-## Step 17: 장애 대응 및 복구 로직 구현
+## Step 18: 장애 대응 및 복구 로직 구현
 
 ### 목표
 
@@ -988,7 +1023,7 @@ domain/
 
 ---
 
-## Step 18: 테스트 작성 및 커버리지 확보
+## Step 19: 테스트 작성 및 커버리지 확보
 
 ### 목표
 
@@ -1029,7 +1064,7 @@ domain/
 
 ---
 
-## Step 19: 부하 테스트 및 성능 최적화
+## Step 20: 부하 테스트 및 성능 최적화
 
 ### 목표
 
@@ -1073,7 +1108,7 @@ domain/
 
 ---
 
-## Step 20: 배포 준비 및 CI/CD 설정
+## Step 21: 배포 준비 및 CI/CD 설정
 
 ### 목표
 
@@ -1136,18 +1171,19 @@ domain/
 | 7 | 예매 및 결제 트랜잭션 | 4-5일 |
 | 8 | 실시간 좌석 갱신 (WebSocket/SSE) | 3-4일 |
 | 9 | 사용자 웹 - 메인 및 영화 목록 | 3-4일 |
-| 10 | 사용자 웹 - 좌석 선택 및 예매 | 5-6일 |
-| 11 | 사용자 웹 - 결제 페이지 | 2-3일 |
-| 12 | 관리자 웹 - 기본 구조 및 인증 | 2-3일 |
-| 13 | 관리자 웹 - 영화/상영관 관리 | 4-5일 |
-| 14 | 관리자 웹 - 예매/결제 조회 | 2-3일 |
-| 15 | 모바일 앱 - 핵심 플로우 | 5-6일 |
-| 16 | API Rate Limit 및 보안 강화 | 2-3일 |
-| 17 | 장애 대응 및 복구 로직 | 3-4일 |
-| 18 | 테스트 작성 및 커버리지 확보 | 4-5일 |
-| 19 | 부하 테스트 및 성능 최적화 | 3-4일 |
-| 20 | 배포 준비 및 CI/CD 설정 | 3-4일 |
-| **총계** | | **약 60-80일** |
+| 10 | 사용자 메인 화면 개선 | 2-3일 |
+| 11 | 사용자 웹 - 좌석 선택 및 예매 | 5-6일 |
+| 12 | 사용자 웹 - 결제 페이지 | 2-3일 |
+| 13 | 관리자 웹 - 기본 구조 및 인증 | 2-3일 |
+| 14 | 관리자 웹 - 영화/상영관 관리 | 4-5일 |
+| 15 | 관리자 웹 - 예매/결제 조회 | 2-3일 |
+| 16 | 모바일 앱 - 핵심 플로우 | 5-6일 |
+| 17 | API Rate Limit 및 보안 강화 | 2-3일 |
+| 18 | 장애 대응 및 복구 로직 | 3-4일 |
+| 19 | 테스트 작성 및 커버리지 확보 | 4-5일 |
+| 20 | 부하 테스트 및 성능 최적화 | 3-4일 |
+| 21 | 배포 준비 및 CI/CD 설정 | 3-4일 |
+| **총계** | | **약 62-83일** |
 
 ---
 

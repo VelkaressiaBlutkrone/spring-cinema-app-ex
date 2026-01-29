@@ -103,4 +103,17 @@ public class ScreeningRepositoryImpl implements ScreeningRepositoryCustom {
                         screening.endTime.gt(startTime))
                 .fetch();
     }
+
+    @Override
+    public List<Screening> findUpcomingScreenings(LocalDateTime from, LocalDateTime to) {
+        return queryFactory
+                .selectFrom(screening)
+                .join(screening.movie, movie).fetchJoin()
+                .where(
+                        screening.status.ne(ScreeningStatus.CANCELLED),
+                        screening.startTime.goe(from),
+                        screening.startTime.lt(to))
+                .orderBy(screening.startTime.asc())
+                .fetch();
+    }
 }

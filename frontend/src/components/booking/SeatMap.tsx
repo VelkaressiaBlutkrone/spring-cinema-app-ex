@@ -5,9 +5,9 @@
 import { useMemo } from 'react';
 import type { SeatStatusItem } from '@/types/seat.types';
 
-const CELL_W = 40;
-const CELL_H = 36;
-const GAP = 4;
+const CELL_W = 56;
+const CELL_H = 48;
+const GAP = 6;
 
 const STATUS_COLOR: Record<string, string> = {
   AVAILABLE: '#22c55e',
@@ -110,7 +110,8 @@ export function SeatMap({
                   x={x + CELL_W / 2}
                   y={y + CELL_H / 2 + 4}
                   textAnchor="middle"
-                  className="fill-white text-xs font-medium"
+                  className="fill-white text-sm font-medium"
+                  style={{ pointerEvents: 'none' }}
                 >
                   {seat.seatNo}
                 </text>
