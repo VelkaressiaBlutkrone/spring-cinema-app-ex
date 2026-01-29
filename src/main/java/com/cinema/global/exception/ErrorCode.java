@@ -83,13 +83,14 @@ public enum ErrorCode {
     // ========================================
     // 결제 관련 (PAYMENT)
     // ========================================
-    PAYMENT_FAILED(HttpStatus.BAD_REQUEST, "PAYMENT_001", "결제에 실패했습니다."),
-    PAYMENT_ALREADY_COMPLETED(HttpStatus.CONFLICT, "PAYMENT_002", "이미 결제가 완료되었습니다."),
-    PAYMENT_AMOUNT_MISMATCH(HttpStatus.BAD_REQUEST, "PAYMENT_003", "결제 금액이 일치하지 않습니다."),
-    PAYMENT_TIMEOUT(HttpStatus.REQUEST_TIMEOUT, "PAYMENT_004", "결제 시간이 초과되었습니다."),
-    PAYMENT_CANNOT_COMPLETE(HttpStatus.BAD_REQUEST, "PAYMENT_005", "결제를 완료할 수 없는 상태입니다."),
-    PAYMENT_CANNOT_CANCEL(HttpStatus.BAD_REQUEST, "PAYMENT_006", "결제를 취소할 수 없는 상태입니다."),
-    PAYMENT_CANNOT_REFUND(HttpStatus.BAD_REQUEST, "PAYMENT_007", "환불할 수 없는 상태입니다."),
+    PAYMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "PAYMENT_001", "결제 정보를 찾을 수 없습니다."),
+    PAYMENT_FAILED(HttpStatus.BAD_REQUEST, "PAYMENT_002", "결제에 실패했습니다."),
+    PAYMENT_ALREADY_COMPLETED(HttpStatus.CONFLICT, "PAYMENT_003", "이미 결제가 완료되었습니다."),
+    PAYMENT_AMOUNT_MISMATCH(HttpStatus.BAD_REQUEST, "PAYMENT_004", "결제 금액이 일치하지 않습니다."),
+    PAYMENT_TIMEOUT(HttpStatus.REQUEST_TIMEOUT, "PAYMENT_005", "결제 시간이 초과되었습니다."),
+    PAYMENT_CANNOT_COMPLETE(HttpStatus.BAD_REQUEST, "PAYMENT_006", "결제를 완료할 수 없는 상태입니다."),
+    PAYMENT_CANNOT_CANCEL(HttpStatus.BAD_REQUEST, "PAYMENT_007", "결제를 취소할 수 없는 상태입니다."),
+    PAYMENT_CANNOT_REFUND(HttpStatus.BAD_REQUEST, "PAYMENT_008", "환불할 수 없는 상태입니다."),
 
     // ========================================
     // Rate Limit 관련

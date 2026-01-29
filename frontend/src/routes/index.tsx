@@ -19,6 +19,8 @@ import {
   AdminScreensPage,
   AdminScreeningsPage,
   AdminSeatsPage,
+  AdminReservationsPage,
+  AdminPaymentsPage,
 } from '@/pages';
 
 export const router = createBrowserRouter([
@@ -47,6 +49,8 @@ export const router = createBrowserRouter([
       { path: 'screens', element: <AdminScreensPage /> },
       { path: 'screenings', element: <AdminScreeningsPage /> },
       { path: 'seats', element: <AdminSeatsPage /> },
+      { path: 'reservations', element: <AdminReservationsPage /> },
+      { path: 'payments', element: <AdminPaymentsPage /> },
     ],
   },
   { path: '*', element: <Navigate to="/" replace /> },

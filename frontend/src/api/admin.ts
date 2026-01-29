@@ -20,7 +20,10 @@ import type {
   AdminSeatResponse,
   AdminSeatCreateRequest,
   AdminSeatUpdateRequest,
+  AdminReservationListResponse,
+  AdminPaymentListResponse,
 } from '@/types/admin.types';
+import type { ReservationDetailResponse } from '@/types/reservation.types';
 
 const prefix = '/admin';
 
@@ -234,6 +237,75 @@ export const adminSeatsApi = {
     const { data } = await axiosInstance.delete<ApiResponseBody<null>>(
       `${prefix}/seats/${seatId}`
     );
+    return data;
+  },
+};
+
+/** 예매 관리 */
+export const adminReservationsApi = {
+  getList: async (params?: {
+    page?: number;
+    size?: number;
+    startDate?: string;
+    endDate?: string;
+    movieId?: number;
+    memberId?: number;
+    status?: string;
+  }) => {
+    const { data } = await axiosInstance.get<
+      ApiResponseBody<AdminPageData<AdminReservationListResponse>>
+    >(`${prefix}/reservations`, { params });
+    return data;
+  },
+  getOne: async (reservationId: number) => {
+    const { data } = await axiosInstance.get<ApiResponseBody<ReservationDetailResponse>>(
+      `${prefix}/reservations/${reservationId}`
+    );
+    return data;
+  },
+  getCancelled: async (params?: {
+    page?: number;
+    size?: number;
+    startDate?: string;
+    endDate?: string;
+  }) => {
+    const { data } = await axiosInstance.get<
+      ApiResponseBody<AdminPageData<AdminReservationListResponse>>
+    >(`${prefix}/reservations/cancelled`, { params });
+    return data;
+  },
+};
+
+/** 결제 관리 */
+export const adminPaymentsApi = {
+  getList: async (params?: {
+    page?: number;
+    size?: number;
+    startDate?: string;
+    endDate?: string;
+    payStatus?: string;
+    memberId?: number;
+  }) => {
+    const { data } = await axiosInstance.get<
+      ApiResponseBody<AdminPageData<AdminPaymentListResponse>>
+    >(`${prefix}/payments`, { params });
+    return data;
+  },
+  getOne: async (paymentId: number) => {
+    const { data } = await axiosInstance.get<ApiResponseBody<AdminPaymentListResponse>>(
+      `${prefix}/payments/${paymentId}`
+    );
+    return data;
+  },
+  getCancelled: async (params?: {
+    page?: number;
+    size?: number;
+    startDate?: string;
+    endDate?: string;
+  }) => {
+    const { data } = await axiosInstance.get<
+      ApiResponseBody<AdminPageData<AdminPaymentListResponse>>
+    >(`${prefix}/payments/cancelled`, { params });
     return data;
   },
 };

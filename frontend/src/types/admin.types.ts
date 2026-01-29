@@ -161,3 +161,46 @@ export interface AdminSeatUpdateRequest {
   seatType?: AdminSeatType;
   baseStatus: AdminSeatBaseStatus;
 }
+
+// ----- Reservation -----
+export type AdminReservationStatus =
+  | 'PENDING'
+  | 'PAYMENT_PENDING'
+  | 'CONFIRMED'
+  | 'CANCELLED'
+  | 'REFUNDED';
+
+export interface AdminReservationListResponse {
+  reservationId: number;
+  reservationNo: string;
+  status: AdminReservationStatus;
+  memberId: number;
+  memberLoginId: string;
+  screeningId: number;
+  movieTitle: string;
+  screenName: string;
+  startTime: string;
+  totalSeats: number;
+  totalAmount: number;
+  createdAt: string;
+}
+
+// ----- Payment -----
+export type AdminPaymentStatus = 'PENDING' | 'SUCCESS' | 'FAILED' | 'CANCELLED' | 'REFUNDED';
+export type AdminPaymentMethod = 'CARD' | 'KAKAO_PAY' | 'NAVER_PAY' | 'TOSS' | 'BANK_TRANSFER';
+
+export interface AdminPaymentListResponse {
+  paymentId: number;
+  paymentNo: string;
+  payStatus: AdminPaymentStatus;
+  payMethod: AdminPaymentMethod;
+  payAmount: number;
+  reservationId: number;
+  reservationNo: string;
+  memberId: number;
+  memberLoginId: string;
+  movieTitle: string;
+  paidAt?: string;
+  cancelledAt?: string;
+  createdAt: string;
+}

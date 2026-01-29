@@ -13,6 +13,8 @@ const SIDEBAR_LINKS = [
   { to: '/admin/screens', label: '상영관 관리' },
   { to: '/admin/screenings', label: '상영 스케줄' },
   { to: '/admin/seats', label: '좌석 관리' },
+  { to: '/admin/reservations', label: '예매 내역' },
+  { to: '/admin/payments', label: '결제 내역' },
 ];
 
 export function AdminLayout() {

@@ -7,8 +7,13 @@ interface ApiErrorResponse {
   status?: number;
 }
 
-function isAxiosError(error: any): error is AxiosError {
-  return error && (error.isAxiosError === true);
+function isAxiosError(error: unknown): error is AxiosError {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'isAxiosError' in error &&
+    (error as AxiosError).isAxiosError === true
+  );
 }
 
 export const getErrorMessage = (error: unknown): string => {

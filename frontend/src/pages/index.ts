@@ -14,4 +14,6 @@ export {
   AdminScreensPage,
   AdminScreeningsPage,
   AdminSeatsPage,
+  AdminReservationsPage,
+  AdminPaymentsPage,
 } from '@/pages/admin';

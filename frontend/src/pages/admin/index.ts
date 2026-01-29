@@ -6,3 +6,5 @@ export { AdminTheatersPage } from '@/pages/admin/AdminTheatersPage';
 export { AdminScreensPage } from '@/pages/admin/AdminScreensPage';
 export { AdminScreeningsPage } from '@/pages/admin/AdminScreeningsPage';
 export { AdminSeatsPage } from '@/pages/admin/AdminSeatsPage';
+export { AdminReservationsPage } from '@/pages/admin/AdminReservationsPage';
+export { AdminPaymentsPage } from '@/pages/admin/AdminPaymentsPage';
