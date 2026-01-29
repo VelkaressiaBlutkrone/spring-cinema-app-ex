@@ -2,10 +2,12 @@ package com.cinema.domain.member.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 public class MemberRequest {
 
     @Getter
+    @Setter
     @NoArgsConstructor
     public static class SignUp {
         private String loginId;
@@ -16,6 +18,7 @@ public class MemberRequest {
     }
 
     @Getter
+    @Setter
     @NoArgsConstructor
     public static class Login {
         private String loginId;

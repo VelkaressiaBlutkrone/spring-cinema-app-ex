@@ -1,0 +1,210 @@
+/// 인증 API (Hybrid Encryption + Secure Storage)
+/// - 로그인/회원가입: EncryptedPayload (RSA + AES-GCM)
+/// - Refresh Token: Set-Cookie에서 파싱 후 flutter_secure_storage 저장 (모바일)
+/// - Access Token: flutter_secure_storage 저장
+
+import 'dart:convert';
+
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
+
+import '../config/api_config.dart';
+import '../utils/hybrid_encryption.dart';
+
+const _storageKeyAccessToken = 'cinema_access_token';
+const _storageKeyRefreshToken = 'cinema_refresh_token';
+
+/// AccessToken 응답 (Refresh는 Set-Cookie → secure storage)
+class AccessTokenResponse {
+  AccessTokenResponse({required this.accessToken});
+  final String accessToken;
+  factory AccessTokenResponse.fromJson(Map<String, dynamic> json) {
+    return AccessTokenResponse(accessToken: json['accessToken'] as String);
+  }
+}
+
+/// PublicKey API 응답 (ApiResponse<PublicKeyResponse>)
+class PublicKeyApiResponse {
+  PublicKeyApiResponse({required this.success, this.data});
+  final bool success;
+  final PublicKeyData? data;
+  factory PublicKeyApiResponse.fromJson(Map<String, dynamic> json) {
+    return PublicKeyApiResponse(
+      success: json['success'] as bool? ?? false,
+      data: json['data'] != null
+          ? PublicKeyData.fromJson(json['data'] as Map<String, dynamic>)
+          : null,
+    );
+  }
+}
+
+class PublicKeyData {
+  PublicKeyData({required this.publicKeyPem});
+  final String publicKeyPem;
+  factory PublicKeyData.fromJson(Map<String, dynamic> json) {
+    return PublicKeyData(publicKeyPem: json['publicKeyPem'] as String);
+  }
+}
+
+class AuthApiService {
+  AuthApiService({
+    String baseUrl = apiBaseUrl,
+    FlutterSecureStorage? storage,
+  })  : _baseUrl = baseUrl.endsWith('/') ? baseUrl : '$baseUrl',
+        _storage = storage ?? const FlutterSecureStorage(
+          aOptions: AndroidOptions(encryptedSharedPreferences: true),
+        );
+
+  final String _baseUrl;
+  final FlutterSecureStorage _storage;
+
+  String _url(String path) {
+    final base = _baseUrl.endsWith('/') ? _baseUrl.substring(0, _baseUrl.length - 1) : _baseUrl;
+    return path.startsWith('/') ? '$base$path' : '$base/$path';
+  }
+
+  String get _publicKeyUrl => _url(apiPathPublicKey);
+  String get _loginUrl => _url(apiPathLogin);
+  String get _signupUrl => _url(apiPathSignup);
+  String get _refreshUrl => _url(apiPathRefresh);
+  String get _logoutUrl => _url(apiPathLogout);
+
+  /// Set-Cookie 헤더에서 cinema_refresh 값 추출
+  String? _extractRefreshTokenFromHeaders(Map<String, String> headers) {
+    final setCookie = headers['set-cookie'] ?? headers['Set-Cookie'];
+    if (setCookie == null || setCookie.isEmpty) return null;
+    final prefix = '$refreshTokenCookieName=';
+    final start = setCookie.indexOf(prefix);
+    if (start == -1) return null;
+    final valueStart = start + prefix.length;
+    final end = setCookie.indexOf(';', valueStart);
+    return end == -1
+        ? setCookie.substring(valueStart).trim()
+        : setCookie.substring(valueStart, end).trim();
+  }
+
+  /// GET /api/public-key → publicKeyPem
+  Future<String> getPublicKey() async {
+    final response = await http.get(Uri.parse(_publicKeyUrl));
+    if (response.statusCode != 200) {
+      throw AuthApiException('공개키를 가져올 수 없습니다.', response.statusCode);
+    }
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    final api = PublicKeyApiResponse.fromJson(json);
+    if (!api.success || api.data == null) {
+      throw AuthApiException('공개키 응답 형식이 올바르지 않습니다.', response.statusCode);
+    }
+    return api.data!.publicKeyPem;
+  }
+
+  /// POST /api/members/login (EncryptedPayload) → accessToken, Set-Cookie → secure storage 저장
+  Future<AccessTokenResponse> login(String loginId, String password) async {
+    final pem = await getPublicKey();
+    final payload = await encryptPayload(pem, {'loginId': loginId, 'password': password});
+    final body = jsonEncode(payload.toJson());
+    final response = await http.post(
+      Uri.parse(_loginUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: body,
+    );
+    if (response.statusCode != 200) {
+      throw AuthApiException('아이디 또는 비밀번호가 일치하지 않습니다.', response.statusCode);
+    }
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    final accessTokenRes = AccessTokenResponse.fromJson(json);
+    final refreshToken = _extractRefreshTokenFromHeaders(response.headers);
+    await _storage.write(key: _storageKeyAccessToken, value: accessTokenRes.accessToken);
+    if (refreshToken != null && refreshToken.isNotEmpty) {
+      await _storage.write(key: _storageKeyRefreshToken, value: refreshToken);
+    }
+    return accessTokenRes;
+  }
+
+  /// POST /api/members/signup (EncryptedPayload) → memberId
+  Future<int> signup({
+    required String loginId,
+    required String password,
+    required String name,
+    required String email,
+    String? phone,
+  }) async {
+    final pem = await getPublicKey();
+    final plain = <String, dynamic>{
+      'loginId': loginId,
+      'password': password,
+      'name': name,
+      'email': email,
+    };
+    if (phone != null && phone.isNotEmpty) plain['phone'] = phone;
+    final payload = await encryptPayload(pem, plain);
+    final body = jsonEncode(payload.toJson());
+    final response = await http.post(
+      Uri.parse(_signupUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: body,
+    );
+    if (response.statusCode != 200) {
+      final msg = response.body.isNotEmpty
+          ? (jsonDecode(response.body) as Map<String, dynamic>)['message']?.toString()
+          : null;
+      throw AuthApiException(msg ?? '회원가입에 실패했습니다.', response.statusCode);
+    }
+    final id = jsonDecode(response.body);
+    return id is int ? id : int.parse(id.toString());
+  }
+
+  /// POST /api/members/refresh (Cookie: cinema_refresh) → accessToken + Set-Cookie
+  Future<AccessTokenResponse> refresh() async {
+    final refreshToken = await _storage.read(key: _storageKeyRefreshToken);
+    if (refreshToken == null || refreshToken.isEmpty) {
+      throw AuthApiException('Refresh token이 없습니다.', 401);
+    }
+    final response = await http.post(
+      Uri.parse(_refreshUrl),
+      headers: {'Cookie': '$refreshTokenCookieName=$refreshToken'},
+    );
+    if (response.statusCode != 200) {
+      await _storage.delete(key: _storageKeyAccessToken);
+      await _storage.delete(key: _storageKeyRefreshToken);
+      throw AuthApiException('세션이 만료되었습니다. 다시 로그인해 주세요.', response.statusCode);
+    }
+    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    final accessTokenRes = AccessTokenResponse.fromJson(json);
+    final newRefresh = _extractRefreshTokenFromHeaders(response.headers);
+    await _storage.write(key: _storageKeyAccessToken, value: accessTokenRes.accessToken);
+    if (newRefresh != null && newRefresh.isNotEmpty) {
+      await _storage.write(key: _storageKeyRefreshToken, value: newRefresh);
+    }
+    return accessTokenRes;
+  }
+
+  /// POST /api/members/logout (Authorization: Bearer) + 저장소 삭제
+  Future<void> logout() async {
+    final accessToken = await _storage.read(key: _storageKeyAccessToken);
+    try {
+      if (accessToken != null && accessToken.isNotEmpty) {
+        await http.post(
+          Uri.parse(_logoutUrl),
+          headers: {'Authorization': 'Bearer $accessToken'},
+        );
+      }
+    } finally {
+      await _storage.delete(key: _storageKeyAccessToken);
+      await _storage.delete(key: _storageKeyRefreshToken);
+    }
+  }
+
+  /// 저장된 access token 조회 (401 시 refresh 시도 후 재요청에 사용)
+  Future<String?> getAccessToken() => _storage.read(key: _storageKeyAccessToken);
+
+  /// 저장된 refresh token 조회
+  Future<String?> getStoredRefreshToken() => _storage.read(key: _storageKeyRefreshToken);
+}
+
+class AuthApiException implements Exception {
+  AuthApiException(this.message, [this.statusCode]);
+  final String message;
+  final int? statusCode;
+  @override
+  String toString() => 'AuthApiException: $message (status: $statusCode)';
+}

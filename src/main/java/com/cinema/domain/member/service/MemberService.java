@@ -13,6 +13,7 @@ import com.cinema.global.exception.BusinessException;
 import com.cinema.global.exception.ErrorCode;
 import com.cinema.global.jwt.JwtTokenProvider;
 import com.cinema.global.jwt.RefreshTokenService;
+import com.cinema.global.security.LoginBruteForceService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
+    private final LoginBruteForceService bruteForceService;
 
     @Value("${jwt.access-token-expire-time}")
     private long accessTokenExpireTime;
@@ -61,16 +63,24 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public TokenResponse login(MemberRequest.Login request) {
+        bruteForceService.checkLocked(request.getLoginId());
+
         Member member = memberRepository.findByLoginId(request.getLoginId())
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND, "아이디 또는 비밀번호가 일치하지 않습니다."));
+                .orElseThrow(() -> {
+                    bruteForceService.recordFailure(request.getLoginId());
+                    return new BusinessException(ErrorCode.MEMBER_NOT_FOUND, "아이디 또는 비밀번호가 일치하지 않습니다.");
+                });
 
         if (!member.isActive()) {
             throw new BusinessException(ErrorCode.MEMBER_DISABLED);
         }
 
         if (!passwordEncoder.matches(request.getPassword(), member.getPasswordHash())) {
+            bruteForceService.recordFailure(request.getLoginId());
             throw new BusinessException(ErrorCode.INVALID_PASSWORD, "아이디 또는 비밀번호가 일치하지 않습니다.");
         }
+
+        bruteForceService.clearSuccess(request.getLoginId());
 
         // 토큰 발급 (Access: 설정값, Refresh: 설정값)
         String accessToken = jwtTokenProvider.createToken(

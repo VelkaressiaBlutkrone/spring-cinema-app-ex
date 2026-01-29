@@ -26,7 +26,7 @@ export function LoginPage() {
     setLoading(true);
     try {
       const res = await authApi.login(form);
-      setTokens(res.accessToken, res.refreshToken);
+      setTokens(res.accessToken);
       showSuccess('로그인되었습니다.');
       navigate('/');
     } catch (err) {

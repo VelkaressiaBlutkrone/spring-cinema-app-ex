@@ -34,7 +34,7 @@ export function AdminLoginPage() {
     setLoading(true);
     try {
       const res = await authApi.login(form);
-      setTokens(res.accessToken, res.refreshToken);
+      setTokens(res.accessToken);
       const role = getRoleFromToken(res.accessToken);
       if (role === 'ADMIN') {
         showSuccess('로그인되었습니다.');

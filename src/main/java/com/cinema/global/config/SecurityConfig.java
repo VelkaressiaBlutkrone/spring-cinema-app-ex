@@ -15,6 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.filter.CorsFilter;
 
 import com.cinema.global.jwt.JwtAuthenticationFilter;
+import com.cinema.global.security.AuthRateLimitFilter;
 
 import lombok.RequiredArgsConstructor;
 
@@ -34,6 +35,7 @@ public class SecurityConfig {
 
     private final CorsFilter corsFilter;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final AuthRateLimitFilter authRateLimitFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -43,6 +45,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                // Rate limit (인증 API DoS 방어)
+                .addFilterBefore(authRateLimitFilter, CorsFilter.class)
                 // CORS 필터 추가
                 .addFilter(corsFilter)
 
@@ -63,9 +67,8 @@ public class SecurityConfig {
                         // ========================================
                         // 인증 관련
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/public-key").permitAll()
                         .requestMatchers("/api/members/signup", "/api/members/login").permitAll()
-
-                        // 토큰 갱신은 인증 불필요 (Refresh Token으로 인증)
                         .requestMatchers("/api/members/refresh").permitAll()
 
                         // 영화 조회 (GET)

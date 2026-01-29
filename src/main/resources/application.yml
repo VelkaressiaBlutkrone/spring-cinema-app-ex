@@ -87,6 +87,22 @@ jwt:
   refresh-token-expire-time: 604800000 # 7일 (밀리초)
 
 ########################################
+# Auth (Refresh Token Cookie, Rate Limit, Brute-force)
+########################################
+auth:
+  refresh-token:
+    cookie-name: cinema_refresh
+    secure-cookie: false               # dev: false, prod: true (HTTPS만)
+    max-age-seconds: 604800            # 7일
+  rate-limit:
+    login-per-minute: 10
+    signup-per-minute: 5
+    refresh-per-minute: 20
+  brute-force:
+    max-failed-attempts: 5
+    lock-minutes: 15
+
+########################################
 # CORS
 ########################################
 cors:

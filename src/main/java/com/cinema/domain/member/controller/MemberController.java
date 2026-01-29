@@ -1,5 +1,8 @@
 package com.cinema.domain.member.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -7,58 +10,109 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cinema.domain.member.dto.AccessTokenResponse;
+import com.cinema.domain.member.dto.EncryptedPayload;
 import com.cinema.domain.member.dto.MemberRequest;
 import com.cinema.domain.member.dto.TokenResponse;
 import com.cinema.domain.member.service.MemberService;
+import com.cinema.global.exception.BusinessException;
+import com.cinema.global.exception.ErrorCode;
+import com.cinema.global.security.HybridDecryptionService;
+import com.cinema.global.security.RefreshTokenCookieHelper;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 회원 컨트롤러
  *
  * RULE:
- * - /api/members/signup, /api/members/login은 인증 불필요 (SecurityConfig에서
- * permitAll)
- * - /api/members/refresh, /api/members/logout은 인증 필요
+ * - 로그인/회원가입: EncryptedPayload (RSA+AES-GCM) 필수
+ * - Refresh Token: HttpOnly Cookie (SameSite=Strict, Secure in prod)
+ * - /api/members/refresh는 인증 불필요 (쿠키로 검증)
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/members")
 @RequiredArgsConstructor
 public class MemberController {
 
     private final MemberService memberService;
+    private final HybridDecryptionService hybridDecryption;
+    private final RefreshTokenCookieHelper refreshCookie;
+    private final Gson gson;
 
     /**
-     * 회원 가입
+     * 회원 가입 (EncryptedPayload: loginId, password, name, phone?, email)
      */
     @PostMapping("/signup")
-    public ResponseEntity<Long> signup(@RequestBody MemberRequest.SignUp request) {
-        return ResponseEntity.ok(memberService.signup(request));
+    public ResponseEntity<Long> signup(@RequestBody EncryptedPayload payload, HttpServletResponse response) {
+        MemberRequest.SignUp req = decryptToSignUp(payload);
+        return ResponseEntity.ok(memberService.signup(req));
     }
 
     /**
-     * 로그인
+     * 로그인 (EncryptedPayload: loginId, password)
+     * - body: AccessTokenResponse
+     * - Set-Cookie: refreshToken (HttpOnly, Secure, SameSite=Strict)
      */
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> login(@RequestBody MemberRequest.Login request) {
-        return ResponseEntity.ok(memberService.login(request));
+    public ResponseEntity<AccessTokenResponse> login(
+            @RequestBody EncryptedPayload payload,
+            HttpServletResponse response) {
+        MemberRequest.Login req = decryptToLogin(payload);
+        TokenResponse tokens = memberService.login(req);
+        refreshCookie.setRefreshTokenCookie(tokens.getRefreshToken(), response);
+        return ResponseEntity.ok(new AccessTokenResponse(tokens.getAccessToken()));
     }
 
     /**
-     * 토큰 갱신
+     * 토큰 갱신 (Cookie: refreshToken → AccessTokenResponse + Set-Cookie)
      */
     @PostMapping("/refresh")
-    public ResponseEntity<TokenResponse> refreshToken(@RequestBody MemberRequest.RefreshToken request) {
-        return ResponseEntity.ok(memberService.refreshToken(request.getRefreshToken()));
+    public ResponseEntity<AccessTokenResponse> refreshToken(
+            HttpServletRequest request,
+            HttpServletResponse response) {
+        String refresh = refreshCookie.getRefreshTokenFromCookie(request);
+        if (refresh == null || refresh.isBlank()) {
+            throw new BusinessException(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
+        TokenResponse tokens = memberService.refreshToken(refresh);
+        refreshCookie.setRefreshTokenCookie(tokens.getRefreshToken(), response);
+        return ResponseEntity.ok(new AccessTokenResponse(tokens.getAccessToken()));
     }
 
     /**
-     * 로그아웃
+     * 로그아웃 (쿠키 삭제 + Redis Refresh 삭제)
      */
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(Authentication authentication) {
+    public ResponseEntity<Void> logout(Authentication authentication, HttpServletResponse response) {
         String loginId = authentication.getName();
         memberService.logout(loginId);
+        refreshCookie.clearRefreshTokenCookie(response);
         return ResponseEntity.ok().build();
+    }
+
+    private MemberRequest.Login decryptToLogin(EncryptedPayload p) {
+        String plain = hybridDecryption.decrypt(p.getEncryptedKey(), p.getIv(), p.getEncryptedData());
+        try {
+            return gson.fromJson(plain, MemberRequest.Login.class);
+        } catch (JsonSyntaxException e) {
+            log.warn("Decrypted login payload parse failed: {}", e.getMessage());
+            throw new BusinessException(ErrorCode.INVALID_INPUT, "잘못된 요청입니다.");
+        }
+    }
+
+    private MemberRequest.SignUp decryptToSignUp(EncryptedPayload p) {
+        String plain = hybridDecryption.decrypt(p.getEncryptedKey(), p.getIv(), p.getEncryptedData());
+        try {
+            return gson.fromJson(plain, MemberRequest.SignUp.class);
+        } catch (JsonSyntaxException e) {
+            log.warn("Decrypted signup payload parse failed: {}", e.getMessage());
+            throw new BusinessException(ErrorCode.INVALID_INPUT, "잘못된 요청입니다.");
+        }
     }
 }

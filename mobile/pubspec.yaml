@@ -37,6 +37,26 @@ dependencies:
 
   # Cinematic UI (Step 10 - 모바일 메인 화면)
   google_fonts: ^6.2.1
+  # Hybrid Encryption (RSA + AES-GCM), Auth API
+  encrypt: ^5.0.3
+  pointycastle: ^3.9.1
+  asn1lib: ^1.6.5
+  flutter_secure_storage: ^9.2.2
+  http: ^1.2.2
+
+  # 상태 관리 (Riverpod)
+  # - riverpod: 선언적 상태 관리
+  # - flutter_riverpod: Flutter 위젯 통합
+  # - riverpod_annotation: 코드 생성 기반 Provider 어노테이션
+  # 사용 위치: lib/provider/
+  riverpod: ^3.1.0
+  flutter_riverpod: ^3.1.0
+  riverpod_annotation: ^4.0.0
+
+  # 로깅 (logger)
+  # - 구조화된 로깅, 로그 레벨, 타임스탬프/스택 트레이스
+  # 사용 위치: lib/provider/, lib/service/, lib/utils/
+  logger: ^2.0.0
 
 dev_dependencies:
   flutter_test:
@@ -48,6 +68,12 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+
+  # Riverpod 코드 생성
+  # - riverpod_generator: @riverpod 어노테이션 기반 코드 생성
+  # - build_runner: 코드 생성 실행 (dart run build_runner build --delete-conflicting-outputs)
+  riverpod_generator: ^4.0.0+1
+  build_runner: ^2.4.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
