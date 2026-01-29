@@ -1,5 +1,5 @@
 /**
- * 빈 상태 컴포넌트 - 데이터가 없을 때 표시
+ * 빈 상태 — cinema theme
  */
 interface EmptyStateProps {
   title?: string;
@@ -12,22 +12,20 @@ export const EmptyState = ({
   title = '데이터가 없습니다',
   message = '표시할 데이터가 없습니다.',
   icon,
-  action
+  action,
 }: EmptyStateProps) => {
   return (
-    <div className="flex flex-col items-center justify-center py-12 px-4">
-      {icon && (
-        <div className="mb-4 text-gray-300 text-6xl">
-          {icon}
-        </div>
-      )}
-      <h3 className="text-lg font-semibold text-gray-800 mb-2">{title}</h3>
-      <p className="text-sm text-gray-500 text-center mb-6 max-w-md leading-relaxed">{message}</p>
-      {action && (
-        <div className="mt-2">
-          {action}
-        </div>
-      )}
+    <div className="flex flex-col items-center justify-center px-4 py-12">
+      {icon && <div className="mb-4 text-5xl text-cinema-muted-dark/60">{icon}</div>}
+      <h3
+        className="mb-2 text-center font-display text-lg tracking-widest text-cinema-text"
+      >
+        {title}
+      </h3>
+      <p className="mb-6 max-w-md text-center text-sm leading-relaxed text-cinema-muted">
+        {message}
+      </p>
+      {action && <div>{action}</div>}
     </div>
   );
 };

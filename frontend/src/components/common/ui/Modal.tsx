@@ -1,7 +1,8 @@
 /**
- * 모달 컴포넌트
+ * 모달 — cinema theme (dark glass)
  */
-import { ReactNode, useEffect } from 'react';
+import type { ReactNode } from 'react';
+import { useEffect } from 'react';
 
 interface ModalProps {
   isOpen: boolean;
@@ -16,11 +17,10 @@ export const Modal = ({ isOpen, onClose, title, children, size = 'md' }: ModalPr
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
     }
-
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = '';
     };
   }, [isOpen]);
 
@@ -35,32 +35,32 @@ export const Modal = ({ isOpen, onClose, title, children, size = 'md' }: ModalPr
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* 배경 오버레이 */}
       <div
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
+        aria-hidden
       />
-
-      {/* 모달 컨텐츠 */}
       <div
-        className={`relative bg-white rounded-2xl shadow-2xl ${sizeClasses[size]} w-full max-h-[90vh] overflow-y-auto`}
+        className={`relative w-full max-h-[90vh] overflow-y-auto rounded-2xl border border-cinema-glass-border bg-cinema-surface shadow-2xl ${sizeClasses[size]}`}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* 헤더 */}
         {title && (
-          <div className="flex justify-between items-center p-5 sm:p-6 border-b border-gray-100">
-            <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+          <div className="flex items-center justify-between border-b border-cinema-glass-border p-5 sm:p-6">
+            <h2
+              className="font-display text-xl tracking-widest text-cinema-text"
+            >
+              {title}
+            </h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 text-2xl leading-none w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-2xl leading-none text-cinema-muted transition hover:bg-cinema-glass hover:text-cinema-text"
+              aria-label="닫기"
             >
               ×
             </button>
           </div>
         )}
-
-        {/* 바디 */}
-        <div className="p-5 sm:p-6">{children}</div>
+        <div className="p-5 text-cinema-muted sm:p-6">{children}</div>
       </div>
     </div>
   );

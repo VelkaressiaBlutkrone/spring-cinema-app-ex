@@ -14,6 +14,7 @@ export interface HomeStatsResponse {
 export interface UpcomingMovieItem {
   id: number;
   title: string;
+  posterUrl?: string;
 }
 
 export const homeApi = {

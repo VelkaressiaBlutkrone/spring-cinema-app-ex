@@ -8,6 +8,8 @@ import { seatsApi } from '@/api/seats';
 import { useSeatEvents } from '@/hooks/useSeatEvents';
 import { SeatMap, HoldTimer } from '@/components/booking';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
+import { GlassCard } from '@/components/common/GlassCard';
+import { NeonButton } from '@/components/common/NeonButton';
 import { useToast } from '@/hooks';
 import { useAuthStore } from '@/stores';
 import { getErrorMessage } from '@/utils/errorHandler';
@@ -150,8 +152,9 @@ export function SeatSelectPage() {
 
   if (id == null) {
     return (
-      <div className="py-8 text-center text-gray-600">
-        상영 정보가 없습니다. <Link to="/movies" className="text-indigo-600 hover:underline">영화 목록</Link>에서 예매할 상영을 선택해 주세요.
+      <div className="py-8 text-center text-cinema-muted">
+        상영 정보가 없습니다.{' '}
+        <Link to="/movies" className="text-cinema-neon-blue hover:underline">영화 목록</Link>에서 예매할 상영을 선택해 주세요.
       </div>
     );
   }
@@ -168,7 +171,9 @@ export function SeatSelectPage() {
     <div className="py-6">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">
+          <h1
+            className="font-display text-2xl tracking-widest text-cinema-text"
+          >
             {screening
               ? ([screening.theaterName, screening.screenName, SCREENING_STATUS_LABEL[screening.status] ?? screening.status]
                   .filter(Boolean)
@@ -176,7 +181,7 @@ export function SeatSelectPage() {
               : `상영 #${id} 좌석 선택`}
           </h1>
           {screening && (
-            <p className="mt-1 text-gray-600">
+            <p className="mt-1 text-cinema-muted">
               {formatDate(screening.startTime, 'YYYY-MM-DD HH:mm')} ~ {formatDate(screening.endTime, 'HH:mm')}
             </p>
           )}
@@ -194,16 +199,19 @@ export function SeatSelectPage() {
       </div>
 
       {heldSeats.length > 0 && (
-        <div className="rounded-lg border border-gray-200 bg-white p-4">
-          <h2 className="mb-2 font-semibold text-gray-800">선택한 좌석 ({heldSeats.length}석)</h2>
+        <GlassCard>
+          <h2 className="mb-2 font-medium text-cinema-text">선택한 좌석 ({heldSeats.length}석)</h2>
           <ul className="mb-4 flex flex-wrap gap-2">
             {heldSeats.map((h) => (
-              <li key={h.seat.seatId} className="rounded bg-indigo-100 px-3 py-1 text-sm text-indigo-800">
+              <li
+                key={h.seat.seatId}
+                className="rounded-lg border border-cinema-neon-blue/40 bg-cinema-neon-blue/10 px-3 py-1 text-sm text-cinema-neon-blue"
+              >
                 {h.seat.rowLabel}-{h.seat.seatNo}
               </li>
             ))}
           </ul>
-          <Link
+          <NeonButton
             to={`/payment/${id}`}
             state={{
               screening,
@@ -214,15 +222,14 @@ export function SeatSelectPage() {
                 seatNo: h.seat.seatNo,
               })),
             }}
-            className="inline-flex rounded-md bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700"
           >
             결제하기
-          </Link>
-        </div>
+          </NeonButton>
+        </GlassCard>
       )}
 
-      <p className="mt-4 text-sm text-gray-500">
-        <Link to="/movies" className="text-indigo-600 hover:underline">영화 목록</Link>으로 돌아가기
+      <p className="mt-4 text-sm text-cinema-muted">
+        <Link to="/movies" className="text-cinema-neon-blue hover:underline">영화 목록</Link>으로 돌아가기
       </p>
     </div>
   );

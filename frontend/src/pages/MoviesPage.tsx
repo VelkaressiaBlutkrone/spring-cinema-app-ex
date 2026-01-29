@@ -1,5 +1,5 @@
 /**
- * 영화 목록 페이지: 영화 카드 목록, 영화 상세 모달, 상영 시간표
+ * 영화 목록 — cinema theme
  */
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
@@ -73,7 +73,11 @@ export function MoviesPage() {
 
   return (
     <div className="py-4">
-      <h1 className="mb-6 text-2xl font-bold text-gray-900">영화 목록</h1>
+      <h1
+        className="mb-6 font-display text-2xl tracking-widest text-cinema-text"
+      >
+        영화 목록
+      </h1>
       {isEmpty ? (
         <EmptyState
           title="등록된 영화가 없습니다"
@@ -86,9 +90,9 @@ export function MoviesPage() {
               type="button"
               key={movie.id}
               onClick={() => openDetail(movie)}
-              className="flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-white text-left shadow-sm transition hover:border-indigo-200 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="group flex flex-col overflow-hidden rounded-2xl border border-cinema-glass-border bg-cinema-surface text-left shadow-lg transition hover:border-cinema-neon-blue/40 hover:shadow-[0_0_24px_rgba(0,212,255,0.12)] focus:outline-none focus:ring-2 focus:ring-cinema-neon-blue/50"
             >
-              <div className="aspect-[2/3] bg-gray-200">
+              <div className="aspect-[2/3] bg-cinema-surface-elevated">
                 {movie.posterUrl ? (
                   <img
                     src={movie.posterUrl}
@@ -96,15 +100,17 @@ export function MoviesPage() {
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center text-4xl text-gray-400">
+                  <div className="flex h-full w-full items-center justify-center text-4xl text-cinema-muted-dark">
                     🎬
                   </div>
                 )}
               </div>
               <div className="p-3">
-                <h2 className="font-semibold text-gray-800 line-clamp-2">{movie.title}</h2>
+                <h2 className="line-clamp-2 font-medium text-cinema-text group-hover:text-cinema-neon-blue transition">
+                  {movie.title}
+                </h2>
                 {movie.releaseDate && (
-                  <p className="mt-1 text-xs text-gray-500">
+                  <p className="mt-1 text-xs text-cinema-muted">
                     {formatDate(movie.releaseDate, 'YYYY-MM-DD')}
                   </p>
                 )}
@@ -121,9 +127,9 @@ export function MoviesPage() {
         size="lg"
       >
         {selectedMovie && (
-          <div className="space-y-4">
-            <p className="text-gray-600">{selectedMovie.description ?? '-'}</p>
-            <div className="grid grid-cols-2 gap-2 text-sm text-gray-700">
+          <div className="space-y-4 text-cinema-text">
+            <p className="text-cinema-muted">{selectedMovie.description ?? '-'}</p>
+            <div className="grid grid-cols-2 gap-2 text-sm text-cinema-muted">
               {selectedMovie.runningTime && (
                 <span>상영시간: {selectedMovie.runningTime}분</span>
               )}
@@ -132,31 +138,33 @@ export function MoviesPage() {
               {selectedMovie.director && <span>감독: {selectedMovie.director}</span>}
             </div>
             <div>
-              <h3 className="mb-2 font-semibold text-gray-800">상영 시간표</h3>
+              <h3 className="mb-2 font-display text-base tracking-widest text-cinema-text">
+                상영 시간표
+              </h3>
               {schedulesLoading ? (
                 <LoadingSpinner size="sm" message="상영 일정 조회 중..." />
               ) : schedules.length === 0 ? (
-                <p className="text-sm text-gray-500">상영 예정인 일정이 없습니다.</p>
+                <p className="text-sm text-cinema-muted">상영 예정인 일정이 없습니다.</p>
               ) : (
-                <ul className="max-h-48 space-y-2 overflow-y-auto rounded border border-gray-200 p-2">
+                <ul className="max-h-48 space-y-2 overflow-y-auto rounded-xl border border-cinema-glass-border bg-cinema-bg p-3">
                   {schedules.map((s) => (
                     <li
                       key={s.id}
-                      className="flex items-center justify-between gap-2 rounded bg-gray-50 px-3 py-2 text-sm"
+                      className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-cinema-surface px-3 py-2 text-sm"
                     >
-                      <span>
+                      <span className="text-cinema-muted">
                         {[s.theaterName, s.screenName, SCREENING_STATUS_LABEL[s.status] ?? s.status]
                           .filter(Boolean)
                           .join(' - ')}
                       </span>
-                      <span className="text-gray-600">
+                      <span className="text-cinema-muted-dark">
                         {formatDate(s.startTime, 'YYYY-MM-DD HH:mm')} ~{' '}
                         {formatDate(s.endTime, 'HH:mm')}
                       </span>
                       <Link
                         to={`/book/${s.id}`}
                         state={{ screening: s }}
-                        className="shrink-0 rounded bg-indigo-600 px-2 py-1 text-xs font-medium text-white hover:bg-indigo-700"
+                        className="shrink-0 rounded-lg bg-cinema-neon-blue px-3 py-1.5 text-xs font-medium text-cinema-bg transition hover:opacity-90"
                       >
                         예매하기
                       </Link>

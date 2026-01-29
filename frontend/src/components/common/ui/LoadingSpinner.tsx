@@ -1,5 +1,5 @@
 /**
- * 로딩 스피너 컴포넌트
+ * 로딩 스피너 — cinema theme (neon blue)
  */
 interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg';
@@ -8,19 +8,19 @@ interface LoadingSpinnerProps {
 
 export const LoadingSpinner = ({ size = 'md', message }: LoadingSpinnerProps) => {
   const sizeClasses = {
-    sm: 'w-4 h-4 border-2',
-    md: 'w-8 h-8 border-4',
-    lg: 'w-12 h-12 border-4',
+    sm: 'h-4 w-4 border-2',
+    md: 'h-8 w-8 border-4',
+    lg: 'h-12 w-12 border-4',
   };
 
   return (
     <div className="flex flex-col items-center justify-center gap-3">
       <div
-        className={`${sizeClasses[size]} border-blue-500 border-t-transparent rounded-full animate-spin`}
+        className={`${sizeClasses[size]} border-cinema-neon-blue/30 border-t-cinema-neon-blue shrink-0 animate-spin rounded-full`}
         role="status"
         aria-label="로딩 중"
       />
-      {message && <div className="text-gray-500 text-sm">{message}</div>}
+      {message && <p className="text-sm text-cinema-muted">{message}</p>}
     </div>
   );
 };

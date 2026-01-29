@@ -58,7 +58,7 @@ public class HomeService {
         for (Screening s : screenings) {
             byMovie.putIfAbsent(
                     s.getMovie().getId(),
-                    new UpcomingMovieItem(s.getMovie().getId(), s.getMovie().getTitle()));
+                    new UpcomingMovieItem(s.getMovie().getId(), s.getMovie().getTitle(), s.getMovie().getPosterUrl()));
         }
         return new ArrayList<>(byMovie.values());
     }

@@ -76,14 +76,14 @@ export function SeatMap({
 
   if (seats.length === 0) {
     return (
-      <div className="rounded border border-gray-200 bg-gray-50 p-8 text-center text-gray-500">
+      <div className="rounded-xl border border-cinema-glass-border bg-cinema-surface p-8 text-center text-cinema-muted">
         좌석 정보가 없습니다.
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white p-4">
+    <div className="overflow-x-auto rounded-xl border border-cinema-glass-border bg-cinema-surface p-4 text-cinema-muted">
       <svg width={width} height={height} className="min-w-0">
         {rows.map(([rowLabel, rowSeats], ri) =>
           rowSeats.map((seat, ci) => {
@@ -125,13 +125,13 @@ export function SeatMap({
             x={8}
             y={24 + ri * (CELL_H + GAP) + CELL_H / 2 + 4}
             textAnchor="end"
-            className="text-sm text-gray-600"
+            className="text-sm text-cinema-muted fill-current"
           >
             {rowLabel}
           </text>
         ))}
       </svg>
-      <div className="mt-4 flex flex-wrap gap-4 text-xs text-gray-600">
+      <div className="mt-4 flex flex-wrap gap-4 text-xs text-cinema-muted">
         <span className="flex items-center gap-1">
           <span className="inline-block h-3 w-3 rounded" style={{ background: STATUS_COLOR.AVAILABLE }} /> 예매 가능
         </span>

@@ -14,4 +14,5 @@ public class UpcomingMovieItem {
 
     private Long id;
     private String title;
+    private String posterUrl;
 }

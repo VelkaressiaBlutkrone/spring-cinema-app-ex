@@ -1,1 +1,33 @@
 @import "tailwindcss";
+
+@theme {
+  /* Cinema design tokens (2026 premium cinematic) */
+  --color-cinema-bg: #0a0a0a;
+  --color-cinema-surface: #121212;
+  --color-cinema-surface-elevated: #1a1a1a;
+  --color-cinema-neon-red: #e63946;
+  --color-cinema-neon-blue: #00d4ff;
+  --color-cinema-neon-amber: #ffc857;
+  --color-cinema-neon-purple: #9d4edd;
+  --color-cinema-text: #ffffff;
+  --color-cinema-muted: #b0b0b0;
+  --color-cinema-muted-dark: #707070;
+  --color-cinema-glass: rgba(255, 255, 255, 0.08);
+  --color-cinema-glass-border: rgba(255, 255, 255, 0.2);
+
+  --font-display: "Bebas Neue", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Roboto", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply antialiased;
+    font-family: var(--font-sans);
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+}

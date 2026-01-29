@@ -1,12 +1,13 @@
 /**
- * 예매 내역 페이지 (본인 예매 목록)
- * GET /api/reservations
+ * 예매 내역 — cinema theme
  */
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { reservationsApi } from '@/api/reservations';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
 import { EmptyState } from '@/components/common/ui/EmptyState';
+import { GlassCard } from '@/components/common/GlassCard';
+import { NeonButton } from '@/components/common/NeonButton';
 import { useToast } from '@/hooks';
 import { useAuthStore } from '@/stores';
 import { getErrorMessage } from '@/utils/errorHandler';
@@ -56,45 +57,46 @@ export function ReservationsPage() {
 
   return (
     <div className="py-6">
-      <h1 className="mb-6 text-2xl font-bold text-gray-900">예매 내역</h1>
+      <h1
+        className="mb-6 font-display text-2xl tracking-widest text-cinema-text"
+      >
+        예매 내역
+      </h1>
       {list.length === 0 ? (
-        <EmptyState
-          title="예매 내역이 없습니다"
-          message="영화 목록에서 상영을 선택해 예매해 보세요."
-          action={
-            <Link
-              to="/movies"
-              className="rounded-md bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700"
-            >
-              영화 목록
-            </Link>
-          }
-        />
+        <GlassCard padding={false}>
+          <EmptyState
+            title="예매 내역이 없습니다"
+            message="영화 목록에서 상영을 선택해 예매해 보세요."
+            icon={<span>🎬</span>}
+            action={
+              <NeonButton to="/movies">영화 목록</NeonButton>
+            }
+          />
+        </GlassCard>
       ) : (
         <ul className="space-y-4">
           {list.map((r) => (
-            <li
-              key={r.reservationId}
-              className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm"
-            >
-              <div className="flex flex-wrap items-start justify-between gap-2">
-                <div>
-                  <p className="font-semibold text-gray-900">{r.movieTitle}</p>
-                  <p className="text-sm text-gray-600">
-                    {r.screenName} · {formatDate(r.startTime, 'YYYY-MM-DD HH:mm')}
-                  </p>
-                  <p className="mt-1 text-sm font-mono text-indigo-600">{r.reservationNo}</p>
-                  <p className="mt-1 text-sm text-gray-700">
-                    {r.totalSeats}석 · {formatPrice(r.totalAmount)}
-                  </p>
+            <li key={r.reservationId}>
+              <GlassCard>
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <div>
+                    <p className="font-medium text-cinema-text">{r.movieTitle}</p>
+                    <p className="text-sm text-cinema-muted">
+                      {r.screenName} · {formatDate(r.startTime, 'YYYY-MM-DD HH:mm')}
+                    </p>
+                    <p className="mt-1 font-mono text-sm text-cinema-neon-blue">{r.reservationNo}</p>
+                    <p className="mt-1 text-sm text-cinema-neon-amber">
+                      {r.totalSeats}석 · {formatPrice(r.totalAmount)}
+                    </p>
+                  </div>
+                  <Link
+                    to={`/reservations/${r.reservationId}`}
+                    className="rounded-lg border border-cinema-glass-border bg-cinema-glass px-3 py-1.5 text-sm font-medium text-cinema-muted transition hover:bg-cinema-glass-border hover:text-cinema-text"
+                  >
+                    상세
+                  </Link>
                 </div>
-                <Link
-                  to={`/reservations/${r.reservationId}`}
-                  className="rounded-md border border-gray-300 px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                >
-                  상세
-                </Link>
-              </div>
+              </GlassCard>
             </li>
           ))}
         </ul>

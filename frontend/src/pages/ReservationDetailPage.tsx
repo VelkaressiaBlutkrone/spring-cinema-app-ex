@@ -1,11 +1,12 @@
 /**
- * 예매 상세 페이지
- * GET /api/reservations/{reservationId}
+ * 예매 상세 — cinema theme
  */
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { reservationsApi } from '@/api/reservations';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
+import { GlassCard } from '@/components/common/GlassCard';
+import { NeonButton } from '@/components/common/NeonButton';
 import { useToast } from '@/hooks';
 import { useAuthStore } from '@/stores';
 import { getErrorMessage } from '@/utils/errorHandler';
@@ -51,9 +52,9 @@ export function ReservationDetailPage() {
   if (!isAuthenticated) return null;
   if (id == null) {
     return (
-      <div className="py-12 text-center text-gray-600">
+      <div className="py-12 text-center text-cinema-muted">
         <p>예매 정보가 없습니다.</p>
-        <Link to="/reservations" className="mt-4 inline-block text-indigo-600 hover:underline">
+        <Link to="/reservations" className="mt-4 inline-block text-cinema-neon-blue hover:underline">
           예매 내역
         </Link>
       </div>
@@ -68,9 +69,9 @@ export function ReservationDetailPage() {
   }
   if (!detail) {
     return (
-      <div className="py-12 text-center text-gray-600">
+      <div className="py-12 text-center text-cinema-muted">
         <p>예매 정보를 찾을 수 없습니다.</p>
-        <Link to="/reservations" className="mt-4 inline-block text-indigo-600 hover:underline">
+        <Link to="/reservations" className="mt-4 inline-block text-cinema-neon-blue hover:underline">
           예매 내역
         </Link>
       </div>
@@ -79,33 +80,37 @@ export function ReservationDetailPage() {
 
   return (
     <div className="mx-auto max-w-xl py-8">
-      <h1 className="mb-6 text-2xl font-bold text-gray-900">예매 상세</h1>
-      <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-        <dl className="space-y-4">
+      <h1
+        className="mb-6 font-display text-2xl tracking-widest text-cinema-text"
+      >
+        예매 상세
+      </h1>
+      <GlassCard>
+        <dl className="space-y-4 text-cinema-text">
           <div>
-            <dt className="text-sm font-medium text-gray-600">예매 번호</dt>
-            <dd className="mt-1 font-mono font-semibold text-gray-900">{detail.reservationNo}</dd>
+            <dt className="text-sm font-medium text-cinema-muted">예매 번호</dt>
+            <dd className="mt-1 font-mono font-semibold text-cinema-neon-blue">{detail.reservationNo}</dd>
           </div>
           <div>
-            <dt className="text-sm font-medium text-gray-600">영화</dt>
-            <dd className="mt-1 text-gray-900">{detail.movieTitle}</dd>
+            <dt className="text-sm font-medium text-cinema-muted">영화</dt>
+            <dd className="mt-1">{detail.movieTitle}</dd>
           </div>
           <div>
-            <dt className="text-sm font-medium text-gray-600">상영관 / 상영 시간</dt>
-            <dd className="mt-1 text-gray-900">
+            <dt className="text-sm font-medium text-cinema-muted">상영관 / 상영 시간</dt>
+            <dd className="mt-1">
               {detail.screenName} · {formatDate(detail.startTime, 'YYYY-MM-DD HH:mm')}
             </dd>
           </div>
           <div>
-            <dt className="text-sm font-medium text-gray-600">좌석</dt>
-            <dd className="mt-1 text-gray-900">
+            <dt className="text-sm font-medium text-cinema-muted">좌석</dt>
+            <dd className="mt-1">
               {detail.seats?.map((s) => s.displayName ?? `${s.rowLabel}-${s.seatNo}`).join(', ') ?? '-'}
             </dd>
           </div>
           <div>
-            <dt className="text-sm font-medium text-gray-600">좌석별 금액 (서버 계산값)</dt>
+            <dt className="text-sm font-medium text-cinema-muted">좌석별 금액 (서버 계산값)</dt>
             <dd className="mt-1">
-              <ul className="space-y-1 text-gray-800">
+              <ul className="space-y-1 text-cinema-muted">
                 {detail.seats?.map((s) => (
                   <li key={s.seatId}>
                     {s.displayName ?? `${s.rowLabel}-${s.seatNo}`}: {formatPrice(s.price)}
@@ -115,29 +120,19 @@ export function ReservationDetailPage() {
             </dd>
           </div>
           <div>
-            <dt className="text-sm font-medium text-gray-600">총 결제 금액</dt>
-            <dd className="mt-1 font-semibold text-gray-900">{formatPrice(detail.totalAmount)}</dd>
+            <dt className="text-sm font-medium text-cinema-muted">총 결제 금액</dt>
+            <dd className="mt-1 font-semibold text-cinema-neon-amber">{formatPrice(detail.totalAmount)}</dd>
           </div>
           <div>
-            <dt className="text-sm font-medium text-gray-600">예매 상태</dt>
-            <dd className="mt-1 text-gray-900">{detail.status}</dd>
+            <dt className="text-sm font-medium text-cinema-muted">예매 상태</dt>
+            <dd className="mt-1">{detail.status}</dd>
           </div>
         </dl>
         <div className="mt-6 flex gap-3">
-          <Link
-            to="/reservations"
-            className="rounded-md bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700"
-          >
-            예매 내역
-          </Link>
-          <Link
-            to="/movies"
-            className="rounded-md border border-gray-300 px-4 py-2 font-medium text-gray-700 hover:bg-gray-50"
-          >
-            영화 목록
-          </Link>
+          <NeonButton to="/reservations">예매 내역</NeonButton>
+          <NeonButton to="/movies" variant="ghost">영화 목록</NeonButton>
         </div>
-      </div>
+      </GlassCard>
     </div>
   );
 }

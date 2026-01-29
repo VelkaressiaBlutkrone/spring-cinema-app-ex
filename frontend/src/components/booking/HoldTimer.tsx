@@ -1,12 +1,10 @@
 /**
- * HOLD 타이머: 서버 기준 만료 시각(holdExpireAt) 기준 남은 시간 표시
+ * HOLD 타이머 — cinema theme
  */
 import { useState, useEffect } from 'react';
 
 export interface HoldTimerProps {
-  /** 서버에서 내려준 만료 시각 ISO 문자열 */
   holdExpireAt: string | undefined;
-  /** 만료 시 콜백 (선택) */
   onExpire?: () => void;
   className?: string;
 }
@@ -49,8 +47,10 @@ export function HoldTimer({ holdExpireAt, onExpire, className = '' }: HoldTimerP
 
   return (
     <div
-      className={`inline-flex items-center gap-2 rounded-lg border px-4 py-2 ${
-        isLow ? 'border-red-300 bg-red-50 text-red-700' : 'border-gray-200 bg-gray-50 text-gray-700'
+      className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2 ${
+        isLow
+          ? 'border-cinema-neon-red/50 bg-cinema-neon-red/10 text-cinema-neon-red'
+          : 'border-cinema-glass-border bg-cinema-glass text-cinema-muted'
       } ${className}`}
       role="timer"
       aria-live="polite"
