@@ -1,6 +1,7 @@
 package com.cinema.domain.admin.controller;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +16,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cinema.domain.admin.dto.PaymentListResponse;
+import com.cinema.domain.admin.dto.StatsDailyItem;
+import com.cinema.domain.admin.dto.StatsKpiResponse;
+import com.cinema.domain.admin.dto.StatsTopMovieItem;
 import com.cinema.domain.admin.service.AdminPaymentService;
+import com.cinema.domain.admin.service.AdminStatsService;
 import com.cinema.domain.payment.entity.PaymentStatus;
 import com.cinema.global.dto.ApiResponse;
 import com.cinema.global.dto.PageResponse;
@@ -35,6 +40,7 @@ import lombok.RequiredArgsConstructor;
 public class AdminPaymentController {
 
     private final AdminPaymentService adminPaymentService;
+    private final AdminStatsService adminStatsService;
 
     /**
      * 결제 목록 조회 (필터링, 정렬, 페이지네이션)
@@ -51,6 +57,30 @@ public class AdminPaymentController {
                 startDate, endDate, payStatus, memberId, pageable);
 
         return ResponseEntity.ok(ApiResponse.success(PageResponse.of(page)));
+    }
+
+    // ========================================
+    // 통계 대시보드 (Step 15) — /api/admin/payments/dashboard/**
+    // ========================================
+
+    @GetMapping("/dashboard/kpi")
+    public ResponseEntity<ApiResponse<StatsKpiResponse>> getDashboardKpi() {
+        return ResponseEntity.ok(ApiResponse.success(adminStatsService.getKpi()));
+    }
+
+    @GetMapping("/dashboard/daily")
+    public ResponseEntity<ApiResponse<List<StatsDailyItem>>> getDashboardDaily(
+            @RequestParam(value = "days", defaultValue = "30") int days) {
+        if (days < 1 || days > 365) {
+            days = 30;
+        }
+        return ResponseEntity.ok(ApiResponse.success(adminStatsService.getDailyTrend(days)));
+    }
+
+    @GetMapping("/dashboard/top-movies")
+    public ResponseEntity<ApiResponse<List<StatsTopMovieItem>>> getDashboardTopMovies(
+            @RequestParam(value = "limit", defaultValue = "5") int limit) {
+        return ResponseEntity.ok(ApiResponse.success(adminStatsService.getTopMoviesByBookings(limit)));
     }
 
     /**

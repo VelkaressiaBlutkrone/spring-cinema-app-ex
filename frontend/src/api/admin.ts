@@ -330,23 +330,24 @@ export interface StatsTopMovieItem {
   bookingCount: number;
 }
 
+/** 통계 API: /api/admin/payments/dashboard/** (AdminPaymentController) */
 export const adminStatsApi = {
   getKpi: async () => {
     const { data } = await axiosInstance.get<ApiResponseBody<StatsKpiResponse>>(
-      `${prefix}/stats/kpi`
+      `${prefix}/payments/dashboard/kpi`
     );
     return data;
   },
   getDailyTrend: async (days = 30) => {
     const { data } = await axiosInstance.get<ApiResponseBody<StatsDailyItem[]>>(
-      `${prefix}/stats/daily`,
+      `${prefix}/payments/dashboard/daily`,
       { params: { days } }
     );
     return data;
   },
   getTopMoviesByBookings: async (limit = 5) => {
     const { data } = await axiosInstance.get<ApiResponseBody<StatsTopMovieItem[]>>(
-      `${prefix}/stats/top-movies`,
+      `${prefix}/payments/dashboard/top-movies`,
       { params: { limit } }
     );
     return data;

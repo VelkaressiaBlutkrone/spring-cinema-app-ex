@@ -1015,7 +1015,7 @@ domain/
 - `AdminReservationService`: 예매 조회 서비스 (필터링, 페이지네이션)
 - `AdminPaymentController`: 결제 목록/상세/취소 내역 조회 API
 - `AdminPaymentService`: 결제 조회 서비스 (필터링, 페이지네이션)
-- `AdminStatsController`: 통계 대시보드 API (KPI, 일별 추이, TOP 영화)
+- `AdminPaymentController`: 통계 대시보드 API (KPI, 일별 추이, TOP 영화) — `/api/admin/payments/dashboard/**`
 - `AdminStatsService`: KPI·일별·영화별 집계 (Payment/Reservation/Screening 기반)
 - `StatsKpiResponse`, `StatsDailyItem`, `StatsTopMovieItem`: 통계 DTO
 - `ReservationListResponse`, `PaymentListResponse`: 관리자용 목록 응답 DTO
@@ -1038,9 +1038,9 @@ domain/
 - `GET /api/admin/payments`: 결제 목록 조회 (필터링: startDate, endDate, payStatus, memberId)
 - `GET /api/admin/payments/{paymentId}`: 결제 상세 조회
 - `GET /api/admin/payments/cancelled`: 취소 결제 목록 조회
-- `GET /api/admin/stats/kpi`: KPI (오늘 매출, 예매 건수, 점유율, 노쇼 플레이스홀더)
-- `GET /api/admin/stats/daily?days=30`: 일별 매출·예매 추이
-- `GET /api/admin/stats/top-movies?limit=5`: 오늘 상영 영화 TOP N 예매 순위
+- `GET /api/admin/payments/dashboard/kpi`: KPI (오늘 매출, 예매 건수, 점유율, 노쇼 플레이스홀더)
+- `GET /api/admin/payments/dashboard/daily?days=30`: 일별 매출·예매 추이
+- `GET /api/admin/payments/dashboard/top-movies?limit=5`: 오늘 상영 영화 TOP N 예매 순위
 
 ### 구현 완료 여부
 
