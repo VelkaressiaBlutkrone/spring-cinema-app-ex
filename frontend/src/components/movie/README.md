@@ -126,12 +126,20 @@ interface ScreeningListProps {
 interface Movie {
   id: number;
   title: string;
-  genre: string;
-  durationMinutes: number;
-  releaseDate: string;
-  posterUrl?: string;
   description?: string;
+  runningTime?: number;
+  rating?: string;
+  genre?: string;
+  director?: string;
+  actors?: string;
+  posterUrl?: string;
+  releaseDate?: string;
+  status: MovieStatus;
+  createdAt?: string;
+  updatedAt?: string;
 }
+
+type MovieStatus = 'RELEASED' | 'UPCOMING' | 'ENDED' | 'DELETED';
 
 interface Screening {
   id: number;
@@ -139,15 +147,15 @@ interface Screening {
   movieTitle: string;
   screenId: number;
   screenName: string;
+  theaterName?: string;
   startTime: string; // ISO 8601
   endTime: string;   // ISO 8601
-  basePrice: number;
   status: ScreeningStatus;
-  availableSeats?: number;
-  totalSeats?: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
-type ScreeningStatus = 'SCHEDULED' | 'OPEN' | 'CLOSED' | 'CANCELLED';
+type ScreeningStatus = 'SCHEDULED' | 'NOW_SHOWING' | 'ONGOING' | 'ENDED' | 'CANCELLED';
 ```
 
 ## 상영 상태 라벨
@@ -158,14 +166,15 @@ type ScreeningStatus = 'SCHEDULED' | 'OPEN' | 'CLOSED' | 'CANCELLED';
 import { SCREENING_STATUS_LABEL } from '@/types/movie.types';
 
 // 사용 예시
-const statusText = SCREENING_STATUS_LABEL[screening.status]; // "예매 가능"
+const statusText = SCREENING_STATUS_LABEL[screening.status]; // "상영 중"
 ```
 
 **상태별 라벨**:
-- `SCHEDULED`: "예정"
-- `OPEN`: "예매 가능"
-- `CLOSED`: "마감"
-- `CANCELLED`: "취소됨"
+- `SCHEDULED`: "상영 예정"
+- `NOW_SHOWING`: "상영 중"
+- `ONGOING`: "상영 중"
+- `ENDED`: "상영 종료"
+- `CANCELLED`: "상영 취소"
 
 ## API 연동
 

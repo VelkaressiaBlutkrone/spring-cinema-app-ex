@@ -220,8 +220,12 @@ import { reservationsApi } from '@/api/reservations';
 // 예매 생성
 const reservation = await reservationsApi.createReservation({
   screeningId: 123,
-  seatIds: [1, 2, 3],
-  paymentMethod: 'CARD',
+  seatHoldItems: [
+    { seatId: 1, holdToken: 'token1' },
+    { seatId: 2, holdToken: 'token2' },
+    { seatId: 3, holdToken: 'token3' },
+  ],
+  payMethod: 'CARD',
 });
 
 // 내 예매 조회

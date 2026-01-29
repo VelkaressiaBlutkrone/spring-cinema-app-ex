@@ -118,23 +118,36 @@ type PaymentMethod =
 // @/types/reservation.types
 interface PaymentRequest {
   screeningId: number;
-  seatIds: number[];
-  paymentMethod: PaymentMethod;
-  // ... 기타 필드
+  seatHoldItems: SeatHoldItem[];
+  payMethod: PaymentMethod;
 }
 
-interface Reservation {
-  id: number;
-  userId: number;
+interface SeatHoldItem {
+  seatId: number;
+  holdToken: string;
+}
+
+interface ReservationDetailResponse {
+  reservationId: number;
+  reservationNo: string;
+  status: string;
+  memberId: number;
   screeningId: number;
   movieTitle: string;
   screenName: string;
   startTime: string;
-  seatIds: number[];
+  totalSeats: number;
   totalAmount: number;
-  paymentMethod: PaymentMethod;
-  status: ReservationStatus;
+  seats: ReservationSeatItem[];
   createdAt: string;
+}
+
+interface ReservationSeatItem {
+  seatId: number;
+  rowLabel: string;
+  seatNo: number;
+  displayName: string;
+  price: number;
 }
 
 type ReservationStatus = 
@@ -149,14 +162,20 @@ type ReservationStatus =
 
 ```typescript
 import { reservationsApi } from '@/api/reservations';
-import type { PaymentRequest } from '@/types/reservation.types';
+import type { PaymentRequest, SeatHoldItem } from '@/types/reservation.types';
 
 async function processPayment() {
+  // 좌석 HOLD 토큰 정보 준비
+  const seatHoldItems: SeatHoldItem[] = [
+    { seatId: 1, holdToken: 'token1' },
+    { seatId: 2, holdToken: 'token2' },
+    { seatId: 3, holdToken: 'token3' },
+  ];
+  
   const paymentData: PaymentRequest = {
     screeningId: 123,
-    seatIds: [1, 2, 3],
-    paymentMethod: 'CARD',
-    // ... 기타 필드
+    seatHoldItems: seatHoldItems,
+    payMethod: 'CARD',
   };
   
   try {
