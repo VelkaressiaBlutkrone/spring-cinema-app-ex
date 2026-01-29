@@ -1,5 +1,5 @@
-/// Main tab screen with bottom navigation
-/// 홈 / 영화찾기 / 예매내역 / 마이페이지
+// Main tab screen with bottom navigation
+// 홈 / 영화찾기 / 예매내역 / 마이페이지
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/cinema_theme.dart';
@@ -42,7 +42,7 @@ class _MainTabScreenState extends State<MainTabScreen> {
   Widget _buildBottomNav() {
     return Container(
       decoration: BoxDecoration(
-        color: CinemaColors.surface.withOpacity(0.95),
+        color: CinemaColors.surface.withValues(alpha: 0.95),
         border: Border(
           top: BorderSide(
             color: CinemaColors.glassBorder,

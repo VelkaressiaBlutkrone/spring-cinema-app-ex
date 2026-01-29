@@ -1,5 +1,5 @@
-/// 2026 Modern Premium Cinematic Theme
-/// Deep black charcoal, neon accents, glassmorphism 2.0
+// 2026 Modern Premium Cinematic Theme
+// Deep black charcoal, neon accents, glassmorphism 2.0
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 

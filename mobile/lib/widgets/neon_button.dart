@@ -28,24 +28,24 @@ class NeonButton extends StatelessWidget {
             end: Alignment.bottomRight,
             colors: isPrimary
                 ? [
-                    CinemaColors.neonBlue.withOpacity(0.9),
-                    CinemaColors.neonBlue.withOpacity(0.6),
+                    CinemaColors.neonBlue.withValues(alpha: 0.9),
+                    CinemaColors.neonBlue.withValues(alpha: 0.6),
                   ]
                 : [
                     CinemaColors.glassWhite,
-                    CinemaColors.glassWhite.withOpacity(0.5),
+                    CinemaColors.glassWhite.withValues(alpha: 0.5),
                   ],
           ),
           boxShadow: [
             BoxShadow(
               color: (isPrimary ? CinemaColors.neonBlue : CinemaColors.neonAmber)
-                  .withOpacity(0.4),
+                  .withValues(alpha: 0.4),
               blurRadius: 16,
               spreadRadius: 0,
             ),
             BoxShadow(
               color: (isPrimary ? CinemaColors.neonBlue : Colors.white)
-                  .withOpacity(0.2),
+                  .withValues(alpha: 0.2),
               blurRadius: 8,
               spreadRadius: -2,
             ),

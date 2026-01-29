@@ -1,5 +1,5 @@
-/// 2026 Modern Premium Cinematic Home Dashboard
-/// Deep black, glassmorphism 2.0, neon accents, immersive movie theater atmosphere
+// 2026 Modern Premium Cinematic Home Dashboard
+// Deep black, glassmorphism 2.0, neon accents, immersive movie theater atmosphere
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -80,7 +80,7 @@ class CinemaHomeScreen extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  CinemaColors.neonRed.withOpacity(0.08),
+                  CinemaColors.neonRed.withValues(alpha: 0.08),
                   Colors.transparent,
                 ],
               ),
@@ -97,7 +97,7 @@ class CinemaHomeScreen extends StatelessWidget {
               shape: BoxShape.circle,
               gradient: RadialGradient(
                 colors: [
-                  CinemaColors.neonBlue.withOpacity(0.06),
+                  CinemaColors.neonBlue.withValues(alpha: 0.06),
                   Colors.transparent,
                 ],
               ),
@@ -122,8 +122,8 @@ class CinemaHomeScreen extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  CinemaColors.neonRed.withOpacity(0.2),
-                  CinemaColors.neonBlue.withOpacity(0.15),
+                  CinemaColors.neonRed.withValues(alpha: 0.2),
+                  CinemaColors.neonBlue.withValues(alpha: 0.15),
                   CinemaColors.surface,
                 ],
               ),
@@ -136,9 +136,9 @@ class CinemaHomeScreen extends StatelessWidget {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  CinemaColors.neonBlue.withOpacity(0.1),
+                  CinemaColors.neonBlue.withValues(alpha: 0.1),
                   Colors.transparent,
-                  CinemaColors.neonRed.withOpacity(0.05),
+                  CinemaColors.neonRed.withValues(alpha: 0.05),
                 ],
               ),
             ),
@@ -159,11 +159,11 @@ class CinemaHomeScreen extends StatelessWidget {
               'TRENDING NOW',
               style: GoogleFonts.bebasNeue(
                 fontSize: 28,
-                color: CinemaColors.textPrimary.withOpacity(0.9),
+                color: CinemaColors.textPrimary.withValues(alpha: 0.9),
                 letterSpacing: 4,
                 shadows: [
                   Shadow(
-                    color: CinemaColors.neonBlue.withOpacity(0.5),
+                    color: CinemaColors.neonBlue.withValues(alpha: 0.5),
                     blurRadius: 12,
                   ),
                 ],
@@ -266,22 +266,7 @@ class CinemaHomeScreen extends StatelessWidget {
 
   Widget _buildRecentReservations() {
     // Empty state for demo
-    const hasReservations = false;
-    if (hasReservations) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: GlassCard(
-          child: Column(
-            children: [
-              ListTile(
-                title: Text('듄: 파트 2', style: GoogleFonts.roboto(color: CinemaColors.textPrimary)),
-                subtitle: Text('12/24 19:30 · CGV 강남 1관', style: GoogleFonts.roboto(color: CinemaColors.textSecondary, fontSize: 12)),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
+    // TODO: Implement reservation list when backend is ready
     return _buildEmptyReservationState();
   }
 
@@ -296,7 +281,7 @@ class CinemaHomeScreen extends StatelessWidget {
             Icon(
               Icons.movie_filter_outlined,
               size: 64,
-              color: CinemaColors.textMuted.withOpacity(0.6),
+              color: CinemaColors.textMuted.withValues(alpha: 0.6),
             ),
             const SizedBox(height: 16),
             Text(
@@ -358,8 +343,8 @@ class _PopularPosterCard extends StatelessWidget {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        CinemaColors.neonRed.withOpacity(0.3),
-                        CinemaColors.neonBlue.withOpacity(0.2),
+                        CinemaColors.neonRed.withValues(alpha: 0.3),
+                        CinemaColors.neonBlue.withValues(alpha: 0.2),
                       ],
                     ),
                   ),
@@ -371,11 +356,11 @@ class _PopularPosterCard extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: CinemaColors.neonRed.withOpacity(0.9),
+                        color: CinemaColors.neonRed.withValues(alpha: 0.9),
                         borderRadius: BorderRadius.circular(8),
                         boxShadow: [
                           BoxShadow(
-                            color: CinemaColors.neonRed.withOpacity(0.5),
+                            color: CinemaColors.neonRed.withValues(alpha: 0.5),
                             blurRadius: 8,
                           ),
                         ],
@@ -447,8 +432,8 @@ class _UpcomingCard extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 gradient: LinearGradient(
                   colors: [
-                    CinemaColors.neonBlue.withOpacity(0.2),
-                    CinemaColors.neonPurple.withOpacity(0.15),
+                    CinemaColors.neonBlue.withValues(alpha: 0.2),
+                    CinemaColors.neonPurple.withValues(alpha: 0.15),
                   ],
                 ),
               ),

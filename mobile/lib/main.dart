@@ -1,5 +1,5 @@
-/// 영화관 예매 모바일 앱
-/// 2026 Modern Premium Cinematic Style
+// 영화관 예매 모바일 앱
+// 2026 Modern Premium Cinematic Style
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'theme/cinema_theme.dart';
