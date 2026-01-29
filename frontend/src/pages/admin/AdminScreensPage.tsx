@@ -72,12 +72,12 @@ export function AdminScreensPage() {
       setLoading(true);
       try {
         const res = await adminScreensApi.getList({ page: pageNum, size: PAGE_SIZE });
-      if (res.success && res.data) {
-        setContent(res.data.content ?? []);
-        setTotalElements(res.data.totalElements ?? 0);
-        setTotalPages(res.data.totalPages ?? 0);
-        setPage(getPageIndex(res.data));
-      }
+        if (res.success && res.data) {
+          setContent(res.data.content ?? []);
+          setTotalElements(res.data.totalElements ?? 0);
+          setTotalPages(res.data.totalPages ?? 0);
+          setPage(getPageIndex(res.data));
+        }
       } catch (err) {
         showError(getErrorMessage(err));
       } finally {
@@ -204,7 +204,9 @@ export function AdminScreensPage() {
       </div>
 
       {theaters.length === 0 && (
-        <p className="mb-4 text-sm text-amber-600">영화관을 먼저 등록한 뒤 상영관을 등록할 수 있습니다.</p>
+        <p className="mb-4 text-sm text-amber-600">
+          영화관을 먼저 등록한 뒤 상영관을 등록할 수 있습니다.
+        </p>
       )}
 
       {isEmpty ? (
@@ -387,11 +389,7 @@ export function AdminScreensPage() {
               disabled={submitLoading}
               className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
             >
-              {submitLoading
-                ? '처리 중...'
-                : editing
-                  ? '수정'
-                  : '등록'}
+              {submitLoading ? '처리 중...' : editing ? '수정' : '등록'}
             </button>
           </div>
         </form>

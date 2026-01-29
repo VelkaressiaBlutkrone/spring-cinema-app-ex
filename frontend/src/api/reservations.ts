@@ -24,9 +24,7 @@ export const reservationsApi = {
 
   /** 본인 예매 목록 */
   getMyReservations: async () => {
-    const { data } = await axiosInstance.get<ApiResponseBody<ReservationDetailResponse[]>>(
-      BASE
-    );
+    const { data } = await axiosInstance.get<ApiResponseBody<ReservationDetailResponse[]>>(BASE);
     return data;
   },
 

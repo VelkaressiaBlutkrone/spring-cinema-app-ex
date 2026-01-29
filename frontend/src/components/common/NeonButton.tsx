@@ -20,7 +20,8 @@ const base =
   'inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-medium transition disabled:opacity-50';
 const styles = {
   primary: 'bg-cinema-neon-blue text-cinema-bg hover:opacity-90',
-  ghost: 'bg-cinema-glass border border-cinema-glass-border text-cinema-text hover:bg-cinema-glass-border',
+  ghost:
+    'bg-cinema-glass border border-cinema-glass-border text-cinema-text hover:bg-cinema-glass-border',
 };
 
 export function NeonButton({
@@ -34,7 +35,8 @@ export function NeonButton({
   className,
 }: NeonButtonProps) {
   const cn = clsx(base, styles[variant], className);
-  const style = variant === 'primary' ? { boxShadow: '0 0 20px rgba(0, 212, 255, 0.4)' } : undefined;
+  const style =
+    variant === 'primary' ? { boxShadow: '0 0 20px rgba(0, 212, 255, 0.4)' } : undefined;
 
   if (to) {
     return (

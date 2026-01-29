@@ -83,11 +83,7 @@ export function AdminDashboardPage() {
       <section>
         <h2 className="mb-4 text-lg font-semibold text-gray-800">오늘 KPI</h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <KpiCard
-            label="오늘 매출"
-            value={formatPrice(kpi?.todaySales ?? 0)}
-            variant="primary"
-          />
+          <KpiCard label="오늘 매출" value={formatPrice(kpi?.todaySales ?? 0)} variant="primary" />
           <KpiCard
             label="오늘 예매 건수"
             value={formatNumber(kpi?.todayBookings ?? 0)}
@@ -122,7 +118,11 @@ export function AdminDashboardPage() {
             >
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
               <XAxis dataKey="dateLabel" tick={{ fontSize: 12 }} />
-              <YAxis yAxisId="sales" tick={{ fontSize: 12 }} tickFormatter={(v) => `${(v / 10000).toFixed(0)}만`} />
+              <YAxis
+                yAxisId="sales"
+                tick={{ fontSize: 12 }}
+                tickFormatter={(v) => `${(v / 10000).toFixed(0)}만`}
+              />
               <YAxis yAxisId="bookings" orientation="right" tick={{ fontSize: 12 }} />
               <Tooltip
                 formatter={(value: number, name: string) =>
@@ -131,7 +131,13 @@ export function AdminDashboardPage() {
                 labelFormatter={(label) => `날짜: ${label}`}
               />
               <Legend />
-              <Bar yAxisId="sales" dataKey="sales" name="매출" fill="#6366f1" radius={[4, 4, 0, 0]} />
+              <Bar
+                yAxisId="sales"
+                dataKey="sales"
+                name="매출"
+                fill="#6366f1"
+                radius={[4, 4, 0, 0]}
+              />
               <Line
                 yAxisId="bookings"
                 type="monotone"

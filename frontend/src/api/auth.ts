@@ -59,9 +59,13 @@ export const authApi = {
 
   /** 토큰 갱신 (Cookie: refreshToken) → AccessToken */
   refresh: async (): Promise<AccessTokenResponse> => {
-    const { data } = await axiosInstance.post<AccessTokenResponse>(`${BASE}/refresh`, {}, {
-      withCredentials: true,
-    });
+    const { data } = await axiosInstance.post<AccessTokenResponse>(
+      `${BASE}/refresh`,
+      {},
+      {
+        withCredentials: true,
+      }
+    );
     return data;
   },
 

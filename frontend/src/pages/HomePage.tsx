@@ -23,13 +23,7 @@ interface SectionTitleProps {
 }
 
 function SectionTitle({ children }: SectionTitleProps) {
-  return (
-    <h2
-      className="mb-4 font-display text-lg tracking-widest text-cinema-text"
-    >
-      {children}
-    </h2>
-  );
+  return <h2 className="mb-4 font-display text-lg tracking-widest text-cinema-text">{children}</h2>;
 }
 
 export function HomePage() {
@@ -81,16 +75,15 @@ export function HomePage() {
           className="absolute inset-0 bg-gradient-to-br from-cinema-neon-red/20 via-cinema-neon-blue/10 to-cinema-surface"
           aria-hidden
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-cinema-bg/80 to-transparent" aria-hidden />
+        <div
+          className="absolute inset-0 bg-gradient-to-t from-cinema-bg/80 to-transparent"
+          aria-hidden
+        />
         <div className="relative flex min-h-[200px] flex-col justify-end px-6 py-8 sm:min-h-[240px] sm:px-10">
-          <h1
-            className="mb-2 font-display text-4xl tracking-[0.2em] text-cinema-text drop-shadow-[0_0_20px_rgba(0,212,255,0.3)] sm:text-5xl"
-          >
+          <h1 className="mb-2 font-display text-4xl tracking-[0.2em] text-cinema-text drop-shadow-[0_0_20px_rgba(0,212,255,0.3)] sm:text-5xl">
             영화관 예매
           </h1>
-          <p className="text-cinema-muted">
-            상영 중인 영화를 확인하고 편리하게 예매하세요.
-          </p>
+          <p className="text-cinema-muted">상영 중인 영화를 확인하고 편리하게 예매하세요.</p>
         </div>
       </section>
 
@@ -113,7 +106,8 @@ export function HomePage() {
                     상영관 <strong className="text-cinema-text">{stats.screenCount}</strong>개
                   </span>
                   <span>
-                    오늘 상영 <strong className="text-cinema-text">{stats.todayScreeningCount}</strong>편
+                    오늘 상영{' '}
+                    <strong className="text-cinema-text">{stats.todayScreeningCount}</strong>편
                   </span>
                 </div>
               </GlassCard>
@@ -196,9 +190,7 @@ export function HomePage() {
                     🎬
                   </span>
                   <p className="text-cinema-muted">
-                    {isAuthenticated
-                      ? '첫 예매를 시작해보세요'
-                      : '지금 바로 예매를 시작해보세요'}
+                    {isAuthenticated ? '첫 예매를 시작해보세요' : '지금 바로 예매를 시작해보세요'}
                   </p>
                   <p className="text-sm text-cinema-muted-dark">
                     영화 목록에서 상영을 선택해 예매해 보세요.

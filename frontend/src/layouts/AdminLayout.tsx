@@ -74,10 +74,7 @@ export function AdminLayout() {
         <header className="flex h-14 shrink-0 items-center justify-between border-b border-gray-200 bg-white px-4">
           <span className="text-sm text-gray-600">영화관 예매 관리자</span>
           <div className="flex items-center gap-2">
-            <Link
-              to="/"
-              className="text-sm text-gray-600 hover:text-gray-900"
-            >
+            <Link to="/" className="text-sm text-gray-600 hover:text-gray-900">
               사용자 사이트
             </Link>
             <button

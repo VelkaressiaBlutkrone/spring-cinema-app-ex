@@ -10,10 +10,7 @@ import { Pagination } from '@/components/common/ui/Pagination';
 import { useToast } from '@/hooks';
 import { getErrorMessage } from '@/utils/errorHandler';
 import { getPageIndex } from '@/types/api.types';
-import type {
-  AdminReservationListResponse,
-  AdminReservationStatus,
-} from '@/types/admin.types';
+import type { AdminReservationListResponse, AdminReservationStatus } from '@/types/admin.types';
 import type { ReservationDetailResponse } from '@/types/reservation.types';
 
 const PAGE_SIZE = 10;
@@ -33,8 +30,9 @@ export function AdminReservationsPage() {
   const [totalPages, setTotalPages] = useState(0);
   const [page, setPage] = useState(0);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
-  const [selectedReservation, setSelectedReservation] =
-    useState<ReservationDetailResponse | null>(null);
+  const [selectedReservation, setSelectedReservation] = useState<ReservationDetailResponse | null>(
+    null
+  );
   const [detailLoading, setDetailLoading] = useState(false);
 
   // 필터 상태

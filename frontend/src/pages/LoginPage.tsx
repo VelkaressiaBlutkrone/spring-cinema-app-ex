@@ -42,11 +42,7 @@ export function LoginPage() {
   return (
     <div className="mx-auto max-w-md py-12">
       <GlassCard className="p-8">
-        <h1
-          className="mb-6 font-display text-2xl tracking-widest text-cinema-text"
-        >
-          로그인
-        </h1>
+        <h1 className="mb-6 font-display text-2xl tracking-widest text-cinema-text">로그인</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="loginId" className="mb-1 block text-sm font-medium text-cinema-muted">

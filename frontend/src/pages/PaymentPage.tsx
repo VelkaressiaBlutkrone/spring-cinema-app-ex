@@ -54,10 +54,12 @@ export function PaymentPage() {
   const [result, setResult] = useState<PaymentResponse | null>(null);
 
   useEffect(() => {
-    const state = location.state as {
-      screening?: Screening;
-      heldSeats?: HeldSeatItem[];
-    } | undefined;
+    const state = location.state as
+      | {
+          screening?: Screening;
+          heldSeats?: HeldSeatItem[];
+        }
+      | undefined;
     if (state?.screening) setScreening(state.screening);
     if (state?.heldSeats?.length) setHeldSeats(state.heldSeats);
   }, [location.state]);
@@ -119,27 +121,29 @@ export function PaymentPage() {
     return (
       <div className="mx-auto max-w-lg py-12">
         <GlassCard>
-          <h1
-            className="mb-6 font-display text-2xl tracking-widest text-cinema-text"
-          >
-            예매 완료
-          </h1>
+          <h1 className="mb-6 font-display text-2xl tracking-widest text-cinema-text">예매 완료</h1>
           <div className="space-y-4">
             <p className="rounded-xl border border-cinema-neon-blue/30 bg-cinema-neon-blue/10 px-4 py-3 text-cinema-neon-blue">
               예매가 완료되었습니다. 예매 번호를 확인해 주세요.
             </p>
             <dl className="grid gap-2 sm:grid-cols-[auto_1fr]">
               <dt className="font-medium text-cinema-muted">예매 번호</dt>
-              <dd className="font-mono font-semibold text-cinema-neon-blue">{result.reservationNo}</dd>
+              <dd className="font-mono font-semibold text-cinema-neon-blue">
+                {result.reservationNo}
+              </dd>
               <dt className="font-medium text-cinema-muted">좌석 수</dt>
               <dd className="text-cinema-text">{result.totalSeats}석</dd>
               <dt className="font-medium text-cinema-muted">총 결제 금액</dt>
-              <dd className="font-semibold text-cinema-neon-amber">{formatPrice(result.totalAmount)}</dd>
+              <dd className="font-semibold text-cinema-neon-amber">
+                {formatPrice(result.totalAmount)}
+              </dd>
             </dl>
           </div>
           <div className="mt-8 flex gap-3">
             <NeonButton to="/reservations">예매 내역</NeonButton>
-            <NeonButton to="/movies" variant="ghost">영화 목록</NeonButton>
+            <NeonButton to="/movies" variant="ghost">
+              영화 목록
+            </NeonButton>
           </div>
         </GlassCard>
       </div>
@@ -148,11 +152,7 @@ export function PaymentPage() {
 
   return (
     <div className="mx-auto max-w-xl py-8">
-      <h1
-        className="mb-6 font-display text-2xl tracking-widest text-cinema-text"
-      >
-        결제
-      </h1>
+      <h1 className="mb-6 font-display text-2xl tracking-widest text-cinema-text">결제</h1>
 
       <GlassCard className="mb-6">
         <h2 className="mb-3 font-medium text-cinema-text">예매 정보</h2>

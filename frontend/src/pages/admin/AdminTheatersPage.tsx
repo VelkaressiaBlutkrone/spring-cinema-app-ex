@@ -45,22 +45,25 @@ export function AdminTheatersPage() {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<AdminTheaterResponse | null>(null);
 
-  const fetchList = useCallback(async (pageNum: number = 0) => {
-    setLoading(true);
-    try {
-      const res = await adminTheatersApi.getList({ page: pageNum, size: PAGE_SIZE });
-      if (res.success && res.data) {
-        setContent(res.data.content ?? []);
-        setTotalElements(res.data.totalElements ?? 0);
-        setTotalPages(res.data.totalPages ?? 0);
-        setPage(getPageIndex(res.data));
+  const fetchList = useCallback(
+    async (pageNum: number = 0) => {
+      setLoading(true);
+      try {
+        const res = await adminTheatersApi.getList({ page: pageNum, size: PAGE_SIZE });
+        if (res.success && res.data) {
+          setContent(res.data.content ?? []);
+          setTotalElements(res.data.totalElements ?? 0);
+          setTotalPages(res.data.totalPages ?? 0);
+          setPage(getPageIndex(res.data));
+        }
+      } catch (err) {
+        showError(getErrorMessage(err));
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      showError(getErrorMessage(err));
-    } finally {
-      setLoading(false);
-    }
-  }, [showError]);
+    },
+    [showError]
+  );
 
   useEffect(() => {
     fetchList(page);
@@ -291,11 +294,7 @@ export function AdminTheatersPage() {
               disabled={submitLoading}
               className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
             >
-              {submitLoading
-                ? '처리 중...'
-                : editing
-                  ? '수정'
-                  : '등록'}
+              {submitLoading ? '처리 중...' : editing ? '수정' : '등록'}
             </button>
           </div>
         </form>

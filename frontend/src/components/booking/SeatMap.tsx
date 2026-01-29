@@ -133,19 +133,33 @@ export function SeatMap({
       </svg>
       <div className="mt-4 flex flex-wrap gap-4 text-xs text-cinema-muted">
         <span className="flex items-center gap-1">
-          <span className="inline-block h-3 w-3 rounded" style={{ background: STATUS_COLOR.AVAILABLE }} /> 예매 가능
+          <span
+            className="inline-block h-3 w-3 rounded"
+            style={{ background: STATUS_COLOR.AVAILABLE }}
+          />{' '}
+          예매 가능
         </span>
         <span className="flex items-center gap-1">
-          <span className="inline-block h-3 w-3 rounded" style={{ background: '#3b82f6' }} /> 내 선택
+          <span className="inline-block h-3 w-3 rounded" style={{ background: '#3b82f6' }} /> 내
+          선택
         </span>
         <span className="flex items-center gap-1">
-          <span className="inline-block h-3 w-3 rounded" style={{ background: OTHER_HOLD_COLOR }} /> 다른 고객 선택
+          <span className="inline-block h-3 w-3 rounded" style={{ background: OTHER_HOLD_COLOR }} />{' '}
+          다른 고객 선택
         </span>
         <span className="flex items-center gap-1">
-          <span className="inline-block h-3 w-3 rounded" style={{ background: STATUS_COLOR.RESERVED }} /> 예매 완료
+          <span
+            className="inline-block h-3 w-3 rounded"
+            style={{ background: STATUS_COLOR.RESERVED }}
+          />{' '}
+          예매 완료
         </span>
         <span className="flex items-center gap-1">
-          <span className="inline-block h-3 w-3 rounded" style={{ background: STATUS_COLOR.BLOCKED }} /> 운영 차단
+          <span
+            className="inline-block h-3 w-3 rounded"
+            style={{ background: STATUS_COLOR.BLOCKED }}
+          />{' '}
+          운영 차단
         </span>
       </div>
     </div>

@@ -26,14 +26,8 @@ async function importPublicKeyFromPem(pem: string): Promise<CryptoKey> {
     .replaceAll(/\s/g, '');
   const s = atob(stripped);
   const bin = new Uint8Array(s.length);
-  for (let i = 0; i < s.length; i++) bin[i] = s.charCodeAt(i);
-  return crypto.subtle.importKey(
-    'spki',
-    bin,
-    { name: RSA_ALG, hash: 'SHA-1' },
-    false,
-    ['encrypt']
-  );
+  for (let i = 0; i < s.length; i++) bin[i] = (s.codePointAt(i) ?? 0) & 0xff;
+  return crypto.subtle.importKey('spki', bin, { name: RSA_ALG, hash: 'SHA-1' }, false, ['encrypt']);
 }
 
 /**
@@ -46,12 +40,12 @@ function randomBytes(len: number): Uint8Array {
 }
 
 /**
- * ArrayBuffer → Base64
+ * ArrayBuffer | Uint8Array → Base64
  */
-function toBase64(buf: ArrayBuffer): string {
-  const u = new Uint8Array(buf);
+function toBase64(buf: ArrayBuffer | Uint8Array): string {
+  const u = buf instanceof Uint8Array ? buf : new Uint8Array(buf);
   let b = '';
-  for (const x of u) b += String.fromCharCode(x);
+  for (const x of u) b += String.fromCodePoint(x);
   return btoa(b);
 }
 
@@ -67,29 +61,33 @@ export async function encryptPayload(
   const rawAesKey = randomBytes(AES_KEY_LEN / 8);
   const iv = randomBytes(GCM_IV_LEN);
 
+  const plainText = new TextEncoder().encode(JSON.stringify(plain));
+  const plainBuffer = new Uint8Array(plainText).buffer;
+  const ivBuffer = new Uint8Array(iv).buffer;
+  const rawAesKeyBuffer = new Uint8Array(rawAesKey).buffer;
+
   const aesKey = await crypto.subtle.importKey(
     'raw',
-    rawAesKey,
+    rawAesKeyBuffer,
     { name: AES_ALG, length: AES_KEY_LEN },
     false,
     ['encrypt']
   );
 
-  const plainText = new TextEncoder().encode(JSON.stringify(plain));
   const ciphertext = await crypto.subtle.encrypt(
     {
       name: AES_ALG,
-      iv,
+      iv: ivBuffer,
       tagLength: GCM_TAG_LEN,
     },
     aesKey,
-    plainText
+    plainBuffer
   );
 
   const encryptedKey = await crypto.subtle.encrypt(
     { name: RSA_ALG },
     publicKey,
-    rawAesKey
+    rawAesKeyBuffer
   );
 
   return {

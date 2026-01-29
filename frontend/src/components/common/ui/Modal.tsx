@@ -46,11 +46,7 @@ export const Modal = ({ isOpen, onClose, title, children, size = 'md' }: ModalPr
       >
         {title && (
           <div className="flex items-center justify-between border-b border-cinema-glass-border p-5 sm:p-6">
-            <h2
-              className="font-display text-xl tracking-widest text-cinema-text"
-            >
-              {title}
-            </h2>
+            <h2 className="font-display text-xl tracking-widest text-cinema-text">{title}</h2>
             <button
               onClick={onClose}
               className="flex h-8 w-8 items-center justify-center rounded-lg text-2xl leading-none text-cinema-muted transition hover:bg-cinema-glass hover:text-cinema-text"

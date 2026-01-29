@@ -31,21 +31,33 @@ export const ToastContainer = ({ children }: ToastContainerProps) => {
     setToast((prev) => ({ ...prev, isVisible: false }));
   }, []);
 
-  const showSuccess = useCallback((message: string) => {
-    showToast(message, 'success');
-  }, [showToast]);
+  const showSuccess = useCallback(
+    (message: string) => {
+      showToast(message, 'success');
+    },
+    [showToast]
+  );
 
-  const showError = useCallback((message: string) => {
-    showToast(message, 'error', 5000); // 에러는 5초간 표시
-  }, [showToast]);
+  const showError = useCallback(
+    (message: string) => {
+      showToast(message, 'error', 5000); // 에러는 5초간 표시
+    },
+    [showToast]
+  );
 
-  const showInfo = useCallback((message: string) => {
-    showToast(message, 'info');
-  }, [showToast]);
+  const showInfo = useCallback(
+    (message: string) => {
+      showToast(message, 'info');
+    },
+    [showToast]
+  );
 
-  const showWarning = useCallback((message: string) => {
-    showToast(message, 'warning');
-  }, [showToast]);
+  const showWarning = useCallback(
+    (message: string) => {
+      showToast(message, 'warning');
+    },
+    [showToast]
+  );
 
   return (
     <ToastContext.Provider

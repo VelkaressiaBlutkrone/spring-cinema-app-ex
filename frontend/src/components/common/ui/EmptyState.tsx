@@ -17,9 +17,7 @@ export const EmptyState = ({
   return (
     <div className="flex flex-col items-center justify-center px-4 py-12">
       {icon && <div className="mb-4 text-5xl text-cinema-muted-dark/60">{icon}</div>}
-      <h3
-        className="mb-2 text-center font-display text-lg tracking-widest text-cinema-text"
-      >
+      <h3 className="mb-2 text-center font-display text-lg tracking-widest text-cinema-text">
         {title}
       </h3>
       <p className="mb-6 max-w-md text-center text-sm leading-relaxed text-cinema-muted">

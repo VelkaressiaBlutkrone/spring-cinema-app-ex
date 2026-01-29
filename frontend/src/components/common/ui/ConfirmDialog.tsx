@@ -39,10 +39,7 @@ export const ConfirmDialog = ({
       <div className="space-y-5">
         <p className="text-gray-700">{message}</p>
         <div className="flex justify-end gap-3">
-          <button
-            onClick={onClose}
-            className="btn-secondary-imweb min-h-[44px] touch-manipulation"
-          >
+          <button onClick={onClose} className="btn-secondary-imweb min-h-[44px] touch-manipulation">
             {cancelText}
           </button>
           <button

@@ -39,9 +39,7 @@ export interface PageResponseBody<T> {
 }
 
 /** 목록 API 응답: Spring Page(number) 또는 PageResponse(page) 모두 처리 */
-export function getPageIndex(
-  data: SpringPage<unknown> | PageResponseBody<unknown>
-): number {
+export function getPageIndex(data: SpringPage<unknown> | PageResponseBody<unknown>): number {
   const d = data as Record<string, unknown>;
   if (typeof d.page === 'number') return d.page;
   if (typeof d.number === 'number') return d.number;

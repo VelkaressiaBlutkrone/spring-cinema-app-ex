@@ -54,7 +54,10 @@ export function ReservationDetailPage() {
     return (
       <div className="py-12 text-center text-cinema-muted">
         <p>예매 정보가 없습니다.</p>
-        <Link to="/reservations" className="mt-4 inline-block text-cinema-neon-blue hover:underline">
+        <Link
+          to="/reservations"
+          className="mt-4 inline-block text-cinema-neon-blue hover:underline"
+        >
           예매 내역
         </Link>
       </div>
@@ -71,7 +74,10 @@ export function ReservationDetailPage() {
     return (
       <div className="py-12 text-center text-cinema-muted">
         <p>예매 정보를 찾을 수 없습니다.</p>
-        <Link to="/reservations" className="mt-4 inline-block text-cinema-neon-blue hover:underline">
+        <Link
+          to="/reservations"
+          className="mt-4 inline-block text-cinema-neon-blue hover:underline"
+        >
           예매 내역
         </Link>
       </div>
@@ -80,16 +86,14 @@ export function ReservationDetailPage() {
 
   return (
     <div className="mx-auto max-w-xl py-8">
-      <h1
-        className="mb-6 font-display text-2xl tracking-widest text-cinema-text"
-      >
-        예매 상세
-      </h1>
+      <h1 className="mb-6 font-display text-2xl tracking-widest text-cinema-text">예매 상세</h1>
       <GlassCard>
         <dl className="space-y-4 text-cinema-text">
           <div>
             <dt className="text-sm font-medium text-cinema-muted">예매 번호</dt>
-            <dd className="mt-1 font-mono font-semibold text-cinema-neon-blue">{detail.reservationNo}</dd>
+            <dd className="mt-1 font-mono font-semibold text-cinema-neon-blue">
+              {detail.reservationNo}
+            </dd>
           </div>
           <div>
             <dt className="text-sm font-medium text-cinema-muted">영화</dt>
@@ -104,7 +108,8 @@ export function ReservationDetailPage() {
           <div>
             <dt className="text-sm font-medium text-cinema-muted">좌석</dt>
             <dd className="mt-1">
-              {detail.seats?.map((s) => s.displayName ?? `${s.rowLabel}-${s.seatNo}`).join(', ') ?? '-'}
+              {detail.seats?.map((s) => s.displayName ?? `${s.rowLabel}-${s.seatNo}`).join(', ') ??
+                '-'}
             </dd>
           </div>
           <div>
@@ -121,7 +126,9 @@ export function ReservationDetailPage() {
           </div>
           <div>
             <dt className="text-sm font-medium text-cinema-muted">총 결제 금액</dt>
-            <dd className="mt-1 font-semibold text-cinema-neon-amber">{formatPrice(detail.totalAmount)}</dd>
+            <dd className="mt-1 font-semibold text-cinema-neon-amber">
+              {formatPrice(detail.totalAmount)}
+            </dd>
           </div>
           <div>
             <dt className="text-sm font-medium text-cinema-muted">예매 상태</dt>
@@ -130,7 +137,9 @@ export function ReservationDetailPage() {
         </dl>
         <div className="mt-6 flex gap-3">
           <NeonButton to="/reservations">예매 내역</NeonButton>
-          <NeonButton to="/movies" variant="ghost">영화 목록</NeonButton>
+          <NeonButton to="/movies" variant="ghost">
+            영화 목록
+          </NeonButton>
         </div>
       </GlassCard>
     </div>

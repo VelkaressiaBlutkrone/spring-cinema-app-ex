@@ -40,11 +40,14 @@ export function SeatSelectPage() {
   const [heldSeats, setHeldSeats] = useState<HeldSeat[]>([]);
 
   // 서버 기준 가장 이른 만료 시각 (HOLD 타이머용)
-  const minHoldExpireAt = heldSeats.length > 0
-    ? heldSeats.reduce((earliest, h) =>
-        (new Date(h.holdExpireAt).getTime() < new Date(earliest.holdExpireAt).getTime() ? h : earliest)
-      ).holdExpireAt
-    : undefined;
+  const minHoldExpireAt =
+    heldSeats.length > 0
+      ? heldSeats.reduce((earliest, h) =>
+          new Date(h.holdExpireAt).getTime() < new Date(earliest.holdExpireAt).getTime()
+            ? h
+            : earliest
+        ).holdExpireAt
+      : undefined;
 
   const myHoldSeatIds = new Set(heldSeats.map((h) => h.seat.seatId));
 
@@ -133,7 +136,9 @@ export function SeatSelectPage() {
         setHeldSeats((prev) => prev.filter((h) => h.seat.seatId !== seat.seatId));
         setSeats((prev) =>
           prev.map((s) =>
-            s.seatId === seat.seatId ? { ...s, status: 'AVAILABLE' as const, holdExpireAt: undefined } : s
+            s.seatId === seat.seatId
+              ? { ...s, status: 'AVAILABLE' as const, holdExpireAt: undefined }
+              : s
           )
         );
         showSuccess('선택이 해제되었습니다.');
@@ -154,7 +159,10 @@ export function SeatSelectPage() {
     return (
       <div className="py-8 text-center text-cinema-muted">
         상영 정보가 없습니다.{' '}
-        <Link to="/movies" className="text-cinema-neon-blue hover:underline">영화 목록</Link>에서 예매할 상영을 선택해 주세요.
+        <Link to="/movies" className="text-cinema-neon-blue hover:underline">
+          영화 목록
+        </Link>
+        에서 예매할 상영을 선택해 주세요.
       </div>
     );
   }
@@ -171,18 +179,21 @@ export function SeatSelectPage() {
     <div className="py-6">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1
-            className="font-display text-2xl tracking-widest text-cinema-text"
-          >
+          <h1 className="font-display text-2xl tracking-widest text-cinema-text">
             {screening
-              ? ([screening.theaterName, screening.screenName, SCREENING_STATUS_LABEL[screening.status] ?? screening.status]
+              ? [
+                  screening.theaterName,
+                  screening.screenName,
+                  SCREENING_STATUS_LABEL[screening.status] ?? screening.status,
+                ]
                   .filter(Boolean)
-                  .join(' - ') || `${screening.movieTitle} - ${screening.screenName}`)
+                  .join(' - ') || `${screening.movieTitle} - ${screening.screenName}`
               : `상영 #${id} 좌석 선택`}
           </h1>
           {screening && (
             <p className="mt-1 text-cinema-muted">
-              {formatDate(screening.startTime, 'YYYY-MM-DD HH:mm')} ~ {formatDate(screening.endTime, 'HH:mm')}
+              {formatDate(screening.startTime, 'YYYY-MM-DD HH:mm')} ~{' '}
+              {formatDate(screening.endTime, 'HH:mm')}
             </p>
           )}
         </div>
@@ -229,7 +240,10 @@ export function SeatSelectPage() {
       )}
 
       <p className="mt-4 text-sm text-cinema-muted">
-        <Link to="/movies" className="text-cinema-neon-blue hover:underline">영화 목록</Link>으로 돌아가기
+        <Link to="/movies" className="text-cinema-neon-blue hover:underline">
+          영화 목록
+        </Link>
+        으로 돌아가기
       </p>
     </div>
   );

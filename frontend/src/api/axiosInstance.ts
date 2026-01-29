@@ -58,12 +58,14 @@ axiosInstance.interceptors.response.use(
         return axiosInstance.request(config);
       } catch {
         useAuthStore.getState().clearAuth();
-        const isAdminPath = typeof window !== 'undefined' && window.location.pathname.startsWith('/admin');
+        const isAdminPath =
+          typeof window !== 'undefined' && window.location.pathname.startsWith('/admin');
         window.location.href = isAdminPath ? '/admin/login' : '/login';
       }
     } else if (status === 401 && isRefresh) {
       useAuthStore.getState().clearAuth();
-      const isAdminPath = typeof window !== 'undefined' && window.location.pathname.startsWith('/admin');
+      const isAdminPath =
+        typeof window !== 'undefined' && window.location.pathname.startsWith('/admin');
       window.location.href = isAdminPath ? '/admin/login' : '/login';
     } else if (status === 403) {
       const url = error.config?.url ?? '';

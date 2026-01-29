@@ -35,15 +35,14 @@ export function NavigationBar() {
         </Link>
         <div className="flex items-center gap-1 sm:gap-2">
           {navLinks.map(({ to, label }) => {
-            const active = location.pathname === to || (to !== '/' && location.pathname.startsWith(to));
+            const active =
+              location.pathname === to || (to !== '/' && location.pathname.startsWith(to));
             return (
               <Link
                 key={to}
                 to={to}
                 className={`relative px-3 py-2 text-sm font-medium transition sm:px-4 ${
-                  active
-                    ? 'text-cinema-neon-blue'
-                    : 'text-cinema-muted hover:text-cinema-text'
+                  active ? 'text-cinema-neon-blue' : 'text-cinema-muted hover:text-cinema-text'
                 }`}
               >
                 {label}

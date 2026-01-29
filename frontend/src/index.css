@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   /* Cinema design tokens (2026 premium cinematic) */
@@ -15,8 +15,8 @@
   --color-cinema-glass: rgba(255, 255, 255, 0.08);
   --color-cinema-glass-border: rgba(255, 255, 255, 0.2);
 
-  --font-display: "Bebas Neue", ui-sans-serif, system-ui, sans-serif;
-  --font-sans: "Roboto", ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Bebas Neue', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Roboto', ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {

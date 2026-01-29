@@ -73,16 +73,9 @@ export function MoviesPage() {
 
   return (
     <div className="py-4">
-      <h1
-        className="mb-6 font-display text-2xl tracking-widest text-cinema-text"
-      >
-        영화 목록
-      </h1>
+      <h1 className="mb-6 font-display text-2xl tracking-widest text-cinema-text">영화 목록</h1>
       {isEmpty ? (
-        <EmptyState
-          title="등록된 영화가 없습니다"
-          message="곧 다양한 영화가 상영될 예정입니다."
-        />
+        <EmptyState title="등록된 영화가 없습니다" message="곧 다양한 영화가 상영될 예정입니다." />
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {list.map((movie) => (
@@ -120,19 +113,12 @@ export function MoviesPage() {
         </div>
       )}
 
-      <Modal
-        isOpen={!!selectedMovie}
-        onClose={closeDetail}
-        title={selectedMovie?.title}
-        size="lg"
-      >
+      <Modal isOpen={!!selectedMovie} onClose={closeDetail} title={selectedMovie?.title} size="lg">
         {selectedMovie && (
           <div className="space-y-4 text-cinema-text">
             <p className="text-cinema-muted">{selectedMovie.description ?? '-'}</p>
             <div className="grid grid-cols-2 gap-2 text-sm text-cinema-muted">
-              {selectedMovie.runningTime && (
-                <span>상영시간: {selectedMovie.runningTime}분</span>
-              )}
+              {selectedMovie.runningTime && <span>상영시간: {selectedMovie.runningTime}분</span>}
               {selectedMovie.rating && <span>등급: {selectedMovie.rating}</span>}
               {selectedMovie.genre && <span>장르: {selectedMovie.genre}</span>}
               {selectedMovie.director && <span>감독: {selectedMovie.director}</span>}

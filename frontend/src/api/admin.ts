@@ -80,10 +80,7 @@ export const adminTheatersApi = {
     return data;
   },
   create: async (body: AdminTheaterCreateRequest) => {
-    const { data } = await axiosInstance.post<ApiResponseBody<number>>(
-      `${prefix}/theaters`,
-      body
-    );
+    const { data } = await axiosInstance.post<ApiResponseBody<number>>(`${prefix}/theaters`, body);
     return data;
   },
   update: async (theaterId: number, body: AdminTheaterUpdateRequest) => {
@@ -124,10 +121,7 @@ export const adminScreensApi = {
     return data;
   },
   create: async (body: AdminScreenCreateRequest) => {
-    const { data } = await axiosInstance.post<ApiResponseBody<number>>(
-      `${prefix}/screens`,
-      body
-    );
+    const { data } = await axiosInstance.post<ApiResponseBody<number>>(`${prefix}/screens`, body);
     return data;
   },
   update: async (screenId: number, body: AdminScreenUpdateRequest) => {
@@ -220,10 +214,7 @@ export const adminSeatsApi = {
     return data;
   },
   create: async (body: AdminSeatCreateRequest) => {
-    const { data } = await axiosInstance.post<ApiResponseBody<number>>(
-      `${prefix}/seats`,
-      body
-    );
+    const { data } = await axiosInstance.post<ApiResponseBody<number>>(`${prefix}/seats`, body);
     return data;
   },
   update: async (seatId: number, body: AdminSeatUpdateRequest) => {
@@ -234,9 +225,7 @@ export const adminSeatsApi = {
     return data;
   },
   delete: async (seatId: number) => {
-    const { data } = await axiosInstance.delete<ApiResponseBody<null>>(
-      `${prefix}/seats/${seatId}`
-    );
+    const { data } = await axiosInstance.delete<ApiResponseBody<null>>(`${prefix}/seats/${seatId}`);
     return data;
   },
 };

@@ -4,11 +4,7 @@
  */
 import { axiosInstance } from '@/api/axiosInstance';
 import type { ApiResponseBody } from '@/types/api.types';
-import type {
-  SeatLayoutResponse,
-  SeatHoldResponse,
-  SeatReleaseRequest,
-} from '@/types/seat.types';
+import type { SeatLayoutResponse, SeatHoldResponse, SeatReleaseRequest } from '@/types/seat.types';
 
 export const seatsApi = {
   /** 좌석 배치·상태 조회 (Redis 캐시, DB Fallback) */

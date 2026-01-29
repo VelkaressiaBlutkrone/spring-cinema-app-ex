@@ -25,9 +25,12 @@ export const moviesApi = {
 export const screeningsApi = {
   /** 상영 목록 (페이징) */
   getScreenings: async (params?: PaginationParams) => {
-    const { data } = await axiosInstance.get<ApiResponseBody<SpringPage<Screening>>>('/screenings', {
-      params: params ? { page: params.page, size: params.size } : undefined,
-    });
+    const { data } = await axiosInstance.get<ApiResponseBody<SpringPage<Screening>>>(
+      '/screenings',
+      {
+        params: params ? { page: params.page, size: params.size } : undefined,
+      }
+    );
     return data;
   },
 

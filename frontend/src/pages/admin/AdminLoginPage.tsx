@@ -69,7 +69,10 @@ export function AdminLoginPage() {
             />
           </div>
           <div>
-            <label htmlFor="admin-password" className="mb-1 block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="admin-password"
+              className="mb-1 block text-sm font-medium text-gray-700"
+            >
               비밀번호
             </label>
             <input

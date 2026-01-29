@@ -57,20 +57,14 @@ export function ReservationsPage() {
 
   return (
     <div className="py-6">
-      <h1
-        className="mb-6 font-display text-2xl tracking-widest text-cinema-text"
-      >
-        예매 내역
-      </h1>
+      <h1 className="mb-6 font-display text-2xl tracking-widest text-cinema-text">예매 내역</h1>
       {list.length === 0 ? (
         <GlassCard padding={false}>
           <EmptyState
             title="예매 내역이 없습니다"
             message="영화 목록에서 상영을 선택해 예매해 보세요."
             icon={<span>🎬</span>}
-            action={
-              <NeonButton to="/movies">영화 목록</NeonButton>
-            }
+            action={<NeonButton to="/movies">영화 목록</NeonButton>}
           />
         </GlassCard>
       ) : (
@@ -84,7 +78,9 @@ export function ReservationsPage() {
                     <p className="text-sm text-cinema-muted">
                       {r.screenName} · {formatDate(r.startTime, 'YYYY-MM-DD HH:mm')}
                     </p>
-                    <p className="mt-1 font-mono text-sm text-cinema-neon-blue">{r.reservationNo}</p>
+                    <p className="mt-1 font-mono text-sm text-cinema-neon-blue">
+                      {r.reservationNo}
+                    </p>
                     <p className="mt-1 text-sm text-cinema-neon-amber">
                       {r.totalSeats}석 · {formatPrice(r.totalAmount)}
                     </p>

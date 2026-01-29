@@ -94,12 +94,12 @@ export function AdminScreeningsPage() {
       setLoading(true);
       try {
         const res = await adminScreeningsApi.getList({ page: pageNum, size: PAGE_SIZE });
-      if (res.success && res.data) {
-        setContent(res.data.content ?? []);
-        setTotalElements(res.data.totalElements ?? 0);
-        setTotalPages(res.data.totalPages ?? 0);
-        setPage(getPageIndex(res.data));
-      }
+        if (res.success && res.data) {
+          setContent(res.data.content ?? []);
+          setTotalElements(res.data.totalElements ?? 0);
+          setTotalPages(res.data.totalPages ?? 0);
+          setPage(getPageIndex(res.data));
+        }
       } catch (err) {
         showError(getErrorMessage(err));
       } finally {
@@ -356,7 +356,9 @@ export function AdminScreeningsPage() {
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
               required
             />
-            <p className="mt-1 text-xs text-gray-500">종료 시간은 영화 상영 시간에 따라 자동 계산됩니다.</p>
+            <p className="mt-1 text-xs text-gray-500">
+              종료 시간은 영화 상영 시간에 따라 자동 계산됩니다.
+            </p>
           </div>
           <div className="flex justify-end gap-3 pt-4">
             <button
@@ -371,11 +373,7 @@ export function AdminScreeningsPage() {
               disabled={submitLoading}
               className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
             >
-              {submitLoading
-                ? '처리 중...'
-                : editing
-                  ? '수정'
-                  : '등록'}
+              {submitLoading ? '처리 중...' : editing ? '수정' : '등록'}
             </button>
           </div>
         </form>

@@ -227,7 +227,9 @@ export function AdminSeatsPage() {
       </div>
 
       {screens.length === 0 && (
-        <p className="mb-4 text-sm text-amber-600">상영관을 먼저 등록한 뒤 좌석을 관리할 수 있습니다.</p>
+        <p className="mb-4 text-sm text-amber-600">
+          상영관을 먼저 등록한 뒤 좌석을 관리할 수 있습니다.
+        </p>
       )}
 
       {selectedScreenId == null ? (
@@ -306,12 +308,7 @@ export function AdminSeatsPage() {
       )}
 
       {/* 등록 모달 */}
-      <Modal
-        isOpen={modalOpen && !editing}
-        onClose={closeModal}
-        title="좌석 등록"
-        size="md"
-      >
+      <Modal isOpen={modalOpen && !editing} onClose={closeModal} title="좌석 등록" size="md">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="seat-screen" className="block text-sm font-medium text-gray-700">
@@ -411,12 +408,7 @@ export function AdminSeatsPage() {
       </Modal>
 
       {/* 수정 모달 */}
-      <Modal
-        isOpen={modalOpen && !!editing}
-        onClose={closeModal}
-        title="좌석 수정"
-        size="sm"
-      >
+      <Modal isOpen={modalOpen && !!editing} onClose={closeModal} title="좌석 수정" size="sm">
         <form onSubmit={handleUpdateSubmit} className="space-y-4">
           {editing && (
             <p className="text-sm text-gray-600">
@@ -491,11 +483,7 @@ export function AdminSeatsPage() {
         onClose={() => setDeleteTarget(null)}
         onConfirm={handleDelete}
         title="좌석 삭제"
-        message={
-          deleteTarget
-            ? `"${deleteTarget.displayName}" 좌석을 삭제하시겠습니까?`
-            : ''
-        }
+        message={deleteTarget ? `"${deleteTarget.displayName}" 좌석을 삭제하시겠습니까?` : ''}
         confirmText="삭제"
         variant="danger"
       />

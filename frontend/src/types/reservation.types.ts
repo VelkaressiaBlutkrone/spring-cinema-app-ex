@@ -3,12 +3,7 @@
  * 백엔드 PaymentRequest, PaymentResponse, ReservationDetailResponse 등과 맞춤
  */
 
-export type PaymentMethod =
-  | 'CARD'
-  | 'KAKAO_PAY'
-  | 'NAVER_PAY'
-  | 'TOSS'
-  | 'BANK_TRANSFER';
+export type PaymentMethod = 'CARD' | 'KAKAO_PAY' | 'NAVER_PAY' | 'TOSS' | 'BANK_TRANSFER';
 
 export interface SeatHoldItem {
   seatId: number;
