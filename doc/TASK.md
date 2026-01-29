@@ -993,10 +993,11 @@ domain/
 - [x] 취소 내역 조회 API:
   - [x] 취소 예매 목록 조회 API (GET /api/admin/reservations/cancelled)
   - [x] 취소 결제 목록 조회 API (GET /api/admin/payments/cancelled)
-- [ ] 통계 대시보드 (선택사항):
-  - [ ] 일별 예매 통계
-  - [ ] 영화별 예매 통계
-- [ ] 데이터 시각화 (차트 등, 선택사항)
+- [x] 통계 대시보드 (MVP):
+  - [x] KPI 카드 (오늘 매출, 예매 건수, 좌석 점유율 %, 노쇼 예상금액 플레이스홀더)
+  - [x] 일별 매출·예매 추이 (라인+막대 복합 차트, 최근 30일)
+  - [x] 오늘 상영 영화 TOP5 예매 순위 (가로 막대 차트)
+- [x] 데이터 시각화 (Recharts): ComposedChart, BarChart, KPI 카드
 
 ### 체크리스트
 
@@ -1004,6 +1005,7 @@ domain/
 - [x] 결제 내역 조회 정상 동작 확인 (코드 구현 완료, 수동 테스트 필요)
 - [x] 취소 내역 조회 API 구현 확인
 - [x] 필터링 기능 정상 동작 확인 (코드 구현 완료, 수동 테스트 필요)
+- [x] 통계 대시보드 KPI·일별·TOP5 구현 확인
 
 ### 구현된 모듈
 
@@ -1013,14 +1015,20 @@ domain/
 - `AdminReservationService`: 예매 조회 서비스 (필터링, 페이지네이션)
 - `AdminPaymentController`: 결제 목록/상세/취소 내역 조회 API
 - `AdminPaymentService`: 결제 조회 서비스 (필터링, 페이지네이션)
+- `AdminStatsController`: 통계 대시보드 API (KPI, 일별 추이, TOP 영화)
+- `AdminStatsService`: KPI·일별·영화별 집계 (Payment/Reservation/Screening 기반)
+- `StatsKpiResponse`, `StatsDailyItem`, `StatsTopMovieItem`: 통계 DTO
 - `ReservationListResponse`, `PaymentListResponse`: 관리자용 목록 응답 DTO
+- `PaymentRepository.findByPayStatusAndPaidAtBetween`, `ReservationRepository.findByStatusAndCreatedAtBetween`: 통계용 조회
 
 #### Frontend
 
 - `AdminReservationsPage`: 예매 내역 조회 페이지 (필터링, 페이지네이션, 상세 모달)
 - `AdminPaymentsPage`: 결제 내역 조회 페이지 (필터링, 페이지네이션, 상세 모달)
-- `adminReservationsApi`, `adminPaymentsApi`: 관리자 예매/결제 API 클라이언트
-- AdminLayout에 "예매 내역", "결제 내역" 메뉴 추가
+- `AdminDashboardPage`: 대시보드에 통계 통합 (KPI 카드, 일별 라인+막대, TOP5 가로 막대 + 바로가기)
+- `adminReservationsApi`, `adminPaymentsApi`, `adminStatsApi`: 관리자 예매/결제/통계 API
+- AdminLayout "예매 내역", "결제 내역" 메뉴 (통계는 대시보드에 통합)
+- Recharts: ComposedChart, BarChart (일별 매출·예매, 영화 TOP5)
 
 #### API 엔드포인트
 
@@ -1030,6 +1038,9 @@ domain/
 - `GET /api/admin/payments`: 결제 목록 조회 (필터링: startDate, endDate, payStatus, memberId)
 - `GET /api/admin/payments/{paymentId}`: 결제 상세 조회
 - `GET /api/admin/payments/cancelled`: 취소 결제 목록 조회
+- `GET /api/admin/stats/kpi`: KPI (오늘 매출, 예매 건수, 점유율, 노쇼 플레이스홀더)
+- `GET /api/admin/stats/daily?days=30`: 일별 매출·예매 추이
+- `GET /api/admin/stats/top-movies?limit=5`: 오늘 상영 영화 TOP N 예매 순위
 
 ### 구현 완료 여부
 

@@ -309,3 +309,46 @@ export const adminPaymentsApi = {
     return data;
   },
 };
+
+/** 통계 대시보드 (Step 15) */
+export interface StatsKpiResponse {
+  todaySales: number;
+  todayBookings: number;
+  todayOccupancyPercent: number;
+  todayNoShowAmount: number;
+}
+
+export interface StatsDailyItem {
+  date: string;
+  sales: number;
+  bookings: number;
+}
+
+export interface StatsTopMovieItem {
+  movieId: number;
+  movieTitle: string;
+  bookingCount: number;
+}
+
+export const adminStatsApi = {
+  getKpi: async () => {
+    const { data } = await axiosInstance.get<ApiResponseBody<StatsKpiResponse>>(
+      `${prefix}/stats/kpi`
+    );
+    return data;
+  },
+  getDailyTrend: async (days = 30) => {
+    const { data } = await axiosInstance.get<ApiResponseBody<StatsDailyItem[]>>(
+      `${prefix}/stats/daily`,
+      { params: { days } }
+    );
+    return data;
+  },
+  getTopMoviesByBookings: async (limit = 5) => {
+    const { data } = await axiosInstance.get<ApiResponseBody<StatsTopMovieItem[]>>(
+      `${prefix}/stats/top-movies`,
+      { params: { limit } }
+    );
+    return data;
+  },
+};

@@ -1,5 +1,6 @@
 package com.cinema.domain.payment.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,4 +21,8 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     Optional<Payment> findByReservationIdAndPayStatus(Long reservationId, PaymentStatus payStatus);
 
     List<Payment> findByPayStatus(PaymentStatus payStatus);
+
+    /** 결제 완료·기간별 조회 (통계용) */
+    List<Payment> findByPayStatusAndPaidAtBetween(
+            PaymentStatus payStatus, LocalDateTime start, LocalDateTime end);
 }

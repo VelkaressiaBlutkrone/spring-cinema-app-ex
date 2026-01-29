@@ -1,5 +1,6 @@
 package com.cinema.domain.reservation.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +29,10 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long>,
     List<Reservation> findByMemberIdAndStatus(Long memberId, ReservationStatus status);
 
     List<Reservation> findByScreeningId(Long screeningId);
+
+    /** 상태·기간별 조회 (통계용) */
+    List<Reservation> findByStatusAndCreatedAtBetween(
+            ReservationStatus status, LocalDateTime start, LocalDateTime end);
 
     // ========================================
     // 복잡한 쿼리 (QueryDSL 사용)
