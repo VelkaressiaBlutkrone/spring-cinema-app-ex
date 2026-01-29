@@ -1,3 +1,8 @@
+-- test_data.sql
+-- member 테이블은 변경 없음. 비밀번호: password123 (BCrypt 해시)
+-- 추가: screening 9~11(어제/그저께), screening_seat, reservation, reservation_seat, payment
+--       → 사용자/관리자 화면·통계 대시보드에서 바로 확인용
+
 -- 비밀번호: password123 (BCrypt 해시 - BCryptPasswordEncoder 기본 설정으로 생성)
 INSERT INTO member (login_id, password_hash, name, phone, email, role, status, created_at, updated_at) VALUES
 ('admin', '$2a$10$Ey4/9UUYGcLkmM36IiSrHuRCCL7A62MLX64kgMfR9W1Q3XiKl9v2K', '관리자', '010-0000-0000', 'admin@cinema.com', 'ADMIN', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
@@ -96,4 +101,75 @@ INSERT INTO screening (movie_id, screen_id, start_time, end_time, status, create
 (2, 1, DATEADD('HOUR', 14, DATEADD('DAY', 1, CURRENT_DATE)), DATEADD('MINUTE', 132, DATEADD('HOUR', 14, DATEADD('DAY', 1, CURRENT_DATE))), 'SCHEDULED', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 (3, 3, DATEADD('HOUR', 11, CURRENT_DATE), DATEADD('MINUTE', 169, DATEADD('HOUR', 11, CURRENT_DATE)), 'SCHEDULED', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 (3, 3, DATEADD('HOUR', 15, CURRENT_DATE), DATEADD('MINUTE', 169, DATEADD('HOUR', 15, CURRENT_DATE)), 'SCHEDULED', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-(3, 3, DATEADD('HOUR', 19, CURRENT_DATE), DATEADD('MINUTE', 169, DATEADD('HOUR', 19, CURRENT_DATE)), 'SCHEDULED', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+(3, 3, DATEADD('HOUR', 19, CURRENT_DATE), DATEADD('MINUTE', 169, DATEADD('HOUR', 19, CURRENT_DATE)), 'SCHEDULED', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(1, 1, DATEADD('HOUR', 10, DATEADD('DAY', -1, CURRENT_DATE)), DATEADD('MINUTE', 181, DATEADD('HOUR', 10, DATEADD('DAY', -1, CURRENT_DATE))), 'SCHEDULED', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(1, 1, DATEADD('HOUR', 14, DATEADD('DAY', -1, CURRENT_DATE)), DATEADD('MINUTE', 181, DATEADD('HOUR', 14, DATEADD('DAY', -1, CURRENT_DATE))), 'SCHEDULED', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+(2, 1, DATEADD('HOUR', 10, DATEADD('DAY', -2, CURRENT_DATE)), DATEADD('MINUTE', 132, DATEADD('HOUR', 10, DATEADD('DAY', -2, CURRENT_DATE))), 'SCHEDULED', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+
+-- ============================================================
+-- screening_seat: 1관 상영만 (1,2,9,10,11 — 3관 상영 3,6,7,8은 좌석 미등록)
+-- ============================================================
+INSERT INTO screening_seat (screening_id, seat_id, status, created_at, updated_at)
+SELECT s.id, t.seat_id, 'AVAILABLE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+FROM (SELECT 1 AS id UNION ALL SELECT 2 UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11) s
+CROSS JOIN (SELECT seat_id FROM seat WHERE screen_id = 1) t;
+
+UPDATE screening_seat SET status = 'RESERVED', reserved_member_id = 2 WHERE screening_id = 1 AND seat_id IN (5, 6);
+UPDATE screening_seat SET status = 'RESERVED', reserved_member_id = 4 WHERE screening_id = 1 AND seat_id = 7;
+UPDATE screening_seat SET status = 'RESERVED', reserved_member_id = 3 WHERE screening_id = 2 AND seat_id IN (20, 21);
+UPDATE screening_seat SET status = 'RESERVED', reserved_member_id = 2 WHERE screening_id = 9 AND seat_id IN (10, 11);
+UPDATE screening_seat SET status = 'RESERVED', reserved_member_id = 3 WHERE screening_id = 10 AND seat_id = 12;
+UPDATE screening_seat SET status = 'RESERVED', reserved_member_id = 2 WHERE screening_id = 11 AND seat_id = 13;
+
+-- ============================================================
+-- reservation: CONFIRMED (오늘 3건, 어제 2건, 그저께 1건) — user1=2, user2=3, user3=4
+-- ============================================================
+INSERT INTO reservation (reservation_no, member_id, screening_id, status, total_seats, total_amount, created_at, updated_at) VALUES
+('R-TEST-001', 2, 1, 'CONFIRMED', 2, 20000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('R-TEST-002', 3, 2, 'CONFIRMED', 2, 20000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('R-TEST-003', 4, 1, 'CONFIRMED', 1, 10000, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('R-TEST-004', 2, 9, 'CONFIRMED', 2, 20000, DATEADD('DAY', -1, CURRENT_TIMESTAMP), DATEADD('DAY', -1, CURRENT_TIMESTAMP)),
+('R-TEST-005', 3, 10, 'CONFIRMED', 1, 10000, DATEADD('DAY', -1, CURRENT_TIMESTAMP), DATEADD('DAY', -1, CURRENT_TIMESTAMP)),
+('R-TEST-006', 2, 11, 'CONFIRMED', 1, 10000, DATEADD('DAY', -2, CURRENT_TIMESTAMP), DATEADD('DAY', -2, CURRENT_TIMESTAMP));
+
+-- ============================================================
+-- reservation_seat: 예매 좌석 (screening_seat_id 서브쿼리)
+-- ============================================================
+INSERT INTO reservation_seat (reservation_id, screening_seat_id, seat_id, price, created_at)
+SELECT (SELECT reservation_id FROM reservation WHERE reservation_no = 'R-TEST-001'), (SELECT screening_seat_id FROM screening_seat WHERE screening_id = 1 AND seat_id = 5), 5, 10000, CURRENT_TIMESTAMP
+FROM (SELECT 1) t WHERE EXISTS (SELECT 1 FROM reservation WHERE reservation_no = 'R-TEST-001');
+INSERT INTO reservation_seat (reservation_id, screening_seat_id, seat_id, price, created_at)
+SELECT (SELECT reservation_id FROM reservation WHERE reservation_no = 'R-TEST-001'), (SELECT screening_seat_id FROM screening_seat WHERE screening_id = 1 AND seat_id = 6), 6, 10000, CURRENT_TIMESTAMP
+FROM (SELECT 1) t WHERE EXISTS (SELECT 1 FROM reservation WHERE reservation_no = 'R-TEST-001');
+INSERT INTO reservation_seat (reservation_id, screening_seat_id, seat_id, price, created_at)
+SELECT (SELECT reservation_id FROM reservation WHERE reservation_no = 'R-TEST-002'), (SELECT screening_seat_id FROM screening_seat WHERE screening_id = 2 AND seat_id = 20), 20, 10000, CURRENT_TIMESTAMP
+FROM (SELECT 1) t WHERE EXISTS (SELECT 1 FROM reservation WHERE reservation_no = 'R-TEST-002');
+INSERT INTO reservation_seat (reservation_id, screening_seat_id, seat_id, price, created_at)
+SELECT (SELECT reservation_id FROM reservation WHERE reservation_no = 'R-TEST-002'), (SELECT screening_seat_id FROM screening_seat WHERE screening_id = 2 AND seat_id = 21), 21, 10000, CURRENT_TIMESTAMP
+FROM (SELECT 1) t WHERE EXISTS (SELECT 1 FROM reservation WHERE reservation_no = 'R-TEST-002');
+INSERT INTO reservation_seat (reservation_id, screening_seat_id, seat_id, price, created_at)
+SELECT (SELECT reservation_id FROM reservation WHERE reservation_no = 'R-TEST-003'), (SELECT screening_seat_id FROM screening_seat WHERE screening_id = 1 AND seat_id = 7), 7, 10000, CURRENT_TIMESTAMP
+FROM (SELECT 1) t WHERE EXISTS (SELECT 1 FROM reservation WHERE reservation_no = 'R-TEST-003');
+INSERT INTO reservation_seat (reservation_id, screening_seat_id, seat_id, price, created_at)
+SELECT (SELECT reservation_id FROM reservation WHERE reservation_no = 'R-TEST-004'), (SELECT screening_seat_id FROM screening_seat WHERE screening_id = 9 AND seat_id = 10), 10, 10000, CURRENT_TIMESTAMP
+FROM (SELECT 1) t WHERE EXISTS (SELECT 1 FROM reservation WHERE reservation_no = 'R-TEST-004');
+INSERT INTO reservation_seat (reservation_id, screening_seat_id, seat_id, price, created_at)
+SELECT (SELECT reservation_id FROM reservation WHERE reservation_no = 'R-TEST-004'), (SELECT screening_seat_id FROM screening_seat WHERE screening_id = 9 AND seat_id = 11), 11, 10000, CURRENT_TIMESTAMP
+FROM (SELECT 1) t WHERE EXISTS (SELECT 1 FROM reservation WHERE reservation_no = 'R-TEST-004');
+INSERT INTO reservation_seat (reservation_id, screening_seat_id, seat_id, price, created_at)
+SELECT (SELECT reservation_id FROM reservation WHERE reservation_no = 'R-TEST-005'), (SELECT screening_seat_id FROM screening_seat WHERE screening_id = 10 AND seat_id = 12), 12, 10000, CURRENT_TIMESTAMP
+FROM (SELECT 1) t WHERE EXISTS (SELECT 1 FROM reservation WHERE reservation_no = 'R-TEST-005');
+INSERT INTO reservation_seat (reservation_id, screening_seat_id, seat_id, price, created_at)
+SELECT (SELECT reservation_id FROM reservation WHERE reservation_no = 'R-TEST-006'), (SELECT screening_seat_id FROM screening_seat WHERE screening_id = 11 AND seat_id = 13), 13, 10000, CURRENT_TIMESTAMP
+FROM (SELECT 1) t WHERE EXISTS (SELECT 1 FROM reservation WHERE reservation_no = 'R-TEST-006');
+
+-- ============================================================
+-- payment: SUCCESS (paid_at = 예매일)
+-- ============================================================
+INSERT INTO payment (payment_no, reservation_id, pay_method, pay_amount, pay_status, pg_transaction_id, paid_at, created_at, updated_at) VALUES
+('P-TEST-001', (SELECT reservation_id FROM reservation WHERE reservation_no = 'R-TEST-001'), 'CARD', 20000, 'SUCCESS', 'PG-TEST-001', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('P-TEST-002', (SELECT reservation_id FROM reservation WHERE reservation_no = 'R-TEST-002'), 'CARD', 20000, 'SUCCESS', 'PG-TEST-002', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('P-TEST-003', (SELECT reservation_id FROM reservation WHERE reservation_no = 'R-TEST-003'), 'KAKAO_PAY', 10000, 'SUCCESS', 'PG-TEST-003', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('P-TEST-004', (SELECT reservation_id FROM reservation WHERE reservation_no = 'R-TEST-004'), 'CARD', 20000, 'SUCCESS', 'PG-TEST-004', DATEADD('DAY', -1, CURRENT_TIMESTAMP), DATEADD('DAY', -1, CURRENT_TIMESTAMP), DATEADD('DAY', -1, CURRENT_TIMESTAMP)),
+('P-TEST-005', (SELECT reservation_id FROM reservation WHERE reservation_no = 'R-TEST-005'), 'NAVER_PAY', 10000, 'SUCCESS', 'PG-TEST-005', DATEADD('DAY', -1, CURRENT_TIMESTAMP), DATEADD('DAY', -1, CURRENT_TIMESTAMP), DATEADD('DAY', -1, CURRENT_TIMESTAMP)),
+('P-TEST-006', (SELECT reservation_id FROM reservation WHERE reservation_no = 'R-TEST-006'), 'CARD', 10000, 'SUCCESS', 'PG-TEST-006', DATEADD('DAY', -2, CURRENT_TIMESTAMP), DATEADD('DAY', -2, CURRENT_TIMESTAMP), DATEADD('DAY', -2, CURRENT_TIMESTAMP));
