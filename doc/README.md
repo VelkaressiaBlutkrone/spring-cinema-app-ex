@@ -7,9 +7,11 @@
 ### 1. 프로젝트 기획 및 요구사항
 
 #### [PRD.md](./PRD.md) - Product Requirements Document
+
 영화관 예매 시스템의 제품 요구사항 문서입니다.
 
 **주요 내용:**
+
 - 프로젝트 개요 및 목표
 - 서비스 성격 정의 (멀티플렉스, 회원 필수, 실시간 예매)
 - 성능 목표 (동시 접속자 1000명, 좌석 클릭 TPS 1000, 응답 시간 < 200ms)
@@ -23,9 +25,11 @@
 ---
 
 #### [RULE.md](./RULE.md) - Development Rules
+
 프로젝트 개발 규칙 및 아키텍처 원칙입니다.
 
 **주요 내용:**
+
 - 절대 원칙 (좌석 상태 변경 제어, 데이터 저장소 역할 분리)
 - 아키텍처 레이어 규칙 (Controller → Service → Domain → Infrastructure)
 - Domain 규칙 (Aggregate, 좌석 소속, 가격 계산)
@@ -43,9 +47,11 @@
 ---
 
 #### [TASK.md](./TASK.md) - Task Plan
+
 상세 개발 작업 계획 및 일정입니다.
 
 **주요 내용:**
+
 - 20개의 개발 Step (Step 1: 프로젝트 생성 ~ Step 20: 배포 준비)
 - 각 Step별 목표, 작업 내용, 체크리스트
 - 예상 소요 시간 및 전체 일정 요약 (약 60-80일)
@@ -62,9 +68,11 @@
 ### 2. 아키텍처 설계
 
 #### [ARCHITECTURE_ALL.md](./ARCHITECTURE_ALL.md) - 전체 시스템 아키텍처
+
 영화관 예매 시스템의 전체 시스템 아키텍처를 설명합니다.
 
 **주요 내용:**
+
 - 시스템 컨테이너 다이어그램 (C4 Model)
 - 기술 스택 요약 (Backend, Frontend, Database, Cache, Infrastructure)
 - 핵심 데이터 흐름 (조회, 좌석 선점, 결제 및 예매 확정, 실시간 갱신)
@@ -75,9 +83,11 @@
 ---
 
 #### [ARCHITECTURE_BACKEND.md](./ARCHITECTURE_BACKEND.md) - 백엔드 아키텍처
+
 백엔드 시스템의 상세 아키텍처를 설명합니다.
 
 **주요 내용:**
+
 - 도메인 모델 (ERD)
 - 좌석 상태 머신 (State Machine)
 - 핵심 로직: 좌석 예매 시퀀스 (Sequence Diagram)
@@ -89,9 +99,11 @@
 ---
 
 #### [ARCHITECTURE_MOBILE.md](./ARCHITECTURE_MOBILE.md) - 모바일 아키텍처
+
 Flutter 모바일 앱의 아키텍처를 설명합니다.
 
 **주요 내용:**
+
 - 앱 네비게이션 구조
 - 아키텍처 패턴 (Riverpod + MVVM)
 - 주요 기술적 고려사항 (상태 관리, 네트워크, 좌석 맵 렌더링, 실시간 통신)
@@ -103,9 +115,11 @@ Flutter 모바일 앱의 아키텍처를 설명합니다.
 ### 3. 재사용 모듈 가이드
 
 #### [BACKEND_MODULES.md](./BACKEND_MODULES.md) - 백엔드 재사용 모듈
+
 백엔드 프로젝트에서 재사용 가능한 모듈들을 정리한 문서입니다.
 
 **주요 내용:**
+
 - 전역 설정 (CorsConfig, SecurityConfig, QueryDslConfig, GsonConfig)
 - AOP 로깅 (@Logging 어노테이션, LoggingAspect, ControllerLoggingAspect)
 - 예외 처리 체계 (ErrorCode, BusinessException, ErrorResponse, GlobalExceptionHandler)
@@ -118,9 +132,11 @@ Flutter 모바일 앱의 아키텍처를 설명합니다.
 ---
 
 #### [FRONTEND_MODULES.md](./FRONTEND_MODULES.md) - 프론트엔드 재사용 모듈
+
 프론트엔드 프로젝트에서 재사용 가능한 모듈들을 정리한 문서입니다.
 
 **주요 내용:**
+
 - 공통 컴포넌트 (Modal, ConfirmDialog, Toast, LoadingSpinner, EmptyState, Pagination)
 - 유틸리티 함수 (dateUtils, formatters, errorHandler)
 - 커스텀 훅 (useToast)
@@ -132,6 +148,7 @@ Flutter 모바일 앱의 아키텍처를 설명합니다.
 ---
 
 #### [MOBILE_MODULES.md](./MOBILE_MODULES.md) - 모바일 재사용 모듈
+
 모바일 앱에서 재사용 가능한 모듈들을 정리한 문서입니다. (현재 비어있음)
 
 **대상 독자:** 모바일 개발자 (Flutter)
@@ -141,9 +158,11 @@ Flutter 모바일 앱의 아키텍처를 설명합니다.
 ### 4. 개발 가이드
 
 #### [SERVER_STARTUP_GUIDE.md](./SERVER_STARTUP_GUIDE.md) - 서버 구동 가이드
+
 서버 구동 및 연결 상태 확인 가이드입니다.
 
 **주요 내용:**
+
 - 프로파일별 데이터베이스 설정
   - 개발 환경 (dev): H2 인메모리 데이터베이스
   - 운영 환경 (prod): MySQL 데이터베이스
@@ -160,9 +179,11 @@ Flutter 모바일 앱의 아키텍처를 설명합니다.
 ---
 
 #### [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) - 문제 해결 가이드
+
 프로젝트 개발 중 발생하는 문제와 해결 방법을 정리한 문서입니다.
 
 **주요 내용:**
+
 - 일반적인 문제 해결 절차
 - TypeScript/React 관련 문제 (JSX 태그 에러, node_modules 설치 등)
 - Spring Boot/백엔드 관련 문제
@@ -180,6 +201,7 @@ Flutter 모바일 앱의 아키텍처를 설명합니다.
 ## 📖 문서 읽기 순서 권장
 
 ### 신규 팀원 온보딩
+
 1. [PRD.md](./PRD.md) - 프로젝트 개요 및 요구사항 이해
 2. [RULE.md](./RULE.md) - 개발 규칙 숙지 (필수)
 3. [ARCHITECTURE_ALL.md](./ARCHITECTURE_ALL.md) - 전체 시스템 아키텍처 파악
@@ -191,11 +213,13 @@ Flutter 모바일 앱의 아키텍처를 설명합니다.
 6. [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) - 문제 발생 시 참고
 
 ### 프로젝트 관리자
+
 1. [PRD.md](./PRD.md) - 요구사항 및 목표
 2. [TASK.md](./TASK.md) - 개발 작업 계획 및 일정
 3. [RULE.md](./RULE.md) - 개발 규칙 및 체크리스트
 
 ### 아키텍트/기술 리더
+
 1. [PRD.md](./PRD.md) - 비기능 요구사항 파악
 2. [ARCHITECTURE_ALL.md](./ARCHITECTURE_ALL.md) - 전체 아키텍처 검토
 3. [ARCHITECTURE_BACKEND.md](./ARCHITECTURE_BACKEND.md) - 백엔드 상세 설계
@@ -207,6 +231,7 @@ Flutter 모바일 앱의 아키텍처를 설명합니다.
 ## 🔑 핵심 개념 요약
 
 ### 좌석 상태 (7가지)
+
 - **AVAILABLE**: 예매 가능
 - **HOLD**: 임시 점유 (Redis + TTL)
 - **PAYMENT_PENDING**: PG 요청 중
@@ -216,21 +241,24 @@ Flutter 모바일 앱의 아키텍처를 설명합니다.
 - **DISABLED**: 물리적 사용 불가
 
 ### 기술 스택
+
 - **Backend**: Spring Boot 4.0.2, Java 21
 - **Frontend (Web)**: React, TypeScript, Vite
 - **Frontend (Mobile)**: Flutter, Riverpod
-- **Database**: 
+- **Database**:
   - 개발 환경: H2 (인메모리)
   - 운영 환경: MySQL 8.0
 - **Cache/Lock**: Redis
 - **Infrastructure**: Docker, Nginx
 
 ### 성능 목표
+
 - 동시 접속자: 1000명
 - 좌석 클릭 TPS: 1000
 - 좌석 클릭 응답 시간: < 200ms
 
 ### 주요 아키텍처 패턴
+
 - Domain-Driven Design (DDD)
 - Aggregate Root: Screening
 - 분산 락 (Redisson)

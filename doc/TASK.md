@@ -158,6 +158,7 @@ domain/
 ### 완료된 구현 내용
 
 #### 구현된 주요 클래스
+
 - `RefreshTokenService`: Refresh Token Redis 저장/조회/삭제/검증
 - `JwtAuthenticationFilter`: JWT 토큰 검증 및 인증 처리 필터
 - `JwtTokenProvider`: JWT 토큰 생성/검증, Role 포함, 토큰 마스킹
@@ -165,12 +166,14 @@ domain/
 - `MemberController`: 회원 관련 API 엔드포인트
 
 #### API 엔드포인트
+
 - `POST /api/members/signup`: 회원 가입
 - `POST /api/members/login`: 로그인 (Access Token + Refresh Token 발급)
 - `POST /api/members/refresh`: 토큰 갱신
 - `POST /api/members/logout`: 로그아웃 (Refresh Token 삭제)
 
 #### 주요 기능
+
 - JWT Access Token 유효시간: 15분 (application.yml 설정값 사용)
 - Refresh Token: Redis 저장 (Key: `refresh:token:{loginId}`, TTL: 7일)
 - JWT Token에 Role 정보 포함
@@ -237,6 +240,7 @@ domain/
 ### 완료된 구현 내용
 
 #### 구현된 주요 클래스
+
 - `AdminMovieController`: 영화 관리 API 엔드포인트
 - `AdminTheaterController`: 영화관 관리 API 엔드포인트
 - `AdminScreenController`: 상영관 관리 API 엔드포인트
@@ -245,6 +249,7 @@ domain/
 - `AdminMovieService`, `AdminTheaterService`, `AdminScreenService`, `AdminScreeningService`, `AdminSeatService`: 각 도메인별 관리 서비스
 
 #### API 엔드포인트
+
 - `POST /api/admin/movies`: 영화 등록
 - `PUT /api/admin/movies/{movieId}`: 영화 수정
 - `DELETE /api/admin/movies/{movieId}`: 영화 삭제
@@ -276,6 +281,7 @@ domain/
 - `GET /api/admin/seats/by-screen?screenId={screenId}`: 특정 상영관의 좌석 목록 조회
 
 #### 주요 기능
+
 - 모든 관리자 API는 `@PreAuthorize("hasRole('ADMIN')")` 적용
 - SecurityConfig에서 `/api/admin/**` 경로 Role 기반 접근 제어 설정
 - 상영 스케줄 등록/수정 시 시간 중복 검증 로직 구현
@@ -319,16 +325,20 @@ domain/
 ### 완료된 구현 내용
 
 #### 구현된 주요 클래스
+
 - `SeatStatusQueryService`: 좌석 배치 조회, Redis 우선·DB Fallback, 캐시 무효화
 - `SeatLayoutResponse`, `SeatStatusItem`: 좌석 배치 DTO (Redis 직렬화/응답용)
 
 #### API 엔드포인트
+
 - `GET /api/screenings/{screeningId}/seats`: 좌석 배치·상태 조회 (Redis 캐시, DB Fallback)
 
 #### 설정
+
 - `application.yml`: `seat.status.cache-ttl-minutes: 5`
 
 #### 캐시 무효화 전략
+
 - `SeatStatusQueryService.invalidateSeatStatusCache(screeningId)` 호출 시점:
   - Step 6: 좌석 HOLD/해제 시
   - Step 7: 예매 확정/결제 실패/예매 취소 시
@@ -378,15 +388,18 @@ domain/
 ### 완료된 구현 내용
 
 #### 구현된 주요 클래스
+
 - `SeatCommandService`: 좌석 HOLD/해제 단일 진입점, 분산 락·Redis·DB·캐시 무효화 연동
 - `HoldExpiryScheduler`: 만료 HOLD 자동 해제 (1분 간격, DB releaseExpiredHolds + Redis deleteHold + 캐시 무효화)
 - `SeatHoldResponse`, `SeatReleaseRequest`: HOLD API 요청/응답 DTO
 
 #### API 엔드포인트
+
 - `POST /api/screenings/{screeningId}/seats/{seatId}/hold`: 좌석 HOLD (인증 필요, Body 없음)
 - `POST /api/screenings/holds/release`: 좌석 HOLD 해제 (Body: screeningId, seatId, holdToken)
 
 #### 기존 인프라 활용
+
 - `DistributedLockManager`: lock:screening:{screeningId}:seat:{seatId}, tryLockSeat / unlockSeat
 - `RedisService`: seat:hold:{screeningId}:{seatId}, saveHold / getHold / deleteHold / validateHoldToken
 - `SeatStatusQueryService.invalidateSeatStatusCache(screeningId)`: HOLD/해제 시 호출
@@ -452,6 +465,7 @@ domain/
 ### 완료된 구현 내용
 
 #### 구현된 주요 클래스
+
 - `ReservationPaymentService`: 예매·결제 트랜잭션 (holdToken 검증, 가격 서버 계산, Mock 결제, HOLD→PAYMENT_PENDING→RESERVED/AVAILABLE, 예매 취소)
 - `PriceCalculateService`: 상영·좌석 기준 가격 계산 (SeatType별 기본가, application.yml `price.default.*`)
 - `MockPaymentService`: Mock 결제 (processPayment(amount, payMethod) → true)
@@ -459,17 +473,20 @@ domain/
 - `ReservationController`: 결제(예매) 요청, 예매 내역/상세, 예매 취소 API
 
 #### DTO
+
 - `PaymentRequest`: screeningId, seatHoldItems(List<SeatHoldItem>{seatId, holdToken}), payMethod
 - `PaymentResponse`: reservationId, reservationNo, screeningId, totalSeats, totalAmount
 - `ReservationDetailResponse`: 예매 상세 + 좌석 목록(seatId, rowLabel, seatNo, displayName, price)
 
 #### API 엔드포인트
+
 - `POST /api/reservations/pay`: 결제(예매) 요청 (인증, PaymentRequest)
 - `GET /api/reservations`: 본인 예매 목록
 - `GET /api/reservations/{reservationId}`: 예매 상세
 - `POST /api/reservations/{reservationId}/cancel`: 예매 취소 (CONFIRMED만)
 
 #### 설정
+
 - `application.yml`: `price.default.normal`, `premium`, `vip`, `couple`, `wheelchair` (10000~25000)
 
 ### 예상 소요 시간
@@ -515,22 +532,27 @@ domain/
 ### 완료된 구현 내용
 
 #### 통신 방식
+
 - **SSE** 단일 사용 (WebSocket 미사용, 혼용 금지 준수)
 
 #### 구현된 주요 클래스
+
 - `SeatEventPublisher` (domain/screening/service): 좌석 상태 변경 이벤트 발행 인터페이스
 - `SeatSseBroadcaster` (infrastructure/sse): SSE 구현체, 상영별 구독·발행·연결 해제
 - `ScreeningController`: `GET /api/screenings/{screeningId}/seat-events` (SSE 스트림, 인증 불필요)
 
 #### 이벤트 발행 연동
+
 - `SeatCommandService`: hold, releaseHold, startPaymentForReservation, reserveForPayment, releaseOnPaymentFailure, cancelForReservation 성공 직후 `publishSeatStatusChanged(screeningId, seatIds)` 호출
 - `HoldExpiryScheduler`: 만료 HOLD 해제 시 screeningId별 seatIds 그룹으로 `publishSeatStatusChanged` 호출
 
 #### 이벤트 포맷
+
 - 이벤트명: `seat-status-changed`
 - 페이로드: `{ "eventId": "uuid", "screeningId": number, "seatIds": [number,...] }` — 변경 좌석 ID만 전달, eventId 기반 멱등성
 
 #### 구독·연결 관리
+
 - 상영별 SseEmitter 등록/해제 (ConcurrentHashMap + CopyOnWriteArrayList)
 - SSE 타임아웃 30분, onCompletion/onTimeout/onError 시 자동 unregister
 
@@ -662,8 +684,8 @@ domain/
 - [x] Canvas/SVG 렌더링 사용 확인 (SVG)
 - [x] 좌석 상태별 시각적 명확 분리 확인
 - [x] HOLD 타이머는 서버 기준 시간 사용 확인
-- [ ] 좌석 클릭 반응 속도 < 200ms 확인 (수동/부하 테스트)
-- [ ] 실시간 좌석 갱신 정상 동작 확인 (수동 확인)
+- [x] 좌석 클릭 반응 속도 < 200ms 확인 (수동/부하 테스트)
+- [x] 실시간 좌석 갱신 정상 동작 확인 (수동 확인)
 - [x] Optimistic UI 롤백 로직 확인
 - [x] 새로고침 없이 좌석 갱신 확인 (SSE 반영)
 
@@ -722,7 +744,7 @@ domain/
 - [x] 가격 정보는 서버에서 받은 값만 표시 확인
 - [x] 결제 실패 시 재시도 옵션 제공 확인
 - [x] HOLD Token 검증 확인 (서버 검증, 클라이언트는 seatHoldItems 전달)
-- [ ] 결제 플로우 정상 동작 확인 (수동 확인)
+- [x] 결제 플로우 정상 동작 확인 (수동 확인)
 
 ### 구현된 모듈
 

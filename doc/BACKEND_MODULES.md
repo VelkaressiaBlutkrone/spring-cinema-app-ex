@@ -882,7 +882,7 @@ public interface ReservationRepositoryCustom {
      * 예매 상세 조회 (다수 조인 포함)
      */
     Optional<Reservation> findByIdWithDetails(Long id);
-    
+
     /**
      * 회원의 예매 목록 조회 (동적 조건)
      */
@@ -896,9 +896,9 @@ public interface ReservationRepositoryCustom {
 @Repository
 @RequiredArgsConstructor
 public class ReservationRepositoryImpl implements ReservationRepositoryCustom {
-    
+
     private final JPAQueryFactory queryFactory;
-    
+
     // Q클래스 import
     private static final QReservation reservation = QReservation.reservation;
     private static final QMember member = QMember.member;
@@ -906,7 +906,7 @@ public class ReservationRepositoryImpl implements ReservationRepositoryCustom {
     private static final QMovie movie = QMovie.movie;
     private static final QReservationSeat reservationSeat = QReservationSeat.reservationSeat;
     private static final QSeat seat = QSeat.seat;
-    
+
     @Override
     public Optional<Reservation> findByIdWithDetails(Long id) {
         return Optional.ofNullable(
@@ -921,7 +921,7 @@ public class ReservationRepositoryImpl implements ReservationRepositoryCustom {
                 .fetchOne()
         );
     }
-    
+
     @Override
     public List<Reservation> findByMemberIdWithDetails(Long memberId, ReservationStatus status) {
         return queryFactory
@@ -941,7 +941,7 @@ public class ReservationRepositoryImpl implements ReservationRepositoryCustom {
 #### 2.4 기본 Repository에 Custom 인터페이스 상속
 
 ```java
-public interface ReservationRepository extends JpaRepository<Reservation, Long>, 
+public interface ReservationRepository extends JpaRepository<Reservation, Long>,
                                                ReservationRepositoryCustom {
     // 기본 JPA 메서드와 Custom 메서드 모두 사용 가능
 }
@@ -1013,13 +1013,13 @@ public Page<Reservation> findByMemberIdWithPaging(Long memberId, Pageable pageab
         .offset(pageable.getOffset())
         .limit(pageable.getPageSize())
         .fetch();
-    
+
     Long total = queryFactory
         .select(reservation.count())
         .from(reservation)
         .where(reservation.member.id.eq(memberId))
         .fetchOne();
-    
+
     return new PageImpl<>(content, pageable, total != null ? total : 0L);
 }
 ```
@@ -1049,6 +1049,7 @@ public Page<Reservation> findByMemberIdWithPaging(Long memberId, Pageable pageab
 
 1. **Q클래스는 static final로 선언**
    - 매번 생성하지 않고 재사용
+
    ```java
    private static final QReservation reservation = QReservation.reservation;
    ```
@@ -1059,6 +1060,7 @@ public Page<Reservation> findByMemberIdWithPaging(Long memberId, Pageable pageab
 
 3. **동적 쿼리에서 null 처리**
    - `BooleanExpression`을 사용하여 null 조건 제외
+
    ```java
    .where(
        condition.getStatus() != null ? reservation.status.eq(condition.getStatus()) : null
@@ -1084,6 +1086,7 @@ public Page<Reservation> findByMemberIdWithPaging(Long memberId, Pageable pageab
 | `TheaterRepository` | Spring Data JPA 메서드 | 선택적 | 낮음 |
 
 **전환 우선순위:**
+
 1. **높음**: 다수 조인이 포함된 `ReservationRepository`, `ScreeningRepository`
 2. **중간**: 집계 쿼리나 조인이 있는 `ScreeningSeatRepository`, `ScreenRepository`
 3. **낮음**: 단순 조회만 있는 Repository는 필요 시 전환

@@ -3,22 +3,26 @@
 ## 1. 절대 원칙 (Absolute Principles)
 
 ### 1.1 좌석 상태 변경 제어
+
 - **좌석 상태 변경은 단일 진입점만 허용**
   - 좌석 상태 변경은 `SeatCommandService` (혹은 이에 준하는 Command Layer) 외 호출 금지
   - 다른 레이어에서 좌석 상태를 직접 변경하는 것은 절대 금지
 
 ### 1.2 데이터 저장소 역할 분리
+
 - **Redis → DB 직접 수정 금지**
   - Redis는 캐시/락/HOLD 용도로만 사용
   - DB는 최종 진실(Source of Truth)
   - Redis의 데이터는 일시적이며, DB가 최종 상태를 결정
 
 ### 1.3 클라이언트 신뢰 금지
+
 - **좌석 상태, 가격, 영화 정보는 서버 계산값만 신뢰**
   - 클라이언트에서 전달된 좌석 상태, 가격 정보는 절대 신뢰하지 않음
   - 모든 비즈니스 로직과 상태 계산은 서버에서 수행
 
 ### 1.4 비동기 이벤트 멱등성
+
 - **비동기 이벤트는 멱등성 보장 필수**
   - 동일 이벤트가 여러 번 처리되어도 결과가 동일해야 함
   - 이벤트 ID 기반 중복 처리 방지 필수
@@ -26,15 +30,18 @@
 ## 2. 아키텍처 레이어 규칙
 
 ### 2.1 레이어 의존성 규칙
+
 ```
 Controller → Application(Service) → Domain → Infrastructure
 ```
+
 - **역방향 의존 절대 금지**
   - 상위 레이어는 하위 레이어에만 의존
   - Domain Layer는 Infrastructure Layer를 직접 참조하지 않음
   - Infrastructure는 Domain의 인터페이스를 구현
 
 ### 2.2 Domain Layer 규칙
+
 - **Spring Annotation 사용 금지**
   - Domain Layer는 프레임워크에 독립적이어야 함
   - `@Entity`, `@Component` 등 Spring 어노테이션 사용 금지
@@ -46,12 +53,14 @@ Controller → Application(Service) → Domain → Infrastructure
 ### 2.3 Repository 규칙
 
 #### 2.3.1 QueryDSL 우선 사용 원칙
+
 - **특정한 경우나 필요가 없는 경우가 아니면 DB 조회는 QueryDSL 방식으로 진행**
   - 기본적으로 모든 복잡한 쿼리는 QueryDSL을 사용
   - Spring Data JPA 메서드 네이밍 규칙(`findBy...`)은 단순 조회에만 제한적으로 사용
   - `@Query` 어노테이션의 JPQL 사용은 QueryDSL로 전환 가능한 경우 우선 전환 검토
 
 #### 2.3.2 QueryDSL 필수 사용 케이스
+
 다음 경우는 **반드시 QueryDSL을 사용**해야 합니다:
 
 1. **다수 조인이 필요한 SELECT 문**
@@ -72,6 +81,7 @@ Controller → Application(Service) → Domain → Infrastructure
    - 대용량 데이터 조회
 
 #### 2.3.3 Spring Data JPA 허용 케이스
+
 다음 경우는 Spring Data JPA 메서드 네이밍 규칙 사용 가능:
 
 1. **단순 조회 (단일 테이블, 단일 조건)**
@@ -87,36 +97,39 @@ Controller → Application(Service) → Domain → Infrastructure
    - 예: `findByScreeningId(Long screeningId)`
 
 #### 2.3.4 Repository 구현 패턴
+
 - **QueryDSL 사용 시 Custom Repository 패턴 적용**
+
   ```java
   // 1. 기본 Repository 인터페이스
   public interface ReservationRepository extends JpaRepository<Reservation, Long> {
       // 단순 조회만 포함
   }
-  
+
   // 2. Custom Repository 인터페이스
   public interface ReservationRepositoryCustom {
       List<Reservation> findWithDetails(Long memberId, ReservationStatus status);
   }
-  
+
   // 3. Custom Repository 구현체
   @Repository
   public class ReservationRepositoryImpl implements ReservationRepositoryCustom {
       private final JPAQueryFactory queryFactory;
-      
+
       @Override
       public List<Reservation> findWithDetails(Long memberId, ReservationStatus status) {
           // QueryDSL 구현
       }
   }
-  
+
   // 4. 기본 Repository에 Custom 인터페이스 상속
-  public interface ReservationRepository extends JpaRepository<Reservation, Long>, 
+  public interface ReservationRepository extends JpaRepository<Reservation, Long>,
                                                  ReservationRepositoryCustom {
   }
   ```
 
 #### 2.3.5 QueryDSL 사용 가이드
+
 - **JPAQueryFactory 주입**
   - `QueryDslConfig`에서 Bean으로 등록된 `JPAQueryFactory` 사용
   - `@RequiredArgsConstructor`로 주입
@@ -144,6 +157,7 @@ Controller → Application(Service) → Domain → Infrastructure
 | `TheaterRepository` | Spring Data JPA 메서드 | 선택적 | 낮음 |
 
 **전환 우선순위:**
+
 1. **높음**: 다수 조인이 포함된 `ReservationRepository`, `ScreeningRepository`
 2. **중간**: 집계 쿼리나 조인이 있는 `ScreeningSeatRepository`, `ScreenRepository`
 3. **낮음**: 단순 조회만 있는 Repository는 필요 시 전환
@@ -151,16 +165,19 @@ Controller → Application(Service) → Domain → Infrastructure
 ## 3. Domain 규칙
 
 ### 3.1 Aggregate 규칙
+
 - **Aggregate Root 외 Entity 직접 접근 금지**
   - 모든 Entity 접근은 Aggregate Root를 통해서만 가능
   - 외부에서 내부 Entity에 직접 접근하는 것은 금지
 
 ### 3.2 좌석 소속 규칙
+
 - **좌석은 반드시 Screening Aggregate 소속**
   - 좌석은 독립적인 Aggregate가 아님
   - Screening Aggregate의 일부로 관리
 
 ### 3.3 가격 계산 규칙
+
 - **가격 계산은 Domain Service에서만 수행**
   - 가격 계산 로직은 Domain Service에 위치
   - Application Service나 Infrastructure에서 가격 계산 금지
@@ -168,6 +185,7 @@ Controller → Application(Service) → Domain → Infrastructure
 ## 4. 좌석 상태 관리 규칙
 
 ### 4.1 좌석 상태 정의
+
 좌석 상태는 단일 Enum으로 정의하며, 다음 7가지 상태만 허용:
 
 ```java
@@ -189,6 +207,7 @@ public enum SeatStatus {
 ### 4.2 HOLD 규칙
 
 #### 4.2.1 HOLD 필수 요구사항
+
 - **HOLD는 반드시 Redis + TTL 사용**
   - HOLD 상태는 Redis에 저장되며, 반드시 TTL 설정
   - TTL 없는 HOLD Key 생성 금지
@@ -202,6 +221,7 @@ public enum SeatStatus {
   - HOLD Token이 없거나 유효하지 않으면 요청 거부
 
 #### 4.2.2 HOLD 연장 규칙
+
 - **동일 유저라도 HOLD 연장 불가 (재선택 필요)**
   - HOLD 시간 연장은 불가능
   - TTL 만료 후 자동 해제되며, 재선택 필요
@@ -209,12 +229,15 @@ public enum SeatStatus {
 ### 4.3 분산 락 규칙
 
 #### 4.3.1 락 키 규칙
+
 ```
 lock:screening:{screeningId}:seat:{seatId}
 ```
+
 - 락 키는 상영 ID와 좌석 ID를 포함하여 명확하게 식별
 
 #### 4.3.2 락 획득 실패 처리
+
 - **락 획득 실패 시 즉시 실패 응답**
   - 락 획득 실패 시 재시도하지 않음
   - 서버에서 재시도 로직 구현 금지
@@ -226,6 +249,7 @@ lock:screening:{screeningId}:seat:{seatId}
 ## 5. 트랜잭션 규칙
 
 ### 5.1 트랜잭션 범위
+
 - **결제 프로세스 상태 전이**
   - HOLD → PAYMENT_PENDING: 결제 요청 시작
   - PAYMENT_PENDING → RESERVED: 결제 성공
@@ -240,6 +264,7 @@ lock:screening:{screeningId}:seat:{seatId}
   - Redis 실패해도 DB 커밋은 정상 진행
 
 ### 5.2 트랜잭션 금지 사항
+
 - **Controller에서 @Transactional 금지**
   - 트랜잭션은 Application Service 레이어에서만 관리
   - Controller는 트랜잭션 경계를 설정하지 않음
@@ -251,6 +276,7 @@ lock:screening:{screeningId}:seat:{seatId}
 ## 6. 실시간 좌석 갱신 규칙
 
 ### 6.1 통신 방식
+
 - **Polling 금지**
   - 클라이언트에서 주기적으로 서버에 요청하는 방식 금지
   - 서버 부하 및 실시간성 저하 방지
@@ -261,6 +287,7 @@ lock:screening:{screeningId}:seat:{seatId}
   - 프로젝트 전반에 걸쳐 일관된 방식 사용
 
 ### 6.2 이벤트 기준
+
 - **좌석 상태 변경 시만 Push**
   - 좌석 상태가 실제로 변경된 경우에만 클라이언트에 Push
   - 불필요한 이벤트 전송 금지
@@ -276,15 +303,18 @@ lock:screening:{screeningId}:seat:{seatId}
 ## 7. Redis 사용 규칙
 
 ### 7.1 Key 네이밍 규칙
+
 ```
 seat:hold:{screeningId}:{seatId}      # HOLD 정보
 seat:status:{screeningId}              # 좌석 상태 캐시
 lock:seat:{screeningId}:{seatId}       # 분산 락
 ```
+
 - Key 네이밍은 일관된 패턴 유지
 - 콜론(`:`)을 구분자로 사용하여 계층 구조 표현
 
 ### 7.2 TTL 규칙
+
 - **HOLD TTL: 설정값 기반 (5~10분)**
   - HOLD TTL은 설정 파일에서 관리
   - 기본값: 5~10분 (PRD 기준)
@@ -297,11 +327,13 @@ lock:seat:{screeningId}:{seatId}       # 분산 락
 ## 8. 성능 규칙
 
 ### 8.1 응답 시간 목표
+
 - **좌석 클릭 → 반영 < 200ms**
   - 좌석 클릭 후 서버 응답까지 200ms 이내
   - Redis 조회, 분산 락 획득, 상태 업데이트 최적화
 
 ### 8.2 동시성 제어
+
 - **최대 1000 TPS 지원**
   - 분산 락과 Redis를 활용하여 동시성 제어
   - 피크타임(주말, 공휴일, 인기 영화 개봉일) 대응
@@ -309,6 +341,7 @@ lock:seat:{screeningId}:{seatId}       # 분산 락
 ## 9. 보안 규칙
 
 ### 9.1 인증
+
 - **JWT Access Token 유효시간 ≤ 15분**
   - Access Token은 짧은 유효시간 유지
   - 보안 강화 및 토큰 탈취 시 피해 최소화
@@ -318,6 +351,7 @@ lock:seat:{screeningId}:{seatId}       # 분산 락
   - 토큰 무효화 및 세션 관리 용이
 
 ### 9.2 관리자 API
+
 - **`/admin/**` 는 Role 기반 접근 필수**
   - 관리자 API는 반드시 역할(Role) 기반 접근 제어
   - 일반 사용자는 접근 불가
@@ -327,11 +361,13 @@ lock:seat:{screeningId}:{seatId}       # 분산 락
   - 더 엄격한 제한 가능
 
 ### 9.3 API Rate Limit
+
 - **예매 API Rate Limit 필수**
   - 좌석 예매 관련 API는 Rate Limit 적용
   - 악의적 요청 및 서버 부하 방지
 
 ### 9.4 HOLD Token 검증
+
 - **HOLD Token 검증 필수**
   - 모든 좌석 관련 요청에서 HOLD Token 검증
   - 위변조 방지 및 보안 강화
@@ -339,17 +375,20 @@ lock:seat:{screeningId}:{seatId}       # 분산 락
 ## 10. 결제 규칙
 
 ### 10.1 Mock 결제
+
 - **결제는 Mock 시스템 사용**
   - 실제 결제 게이트웨이 연동 없이 Mock 결제 사용
   - 개발 및 테스트 환경에서 사용
 
 ### 10.2 결제 실패 처리
+
 - **결제 실패 시 PAYMENT_PENDING 상태의 좌석은 자동으로 AVAILABLE로 복구**
   - 결제 실패 이벤트 발생 시 PAYMENT_PENDING → AVAILABLE 상태 전이
   - HOLD 정보 자동 해제
   - 사용자에게 재시도 옵션 제공
 
 ### 10.3 결제 위변조 방지
+
 - **결제 정보는 서버에서만 검증**
   - 클라이언트에서 전달된 결제 정보는 신뢰하지 않음
   - 가격, 좌석 정보는 서버에서 재계산하여 검증
@@ -357,7 +396,9 @@ lock:seat:{screeningId}:{seatId}       # 분산 락
 ## 11. 로깅 규칙
 
 ### 11.1 필수 로그
+
 다음 이벤트는 반드시 로깅:
+
 - 좌석 HOLD / 해제
 - 좌석 상태 전이 (모든 상태 변경)
 - 결제 성공 / 실패
@@ -365,7 +406,9 @@ lock:seat:{screeningId}:{seatId}       # 분산 락
 - 장애 발생 시점 및 원인
 
 ### 11.2 로그 금지
+
 다음 정보는 로그에 기록하지 않음:
+
 - 개인정보 (이름, 전화번호, 이메일 등)
 - 결제 상세 정보 (카드 번호, 계좌 정보 등)
 - JWT Token 전체 값 (일부만 마스킹하여 기록)
@@ -373,6 +416,7 @@ lock:seat:{screeningId}:{seatId}       # 분산 락
 ## 12. 프론트엔드 규칙 (Web / Mobile 공통)
 
 ### 12.1 상태 관리
+
 - **서버 상태는 반드시 서버 기준**
   - 클라이언트의 상태는 서버 상태의 반영일 뿐
   - 서버와 클라이언트 상태 불일치 시 서버 상태가 우선
@@ -382,6 +426,7 @@ lock:seat:{screeningId}:{seatId}       # 분산 락
   - 사용자 경험과 데이터 일관성 모두 보장
 
 ### 12.2 좌석 UI
+
 - **좌석 상태별 시각적 명확 분리**
   - AVAILABLE, HOLD, PAYMENT_PENDING, RESERVED, CANCELLED, BLOCKED, DISABLED 상태별로 명확한 시각적 구분
   - 사용자가 현재 상태를 쉽게 인지할 수 있어야 함
@@ -391,6 +436,7 @@ lock:seat:{screeningId}:{seatId}       # 분산 락
   - 시간 동기화 문제 방지
 
 ### 12.3 좌석 맵 렌더링
+
 - **Canvas / SVG 렌더링 사용**
   - 성능 최적화를 위해 Canvas 또는 SVG 사용
   - DOM 조작 최소화
@@ -398,6 +444,7 @@ lock:seat:{screeningId}:{seatId}       # 분산 락
 ## 13. 장애 대응 규칙
 
 ### 13.1 Redis 장애 대응
+
 - **읽기: DB Fallback**
   - Redis 장애 시 좌석 상태 조회는 DB에서 수행
   - 읽기 성능 저하를 감수하더라도 서비스 지속
@@ -407,6 +454,7 @@ lock:seat:{screeningId}:{seatId}       # 분산 락
   - 데이터 일관성 보장을 위해 쓰기 작업 중단
 
 ### 13.2 자동 복구
+
 - **장애 발생 시 좌석 상태 자동 복구 로직 필수**
   - HOLD 타임아웃 자동 해제
   - 트랜잭션 롤백을 통한 일관성 보장
@@ -415,18 +463,21 @@ lock:seat:{screeningId}:{seatId}       # 분산 락
 ## 14. 예외 처리 규칙
 
 ### 14.1 공통 예외 사용 필수
+
 - **비즈니스 로직 예외는 반드시 공통 예외 체계 사용**
   - `BusinessException` + `ErrorCode` (기본)
   - 도메인별 예외: `MemberException`, `ScreeningException`, `SeatException`, `PaymentException`, `ReservationException` 등 (`global.exception` 패키지)
   - 모든 예외는 `GlobalExceptionHandler`에서 처리되어 일관된 `ErrorResponse`로 변환
 
 ### 14.2 금지 예외
+
 - **다음 예외는 비즈니스 로직에서 사용 금지**
   - `IllegalArgumentException`, `IllegalStateException`
   - `RuntimeException` 직접 상속 커스텀 예외 (공통 체계 미적용)
   - 기타 `ErrorCode`와 무관한 예외
 
 ### 14.3 ErrorCode 정의
+
 - **신규 비즈니스 오류는 `ErrorCode`에 추가 후 공통 예외로 사용**
   - `ErrorCode` enum에 코드, HTTP 상태, 메시지 정의
   - 필요 시 도메인별 예외 클래스에 정적 팩토리 메서드 추가

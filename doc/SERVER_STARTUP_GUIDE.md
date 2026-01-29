@@ -3,7 +3,9 @@
 ## 1. 프로파일별 데이터베이스 설정
 
 ### 개요
+
 프로젝트는 개발 환경과 운영 환경을 분리하여 관리합니다:
+
 - **개발 환경 (dev)**: H2 인메모리 데이터베이스 사용
 - **운영 환경 (prod)**: MySQL 데이터베이스 사용
 
@@ -18,7 +20,9 @@
 ### 1.2 개발 환경 (dev) - H2 데이터베이스
 
 #### 기본 프로파일
+
 `application.yml`에서 기본 프로파일이 `dev`로 설정되어 있습니다:
+
 ```yaml
 spring:
   profiles:
@@ -26,7 +30,9 @@ spring:
 ```
 
 #### H2 데이터베이스 설정
+
 `application-dev.yml`에서 H2 인메모리 데이터베이스를 사용합니다:
+
 ```yaml
 spring:
   datasource:
@@ -50,12 +56,14 @@ spring:
 ```
 
 **H2 데이터베이스 특징:**
+
 - 인메모리 데이터베이스로 별도 설치 불필요
 - 서버 재시작 시 데이터 초기화
 - 개발 및 테스트에 최적화
 - `ddl-auto: update`로 엔티티 변경 시 자동 스키마 업데이트
 
 #### 개발 환경 실행 방법
+
 ```bash
 # 기본 프로파일(dev)로 실행
 ./gradlew bootRun
@@ -67,7 +75,9 @@ spring:
 ### 1.3 운영 환경 (prod) - MySQL 데이터베이스
 
 #### MySQL 데이터베이스 설정
+
 `application-prod.yml`에서 MySQL 데이터베이스를 사용합니다:
+
 ```yaml
 spring:
   datasource:
@@ -91,6 +101,7 @@ spring:
 ```
 
 **MySQL 데이터베이스 특징:**
+
 - 영구 데이터 저장소
 - 운영 환경에 최적화
 - `ddl-auto: none`으로 스키마 자동 변경 방지
@@ -108,6 +119,7 @@ spring:
 | `allowPublicKeyRetrieval` | true | Public Key 인증 허용 (MySQL 8.x 필수) |
 
 #### 운영 환경 실행 방법
+
 ```bash
 # prod 프로파일로 실행
 ./gradlew bootRun --args='--spring.profiles.active=prod'
@@ -119,6 +131,7 @@ java -jar app.jar --spring.profiles.active=prod
 ### 1.4 Redis 설정
 
 Redis 설정은 프로파일과 무관하게 공통 설정(`application.yml`)에 포함되어 있습니다:
+
 ```yaml
 spring:
   data:
@@ -153,6 +166,7 @@ Redis는 기본적으로 연결 실패해도 앱 시작에 영향을 주지 않�
 ## 2. DB 접속 여부와 상관없이 서버 구동하는 방법
 
 ### 개요
+
 개발 환경에서 MySQL/Redis가 실행되지 않은 상태에서도 Spring Boot 서버를 구동할 수 있도록 설정합니다.
 
 **주의:** 이 기능은 개발/테스트 환경에서만 사용하세요. 운영 환경에서는 DB/Redis 연결이 필수입니다.
@@ -160,6 +174,7 @@ Redis는 기본적으로 연결 실패해도 앱 시작에 영향을 주지 않�
 ### 2.1 핵심 설정
 
 #### DataSource (HikariCP) 설정
+
 ```yaml
 spring:
   datasource:
@@ -169,10 +184,12 @@ spring:
 ```
 
 **핵심 설정:**
+
 - `initialization-fail-timeout: -1`: HikariCP가 초기 연결 실패해도 애플리케이션 시작을 허용
 - `connection-timeout: 5000`: 연결 시도 타임아웃을 5초로 제한
 
 #### JPA/Hibernate 설정
+
 ```yaml
 spring:
   jpa:
@@ -180,9 +197,11 @@ spring:
 ```
 
 **핵심 설정:**
+
 - `defer-datasource-initialization: true`: DataSource 초기화를 지연하여 앱 시작 시점에 DB 연결 필수가 아님
 
 #### SQL 초기화 설정
+
 ```yaml
 spring:
   sql:
@@ -208,6 +227,7 @@ spring:
 ## 3. 서버 접속 로깅
 
 ### 개요
+
 애플리케이션 시작 시 데이터베이스(H2 또는 MySQL)/Redis 연결 상태를 콘솔에 출력하여 인프라 연결 상태를 한눈에 확인합니다.
 
 ### 3.1 DatabaseConnectionChecker 구현
@@ -251,7 +271,7 @@ public class DatabaseConnectionChecker implements ApplicationRunner {
 
     private void checkDatabaseConnection() {
         log.info("");
-        
+
         try (var connection = dataSource.getConnection()) {
             var metaData = connection.getMetaData();
             var dbName = metaData.getDatabaseProductName();
@@ -311,7 +331,8 @@ public class DatabaseConnectionChecker implements ApplicationRunner {
 
 ### 3.3 출력 예시
 
-#### 개발 환경 (H2) 연결 성공 시:
+#### 개발 환경 (H2) 연결 성공 시
+
 ```
 ╔════════════════════════════════════════════════════════════╗
 ║              CONNECTION STATUS CHECK                       ║
@@ -334,7 +355,8 @@ public class DatabaseConnectionChecker implements ApplicationRunner {
 ╚════════════════════════════════════════════════════════════╝
 ```
 
-#### 운영 환경 (MySQL) 연결 성공 시:
+#### 운영 환경 (MySQL) 연결 성공 시
+
 ```
 ╔════════════════════════════════════════════════════════════╗
 ║              CONNECTION STATUS CHECK                       ║
@@ -357,7 +379,8 @@ public class DatabaseConnectionChecker implements ApplicationRunner {
 ╚════════════════════════════════════════════════════════════╝
 ```
 
-#### 연결 실패 시:
+#### 연결 실패 시
+
 ```
 ╔════════════════════════════════════════════════════════════╗
 ║              CONNECTION STATUS CHECK                       ║

@@ -43,18 +43,21 @@
 ### 카테고리별 주요 문제
 
 #### 프론트엔드
+
 - TypeScript JSX 오류 → [02-typescript-react.md](./trouble/02-typescript-react.md)
 - Vite 빌드 실패 → [05-build.md](./trouble/05-build.md)
 - Tailwind CSS 미적용 → [05-build.md](./trouble/05-build.md)
 - Path Alias 설정 → [08-config-guide.md](./trouble/08-config-guide.md)
 
 #### 백엔드
+
 - Spring Boot 의존성 → [04-spring-boot.md](./trouble/04-spring-boot.md)
 - Gradle 빌드 → [05-build.md](./trouble/05-build.md)
 - DB 연결 → [06-database.md](./trouble/06-database.md)
 - Redis 연결 → [07-cinema-app.md](./trouble/07-cinema-app.md)
 
 #### Cinema App 프로젝트
+
 - QueryDSL Q클래스 → [07-cinema-app.md](./trouble/07-cinema-app.md)
 - Redisson/Redis → [07-cinema-app.md](./trouble/07-cinema-app.md)
 - 도메인 예외 처리 → [07-cinema-app.md](./trouble/07-cinema-app.md)
