@@ -82,13 +82,15 @@ public class ScreeningController {
 
     /**
      * 좌석 배치·상태 조회 (Step 5)
-     * Redis 캐시 우선, 미스/장애 시 DB Fallback
+     * Redis 캐시 우선, 미스/장애 시 DB Fallback. 인증 시 "내 HOLD"에 holdToken/isHeldByCurrentUser 포함.
      * Key: seat:status:{screeningId}
      */
     @GetMapping("/{screeningId}/seats")
     public ResponseEntity<ApiResponse<SeatLayoutResponse>> getSeatLayout(
-            @PathVariable("screeningId") Long screeningId) {
-        SeatLayoutResponse layout = seatStatusQueryService.getSeatLayout(screeningId);
+            @PathVariable("screeningId") Long screeningId,
+            Authentication authentication) {
+        Long memberId = resolveMemberIdOrNull(authentication);
+        SeatLayoutResponse layout = seatStatusQueryService.getSeatLayout(screeningId, memberId);
         return ResponseEntity.ok(ApiResponse.success(layout));
     }
 
@@ -130,13 +132,21 @@ public class ScreeningController {
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
-    private Long resolveMemberId(Authentication authentication) {
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new BusinessException(ErrorCode.UNAUTHORIZED);
+    /** 인증된 경우 회원 ID, 아니면 null (좌석 조회 등 permitAll에서 "내 HOLD" 후처리용) */
+    private Long resolveMemberIdOrNull(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()
+                || "anonymousUser".equals(authentication.getPrincipal())) {
+            return null;
         }
         String loginId = authentication.getName();
-        return memberRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND))
-                .getId();
+        return memberRepository.findByLoginId(loginId).map(m -> m.getId()).orElse(null);
+    }
+
+    private Long resolveMemberId(Authentication authentication) {
+        Long id = resolveMemberIdOrNull(authentication);
+        if (id == null) {
+            throw new BusinessException(ErrorCode.UNAUTHORIZED);
+        }
+        return id;
     }
 }

@@ -85,3 +85,30 @@ export const getYearRange = (date: Date = new Date()): { start: Date; end: Date 
 export const toISOString = (date: Date = new Date()): string => {
   return date.toISOString();
 };
+
+/**
+ * 상영 시간표 표시용 상태 (현재 시각 기준)
+ * - BOOKABLE(예매하기): 상영 시작 전 → 좌석 선택 가능
+ * - NOW_PLAYING(상영중): 상영 시작 ~ 종료 사이 → 좌석 선택 불가
+ * - ENDED(상영종료): 상영 종료 후 → 좌석 선택 불가
+ */
+export type ScreeningDisplayStatus = 'BOOKABLE' | 'NOW_PLAYING' | 'ENDED';
+
+export function getScreeningDisplayStatus(
+  startTime: string,
+  endTime: string,
+  now: Date = new Date()
+): ScreeningDisplayStatus {
+  const start = new Date(startTime).getTime();
+  const end = new Date(endTime).getTime();
+  const t = now.getTime();
+  if (t < start) return 'BOOKABLE';
+  if (t < end) return 'NOW_PLAYING';
+  return 'ENDED';
+}
+
+export const SCREENING_DISPLAY_LABEL: Record<ScreeningDisplayStatus, string> = {
+  BOOKABLE: '예매하기',
+  NOW_PLAYING: '상영중',
+  ENDED: '상영종료',
+};

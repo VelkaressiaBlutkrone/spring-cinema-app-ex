@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../exception/app_exception.dart';
-import '../../models/reservation.dart';
+import '../../models/reservation.dart' show ReservationDetailModel, reservationStatusLabel;
 import '../../provider/api_providers.dart';
 import '../../theme/cinema_theme.dart';
 import '../../widgets/custom_button.dart';
@@ -164,6 +164,14 @@ class _ReservationDetailScreenState extends ConsumerState<ReservationDetailScree
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: CinemaColors.textPrimary,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '예매 상태: ${reservationStatusLabel[r.status] ?? r.status}',
+                        style: GoogleFonts.roboto(
+                          fontSize: 13,
+                          color: CinemaColors.textMuted,
                         ),
                       ),
                     ],

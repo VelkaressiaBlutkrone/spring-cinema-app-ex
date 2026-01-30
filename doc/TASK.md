@@ -1151,7 +1151,7 @@ domain/
 
 ---
 
-## 좌석 선택 UX 개선 (내 선택 유지 · 장바구니 · 취소) — 대기
+## 좌석 선택 UX 개선 (내 선택 유지 · 장바구니 · 취소) — 완료
 
 ### 요구사항 정리
 
@@ -1173,36 +1173,36 @@ domain/
 
 - **목표**: 인증된 사용자가 좌석 배치를 조회할 때, 본인이 HOLD한 좌석에 한해 `holdToken`(및 필요 시 `isHeldByCurrentUser`)을 내려줌.
 - **작업**:
-  - [ ] `SeatStatusItem`(또는 응답 DTO)에 선택 필드 추가: `holdToken` (nullable), `isHeldByCurrentUser` (boolean, 선택).
-  - [ ] `GET /api/screenings/{screeningId}/seats` 처리 시: 인증된 경우, 각 좌석이 HOLD일 때 Redis 등에서 HOLD 소유자(memberId) 확인 후, 현재 사용자와 일치하면 해당 좌석 항목에만 `holdToken`(및 `isHeldByCurrentUser: true`) 설정.
-  - [ ] 캐시 전략: 좌석 배치 캐시는 "비인증용" 공통 유지하고, 인증 요청 시 캐시 결과 위에 "현재 사용자 HOLD" 정보만 추가하는 후처리 방식 검토 (캐시 키를 사용자별로 두지 않아도 됨).
+  - [x] `SeatStatusItem`(또는 응답 DTO)에 선택 필드 추가: `holdToken` (nullable), `isHeldByCurrentUser` (boolean, 선택).
+  - [x] `GET /api/screenings/{screeningId}/seats` 처리 시: 인증된 경우, 각 좌석이 HOLD일 때 Redis 등에서 HOLD 소유자(memberId) 확인 후, 현재 사용자와 일치하면 해당 좌석 항목에만 `holdToken`(및 `isHeldByCurrentUser: true`) 설정.
+  - [x] 캐시 전략: 좌석 배치 캐시는 "비인증용" 공통 유지하고, 인증 요청 시 캐시 결과 위에 "현재 사용자 HOLD" 정보만 추가하는 후처리 방식 검토 (캐시 키를 사용자별로 두지 않아도 됨).
 - **결과**: 웹/앱이 재진입 시에도 API 응답만으로 "내 선택" 표시 및 해제(취소) 호출 가능.
 
 #### 2. 웹(React): 내 선택 유지 및 취소
 
 - **목표**: 좌석 선택 → 이탈 → 재진입 시에도 "내 선택"으로 표시되고, 좌석 맵/장바구니에서 취소 가능.
 - **작업**:
-  - [ ] 좌석 배치 API 응답의 `holdToken` / `isHeldByCurrentUser` 반영: "내 선택"(파란색) vs "다른 고객 선택"(주황) 구분 표시.
-  - [ ] 좌석 맵에서 "내 선택" 좌석 클릭 시 HOLD 해제(취소) 호출: `POST /api/screenings/holds/release` (screeningId, seatId, holdToken). holdToken은 API 응답에서 확보.
-  - [ ] (선택) 세션/상태에 screeningId별 hold 목록 보관해, API 응답 전에도 일시적으로 "내 선택" 표시 가능. 단, 재진입 시에는 서버 응답이 기준이 되도록 정합성 유지.
+  - [x] 좌석 배치 API 응답의 `holdToken` / `isHeldByCurrentUser` 반영: "내 선택"(파란색) vs "다른 고객 선택"(주황) 구분 표시.
+  - [x] 좌석 맵에서 "내 선택" 좌석 클릭 시 HOLD 해제(취소) 호출: `POST /api/screenings/holds/release` (screeningId, seatId, holdToken). holdToken은 API 응답에서 확보.
+  - [x] loadSeats 시 API 응답에서 "내 HOLD" 목록(holdToken 포함)으로 heldSeats 초기화하여 재진입 시 서버 기준 복원.
 - **결과**: 요구사항 1·3(웹) 충족.
 
 #### 3. 앱(Flutter): 내 선택 유지 및 취소
 
 - **목표**: 웹과 동일하게 재진입 시 "내 선택" 표시 및 좌석 맵/장바구니에서 취소 가능.
 - **작업**:
-  - [ ] 좌석 배치 모델·API 응답 파싱에 `holdToken`, `isHeldByCurrentUser`(있을 경우) 반영.
-  - [ ] 좌석 선택 화면에서 "내 선택" vs "다른 고객 선택" 색상/표시 구분, "내 선택" 터치 시 HOLD 해제 API 호출(holdToken 사용).
-  - [ ] 장바구니식 목록(아래 4번)에서도 동일 holdToken으로 취소 가능하도록 연동.
+  - [x] 좌석 배치 모델·API 응답 파싱에 `holdToken`, `isHeldByCurrentUser`(있을 경우) 반영.
+  - [x] 좌석 선택 화면에서 "내 선택" vs "다른 고객 선택" 색상/표시 구분, "내 선택" 터치 시 HOLD 해제 API 호출(holdToken 사용).
+  - [x] _loadLayout 시 API 응답에서 "내 HOLD"(isHeldByCurrentUser + holdToken)로 _heldSeats 복원. getSeatLayout 호출 시 useAuth: true로 인증 전달.
 - **결과**: 요구사항 1·3(앱) 충족.
 
 #### 4. 장바구니식 좌석 선택 목록 (웹/앱 공통)
 
 - **목표**: 현재 상영에 대해 "내가 선택한 좌석"만 모아서 보여주는 전용 UI. 목록에서 개별 취소(해제) 및 결제하기 진입.
 - **작업**:
-  - [ ] **웹**: 좌석 선택(상영 상세) 화면 내 "선택한 좌석" 영역 또는 사이드/하단 패널로 구현. 항목: 행·번호(또는 displayName), (선택 시) 가격, 개별 "취소" 버튼 → `POST .../holds/release`. "결제하기" 버튼으로 기존 결제 플로우 진입. 데이터는 좌석 배치 API에서 받은 "내 HOLD" 목록(holdToken 포함) 기반.
-  - [ ] **앱**: 좌석 선택 화면 상단/하단에 "선택한 좌석 N석" 접이식 목록 또는 전용 위젯. 항목: 좌석 라벨, 개별 해제, "결제하기" 진입. 동일하게 API의 "내 HOLD" 목록(holdToken) 사용.
-  - [ ] 공통: HOLD 해제 시 목록에서 제거 및 좌석 맵 상태 갱신(재조회 또는 SSE 등으로 동기화).
+  - [x] **웹**: 좌석 선택(상영 상세) 화면 내 "선택한 좌석" 영역. 항목: 행·번호, 개별 "취소" 버튼 → `POST .../holds/release`. "결제하기" 버튼으로 기존 결제 플로우 진입. 데이터는 좌석 배치 API에서 받은 "내 HOLD" 목록(holdToken 포함) 기반.
+  - [x] **앱**: 좌석 선택 화면 하단(좌석 맵·범례 아래)에 "선택한 좌석 N석" 목록. 항목: 좌석 라벨, 개별 "취소" 버튼, 하단 "결제하기" 진입. 동일하게 API의 "내 HOLD" 목록(holdToken) 사용.
+  - [x] 공통: HOLD 해제 시 목록에서 제거 및 좌석 맵 상태 갱신(재조회 또는 SSE 등으로 동기화).
 - **결과**: 요구사항 2 충족.
 
 #### 5. 체크리스트 (구현 후)
@@ -1214,7 +1214,52 @@ domain/
 
 ### 상태
 
-**대기** — 위 구성대로 구현 진행 전, 요구사항 및 API·캐시 설계만 반영된 상태.
+**완료** — 백엔드(holdToken/isHeldByCurrentUser 후처리), 웹(재진입 시 내 선택 복원·장바구니 취소), 앱(동일·장바구니 취소) 구현 반영.
+
+---
+
+## 상영시간표 예매 가능 구분 (예매하기/상영중/상영종료) — 완료
+
+### 요구사항 정리 (웹/앱 공통)
+
+1. **상영시간표에서 현재 날짜·시간 기준 상태 구분**
+   - 현재 시각을 기준으로 각 상영의 **시작 시각(startTime)**·**종료 시각(endTime)**과 비교한다.
+   - **지난 일자·시간**(종료 시각이 이미 지남) → **상영종료**
+   - **시작 전**(현재 시각 < 시작 시각) → **예매하기**
+   - **시작 후 ~ 종료 전**(시작 시각 ≤ 현재 시각 < 종료 시각) → **상영중**
+
+2. **표시 및 좌석 선택 제한**
+   - 상영시간표 항목에 상태를 **예매하기 / 상영중 / 상영종료**로 표시한다.
+   - **예매하기** 상태인 상영만 좌석 선택 화면으로 진입할 수 있다.
+   - **상영중**, **상영종료** 상태인 상영은 버튼 비활성화 또는 텍스트만 표시하고, 좌석 선택으로 넘어가지 않도록 한다.
+
+### 기능 구현 구성 (완료)
+
+#### 1. 웹(React)
+
+- **목표**: 영화 상세 모달의 상영시간표에서 현재 시각 기준으로 예매하기/상영중/상영종료 구분, 예매하기만 좌석 선택 진입.
+- **작업**:
+  - [x] `dateUtils.ts`: `getScreeningDisplayStatus(startTime, endTime, now?)` 추가. 반환: `'BOOKABLE'`(예매하기), `'NOW_PLAYING'`(상영중), `'ENDED'`(상영종료). `SCREENING_DISPLAY_LABEL` 상수 추가.
+  - [x] `MoviesPage.tsx`: 각 상영에 대해 `getScreeningDisplayStatus(s.startTime, s.endTime)` 호출. `displayStatus === 'BOOKABLE'`일 때만 `<Link to={/book/:id}>예매하기</Link>` 렌더링. 그 외는 비활성 스타일의 라벨(상영중/상영종료)만 표시.
+- **결과**: 상영시간표에서 예매하기/상영중/상영종료 구분 표시, 예매하기만 좌석 선택 가능.
+
+#### 2. 앱(Flutter)
+
+- **목표**: 영화 상세 화면의 상영 시간 목록에서 동일하게 현재 시각 기준 구분, 예매하기만 좌석 선택 화면 진입.
+- **작업**:
+  - [x] `movie_detail_screen.dart`: `_screeningDisplayStatus(startTime, endTime)`(예매하기/상영중/상영종료 문자열 반환), `_isScreeningBookable(startTime, endTime)`(시작 시각 전이면 true) 헬퍼 추가.
+  - [x] 상영 목록 항목: `canBook`일 때만 `InkWell onTap`으로 `SeatSelectScreen` 진입. 그 외는 `onTap: null`로 비활성, 상태 텍스트(상영중/상영종료) 표시.
+- **결과**: 상영 시간표에서 예매하기/상영중/상영종료 구분 표시, 예매하기만 좌석 선택 가능.
+
+#### 3. 체크리스트 (구현 후)
+
+- [ ] 웹: 상영시간표에서 과거 상영은 "상영종료", 진행 중은 "상영중", 미래 상영은 "예매하기"로 표시되는지 확인.
+- [ ] 웹: "예매하기"만 클릭 시 좌석 선택 페이지로 이동, "상영중"/"상영종료"는 클릭해도 이동하지 않는지 확인.
+- [ ] 앱: 동일 시나리오에서 상태 표시 및 예매하기만 좌석 선택 진입되는지 확인.
+
+### 상태
+
+**완료** — 웹(dateUtils + MoviesPage), 앱(movie_detail_screen) 구현 반영.
 
 ---
 

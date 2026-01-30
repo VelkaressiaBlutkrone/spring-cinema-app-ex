@@ -1,3 +1,12 @@
+/// 예매 상태 표시용 라벨 (일반 사용자용)
+const reservationStatusLabel = <String, String>{
+  'PENDING': '예매 대기',
+  'PAYMENT_PENDING': '결제 대기',
+  'CONFIRMED': '예매 완료',
+  'CANCELLED': '예매 취소',
+  'REFUNDED': '환불 완료',
+};
+
 /// 예매 상세 응답 (ReservationDetailResponse)
 class ReservationDetailModel {
   ReservationDetailModel({

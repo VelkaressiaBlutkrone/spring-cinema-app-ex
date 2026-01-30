@@ -9,9 +9,8 @@ import { EmptyState } from '@/components/common/ui/EmptyState';
 import { Modal } from '@/components/common/ui/Modal';
 import { useToast } from '@/hooks';
 import { getErrorMessage } from '@/utils/errorHandler';
-import { formatDate } from '@/utils/dateUtils';
+import { formatDate, getScreeningDisplayStatus, SCREENING_DISPLAY_LABEL } from '@/utils/dateUtils';
 import type { Movie, Screening } from '@/types/movie.types';
-import { SCREENING_STATUS_LABEL } from '@/types/movie.types';
 import type { SpringPage } from '@/types/api.types';
 
 export function MoviesPage() {
@@ -133,29 +132,40 @@ export function MoviesPage() {
                 <p className="text-sm text-cinema-muted">상영 예정인 일정이 없습니다.</p>
               ) : (
                 <ul className="max-h-48 space-y-2 overflow-y-auto rounded-xl border border-cinema-glass-border bg-cinema-bg p-3">
-                  {schedules.map((s) => (
-                    <li
-                      key={s.id}
-                      className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-cinema-surface px-3 py-2 text-sm"
-                    >
-                      <span className="text-cinema-muted">
-                        {[s.theaterName, s.screenName, SCREENING_STATUS_LABEL[s.status] ?? s.status]
-                          .filter(Boolean)
-                          .join(' - ')}
-                      </span>
-                      <span className="text-cinema-muted-dark">
-                        {formatDate(s.startTime, 'YYYY-MM-DD HH:mm')} ~{' '}
-                        {formatDate(s.endTime, 'HH:mm')}
-                      </span>
-                      <Link
-                        to={`/book/${s.id}`}
-                        state={{ screening: s }}
-                        className="shrink-0 rounded-lg bg-cinema-neon-blue px-3 py-1.5 text-xs font-medium text-cinema-bg transition hover:opacity-90"
+                  {schedules.map((s) => {
+                    const displayStatus = getScreeningDisplayStatus(s.startTime, s.endTime);
+                    const canBook = displayStatus === 'BOOKABLE';
+                    return (
+                      <li
+                        key={s.id}
+                        className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-cinema-surface px-3 py-2 text-sm"
                       >
-                        예매하기
-                      </Link>
-                    </li>
-                  ))}
+                        <span className="text-cinema-muted">
+                          {[s.theaterName, s.screenName]
+                            .filter(Boolean)
+                            .join(' - ')}{' '}
+                          · {SCREENING_DISPLAY_LABEL[displayStatus]}
+                        </span>
+                        <span className="text-cinema-muted-dark">
+                          {formatDate(s.startTime, 'YYYY-MM-DD HH:mm')} ~{' '}
+                          {formatDate(s.endTime, 'HH:mm')}
+                        </span>
+                        {canBook ? (
+                          <Link
+                            to={`/book/${s.id}`}
+                            state={{ screening: s }}
+                            className="shrink-0 rounded-lg bg-cinema-neon-blue px-3 py-1.5 text-xs font-medium text-cinema-bg transition hover:opacity-90"
+                          >
+                            예매하기
+                          </Link>
+                        ) : (
+                          <span className="shrink-0 rounded-lg border border-cinema-glass-border bg-cinema-surface px-3 py-1.5 text-xs font-medium text-cinema-muted cursor-not-allowed">
+                            {SCREENING_DISPLAY_LABEL[displayStatus]}
+                          </span>
+                        )}
+                      </li>
+                    );
+                  })}
                 </ul>
               )}
             </div>

@@ -64,6 +64,32 @@ class _MovieDetailScreenState extends ConsumerState<MovieDetailScreen> {
     }
   }
 
+  /// 상영 시간표 표시용 상태 (현재 시각 기준): 예매하기 / 상영중 / 상영종료
+  static String _screeningDisplayStatus(String? startTime, String? endTime) {
+    if (startTime == null || startTime.isEmpty || endTime == null || endTime.isEmpty) return '상영종료';
+    try {
+      final start = DateTime.parse(startTime);
+      final end = DateTime.parse(endTime);
+      final now = DateTime.now();
+      if (now.isBefore(start)) return '예매하기';
+      if (now.isBefore(end)) return '상영중';
+      return '상영종료';
+    } catch (_) {
+      return '상영종료';
+    }
+  }
+
+  static bool _isScreeningBookable(String? startTime, String? endTime) {
+    if (startTime == null || startTime.isEmpty || endTime == null || endTime.isEmpty) return false;
+    try {
+      final start = DateTime.parse(startTime);
+      final now = DateTime.now();
+      return now.isBefore(start);
+    } catch (_) {
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -136,6 +162,8 @@ class _MovieDetailScreenState extends ConsumerState<MovieDetailScreen> {
                     }
                     return Column(
                       children: list.map((s) {
+                        final displayStatus = _screeningDisplayStatus(s.startTime, s.endTime);
+                        final canBook = _isScreeningBookable(s.startTime, s.endTime);
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 10),
                           child: GlassCard(
@@ -143,17 +171,19 @@ class _MovieDetailScreenState extends ConsumerState<MovieDetailScreen> {
                             borderRadius: 12,
                             blur: 16,
                             child: InkWell(
-                              onTap: () => Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => SeatSelectScreen(
-                                    screeningId: s.id,
-                                    movieTitle: s.movieTitle,
-                                    screenName: s.screenName,
-                                    theaterName: s.theaterName,
-                                    startTime: s.startTime,
-                                  ),
-                                ),
-                              ),
+                              onTap: canBook
+                                  ? () => Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (_) => SeatSelectScreen(
+                                            screeningId: s.id,
+                                            movieTitle: s.movieTitle,
+                                            screenName: s.screenName,
+                                            theaterName: s.theaterName,
+                                            startTime: s.startTime,
+                                          ),
+                                        ),
+                                      )
+                                  : null,
                               borderRadius: BorderRadius.circular(12),
                               child: Row(
                                 children: [
@@ -170,7 +200,7 @@ class _MovieDetailScreenState extends ConsumerState<MovieDetailScreen> {
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
-                                          '${s.screenName} · ${_formatDateTime(s.startTime)}',
+                                          '${s.screenName} · ${_formatDateTime(s.startTime)} · $displayStatus',
                                           style: GoogleFonts.roboto(
                                             fontSize: 13,
                                             color: CinemaColors.textMuted,
@@ -179,7 +209,16 @@ class _MovieDetailScreenState extends ConsumerState<MovieDetailScreen> {
                                       ],
                                     ),
                                   ),
-                                  Icon(Icons.chevron_right, color: CinemaColors.textMuted),
+                                  if (canBook)
+                                    Icon(Icons.chevron_right, color: CinemaColors.textMuted)
+                                  else
+                                    Text(
+                                      displayStatus,
+                                      style: GoogleFonts.roboto(
+                                        fontSize: 12,
+                                        color: CinemaColors.textMuted,
+                                      ),
+                                    ),
                                 ],
                               ),
                             ),

@@ -14,6 +14,15 @@ import { formatDate } from '@/utils/dateUtils';
 import { formatPrice } from '@/utils/formatters';
 import type { ReservationDetailResponse } from '@/types/reservation.types';
 
+/** 예매 상태 표시용 라벨 (일반 사용자용) */
+const RESERVATION_STATUS_LABEL: Record<string, string> = {
+  PENDING: '예매 대기',
+  PAYMENT_PENDING: '결제 대기',
+  CONFIRMED: '예매 완료',
+  CANCELLED: '예매 취소',
+  REFUNDED: '환불 완료',
+};
+
 export function ReservationDetailPage() {
   const { reservationId } = useParams<{ reservationId: string }>();
   const navigate = useNavigate();
@@ -113,7 +122,7 @@ export function ReservationDetailPage() {
             </dd>
           </div>
           <div>
-            <dt className="text-sm font-medium text-cinema-muted">좌석별 금액 (서버 계산값)</dt>
+            <dt className="text-sm font-medium text-cinema-muted">좌석별 금액</dt>
             <dd className="mt-1">
               <ul className="space-y-1 text-cinema-muted">
                 {detail.seats?.map((s) => (
@@ -132,7 +141,9 @@ export function ReservationDetailPage() {
           </div>
           <div>
             <dt className="text-sm font-medium text-cinema-muted">예매 상태</dt>
-            <dd className="mt-1">{detail.status}</dd>
+            <dd className="mt-1">
+              {RESERVATION_STATUS_LABEL[detail.status] ?? detail.status}
+            </dd>
           </div>
         </dl>
         <div className="mt-6 flex gap-3">

@@ -18,6 +18,10 @@ export interface SeatStatusItem {
   rowLabel: string;
   seatNo: number;
   holdExpireAt?: string; // ISO string, HOLD인 경우 서버 기준 만료 시각
+  /** 현재 사용자 소유 HOLD일 때만 API가 내려줌 (재진입 시 취소용) */
+  holdToken?: string;
+  /** 현재 사용자 소유 HOLD 여부 */
+  isHeldByCurrentUser?: boolean;
 }
 
 export interface SeatLayoutResponse {

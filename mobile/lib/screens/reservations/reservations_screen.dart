@@ -124,7 +124,7 @@ class _ReservationsScreenState extends ConsumerState<ReservationsScreen> {
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
-                                  r.status == 'CONFIRMED' ? '확정' : r.status,
+                                  reservationStatusLabel[r.status] ?? r.status,
                                   style: GoogleFonts.roboto(
                                     fontSize: 12,
                                     color: CinemaColors.textPrimary,

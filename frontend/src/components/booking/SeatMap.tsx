@@ -60,8 +60,11 @@ export function SeatMap({
     return { rows, width: w, height: h };
   }, [seats]);
 
+  const isMyHold = (seat: SeatStatusItem) =>
+    seat.status === 'HOLD' && (seat.isHeldByCurrentUser ?? myHoldSeatIds.has(seat.seatId));
+
   const getFill = (seat: SeatStatusItem) => {
-    if (seat.status === 'HOLD' && !myHoldSeatIds.has(seat.seatId)) {
+    if (seat.status === 'HOLD' && !isMyHold(seat)) {
       return OTHER_HOLD_COLOR;
     }
     return STATUS_COLOR[seat.status] ?? '#9ca3af';
@@ -70,7 +73,7 @@ export function SeatMap({
   const isClickable = (seat: SeatStatusItem) => {
     if (disabled) return false;
     if (seat.status === 'AVAILABLE') return true;
-    if (seat.status === 'HOLD' && myHoldSeatIds.has(seat.seatId)) return true;
+    if (seat.status === 'HOLD' && isMyHold(seat)) return true;
     return false;
   };
 

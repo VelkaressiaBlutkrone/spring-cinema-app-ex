@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cinema.domain.admin.service.AdminScreeningService;
+import com.cinema.domain.screening.entity.SeatStatus;
 import com.cinema.domain.screening.dto.SeatLayoutResponse;
 import com.cinema.domain.screening.dto.SeatStatusItem;
 import com.cinema.domain.screening.entity.Screening;
@@ -43,25 +44,35 @@ public class SeatStatusQueryService {
 
     /**
      * 상영별 좌석 배치 및 상태를 조회한다.
-     * 주요 동작 흐름:
-     * 1) 우선 Redis 캐시에서 좌석 정보를 조회(좌석 레이아웃 + 상태 정보).
-     * - 캐시에 데이터가 있으면 즉시 반환(Cache Hit).
-     * - 장애(예외) 발생 혹은 데이터 미존재(Miss) 시 DB에서 조회.
-     * 2) Redis에 캐시된 정보가 없거나 장애인 경우 DB에서 조회 후,
-     * 조회 결과를 Redis에 지정된 TTL(기본 5분)로 캐싱하고 반환.
-     * [동시성 고려] 예매/HOLD 등의 좌석 상태 변경 작업 전체는 SeatCommandService의 캐시 무효화에서
-     * invalidateSeatStatusCache를 반드시 호출해야 캐시 일관성을 유지할 수 있음.
+     * 인증 사용자(memberId != null)인 경우, HOLD 좌석 중 현재 사용자 소유에 한해
+     * holdToken, isHeldByCurrentUser를 후처리로 설정한다. (캐시는 비인증용 공통 유지)
      *
      * @param screeningId 상영ID
+     * @param memberId    로그인 회원 ID (null이면 비인증, holdToken/isHeldByCurrentUser 미설정)
      * @return 좌석 레이아웃 및 상태 정보 DTO
      */
-    public SeatLayoutResponse getSeatLayout(Long screeningId) {
-        // 1. 캐시에 좌석 상태 정보가 존재하는지 확인 및 반환
+    public SeatLayoutResponse getSeatLayout(Long screeningId, Long memberId) {
+        SeatLayoutResponse raw = getSeatLayoutInternal(screeningId);
+        if (memberId == null) {
+            return raw;
+        }
+        List<SeatStatusItem> enriched = raw.getSeats().stream()
+                .map(item -> enrichWithMyHold(screeningId, item, memberId))
+                .toList();
+        return SeatLayoutResponse.builder()
+                .screeningId(raw.getScreeningId())
+                .seats(enriched)
+                .build();
+    }
+
+    /**
+     * 상영별 좌석 배치 및 상태를 조회한다. (비인증/공통 캐시용)
+     */
+    private SeatLayoutResponse getSeatLayoutInternal(Long screeningId) {
         Optional<SeatLayoutResponse> cached = getFromCache(screeningId);
         if (cached.isPresent()) {
             return cached.get();
         }
-        // 2. 캐시 미존재(Miss) 혹은 장애 발생 시 DB에서 조회 및 캐싱
         return getFromDbAndCache(screeningId);
     }
 
@@ -148,6 +159,44 @@ public class SeatStatusQueryService {
                 .seatNo(ss.getSeat().getSeatNo())
                 .holdExpireAt(ss.getHoldExpireAt())
                 .build();
+    }
+
+    /**
+     * 좌석 항목에 "현재 사용자 HOLD" 정보를 붙인 복사본을 반환한다.
+     * HOLD가 아니면 holdToken/isHeldByCurrentUser null; HOLD이면 Redis에서 소유자 확인 후 설정.
+     */
+    private SeatStatusItem enrichWithMyHold(Long screeningId, SeatStatusItem item, Long memberId) {
+        if (item.getStatus() != SeatStatus.HOLD) {
+            return SeatStatusItem.builder()
+                    .seatId(item.getSeatId())
+                    .status(item.getStatus())
+                    .rowLabel(item.getRowLabel())
+                    .seatNo(item.getSeatNo())
+                    .holdExpireAt(item.getHoldExpireAt())
+                    .holdToken(null)
+                    .isHeldByCurrentUser(false)
+                    .build();
+        }
+        return redisService.getHold(screeningId, item.getSeatId())
+                .filter(info -> memberId.equals(info.memberId()))
+                .map(info -> SeatStatusItem.builder()
+                        .seatId(item.getSeatId())
+                        .status(item.getStatus())
+                        .rowLabel(item.getRowLabel())
+                        .seatNo(item.getSeatNo())
+                        .holdExpireAt(item.getHoldExpireAt())
+                        .holdToken(info.holdToken())
+                        .isHeldByCurrentUser(true)
+                        .build())
+                .orElseGet(() -> SeatStatusItem.builder()
+                        .seatId(item.getSeatId())
+                        .status(item.getStatus())
+                        .rowLabel(item.getRowLabel())
+                        .seatNo(item.getSeatNo())
+                        .holdExpireAt(item.getHoldExpireAt())
+                        .holdToken(null)
+                        .isHeldByCurrentUser(false)
+                        .build());
     }
 
     /**

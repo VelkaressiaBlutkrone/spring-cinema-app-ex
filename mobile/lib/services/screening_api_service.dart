@@ -26,10 +26,10 @@ class ScreeningApiService {
     return api.data!;
   }
 
-  /// GET /api/screenings/{screeningId}/seats
+  /// GET /api/screenings/{screeningId}/seats (인증 시 "내 HOLD"에 holdToken/isHeldByCurrentUser 포함)
   Future<SeatLayoutModel> getSeatLayout(int screeningId) async {
     final path = '$apiPathScreeningSeats/$screeningId/seats';
-    final response = await _client.get(path, useAuth: false);
+    final response = await _client.get(path, useAuth: true);
     _client.throwIfNotOk('getSeatLayout', response);
     final json = jsonDecode(response.body) as Map<String, dynamic>;
     final api = ApiResponse.fromJson(json, (d) => SeatLayoutModel.fromJson(d as Map<String, dynamic>));

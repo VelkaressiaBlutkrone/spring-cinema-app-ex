@@ -300,46 +300,46 @@ export function AdminReservationsPage() {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">예매번호</label>
-                <p className="mt-1 text-sm text-gray-900">{selectedReservation.reservationNo}</p>
+                <label className="block text-sm font-medium text-cinema-muted">예매번호</label>
+                <p className="mt-1 text-sm text-cinema-text">{selectedReservation.reservationNo}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">상태</label>
-                <p className="mt-1 text-sm text-gray-900">
+                <label className="block text-sm font-medium text-cinema-muted">상태</label>
+                <p className="mt-1 text-sm text-cinema-text">
                   {STATUS_LABEL[selectedReservation.status as AdminReservationStatus]}
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">영화</label>
-                <p className="mt-1 text-sm text-gray-900">{selectedReservation.movieTitle}</p>
+                <label className="block text-sm font-medium text-cinema-muted">영화</label>
+                <p className="mt-1 text-sm text-cinema-text">{selectedReservation.movieTitle}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">상영관</label>
-                <p className="mt-1 text-sm text-gray-900">{selectedReservation.screenName}</p>
+                <label className="block text-sm font-medium text-cinema-muted">상영관</label>
+                <p className="mt-1 text-sm text-cinema-text">{selectedReservation.screenName}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">상영시간</label>
-                <p className="mt-1 text-sm text-gray-900">
+                <label className="block text-sm font-medium text-cinema-muted">상영시간</label>
+                <p className="mt-1 text-sm text-cinema-text">
                   {formatDate(selectedReservation.startTime.toString())}
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">총 금액</label>
-                <p className="mt-1 text-sm text-gray-900">
+                <label className="block text-sm font-medium text-cinema-muted">총 금액</label>
+                <p className="mt-1 text-sm text-cinema-text">
                   {formatAmount(selectedReservation.totalAmount)}
                 </p>
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">좌석 정보</label>
+              <label className="block text-sm font-medium text-cinema-muted">좌석 정보</label>
               <div className="mt-2 space-y-2">
                 {selectedReservation.seats.map((seat, idx) => (
                   <div
                     key={idx}
-                    className="flex items-center justify-between rounded-md border border-gray-200 p-2"
+                    className="flex items-center justify-between rounded-md border border-cinema-glass-border p-2"
                   >
-                    <span className="text-sm text-gray-900">{seat.displayName}</span>
-                    <span className="text-sm text-gray-600">{formatAmount(seat.price)}</span>
+                    <span className="text-sm text-cinema-text">{seat.displayName}</span>
+                    <span className="text-sm text-cinema-muted">{formatAmount(seat.price)}</span>
                   </div>
                 ))}
               </div>

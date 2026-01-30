@@ -288,51 +288,51 @@ export function AdminPaymentsPage() {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">결제번호</label>
-                <p className="mt-1 text-sm text-gray-900">{selectedPayment.paymentNo}</p>
+                <label className="block text-sm font-medium text-cinema-muted">결제번호</label>
+                <p className="mt-1 text-sm text-cinema-text">{selectedPayment.paymentNo}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">예매번호</label>
-                <p className="mt-1 text-sm text-gray-900">{selectedPayment.reservationNo}</p>
+                <label className="block text-sm font-medium text-cinema-muted">예매번호</label>
+                <p className="mt-1 text-sm text-cinema-text">{selectedPayment.reservationNo}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">회원</label>
-                <p className="mt-1 text-sm text-gray-900">
+                <label className="block text-sm font-medium text-cinema-muted">회원</label>
+                <p className="mt-1 text-sm text-cinema-text">
                   {selectedPayment.memberLoginId} ({selectedPayment.memberId})
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">영화</label>
-                <p className="mt-1 text-sm text-gray-900">{selectedPayment.movieTitle}</p>
+                <label className="block text-sm font-medium text-cinema-muted">영화</label>
+                <p className="mt-1 text-sm text-cinema-text">{selectedPayment.movieTitle}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">결제수단</label>
-                <p className="mt-1 text-sm text-gray-900">
+                <label className="block text-sm font-medium text-cinema-muted">결제수단</label>
+                <p className="mt-1 text-sm text-cinema-text">
                   {METHOD_LABEL[selectedPayment.payMethod] || selectedPayment.payMethod}
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">결제 금액</label>
-                <p className="mt-1 text-sm text-gray-900">
+                <label className="block text-sm font-medium text-cinema-muted">결제 금액</label>
+                <p className="mt-1 text-sm text-cinema-text">
                   {formatAmount(selectedPayment.payAmount)}
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">결제 상태</label>
-                <p className="mt-1 text-sm text-gray-900">
+                <label className="block text-sm font-medium text-cinema-muted">결제 상태</label>
+                <p className="mt-1 text-sm text-cinema-text">
                   {STATUS_LABEL[selectedPayment.payStatus]}
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">결제일시</label>
-                <p className="mt-1 text-sm text-gray-900">
+                <label className="block text-sm font-medium text-cinema-muted">결제일시</label>
+                <p className="mt-1 text-sm text-cinema-text">
                   {selectedPayment.paidAt ? formatDate(selectedPayment.paidAt) : '-'}
                 </p>
               </div>
               {selectedPayment.cancelledAt && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">취소일시</label>
-                  <p className="mt-1 text-sm text-gray-900">
+                  <label className="block text-sm font-medium text-cinema-muted">취소일시</label>
+                  <p className="mt-1 text-sm text-cinema-text">
                     {formatDate(selectedPayment.cancelledAt)}
                   </p>
                 </div>

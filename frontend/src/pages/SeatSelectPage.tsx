@@ -42,26 +42,43 @@ export function SeatSelectPage() {
   // 서버 기준 가장 이른 만료 시각 (HOLD 타이머용)
   const minHoldExpireAt =
     heldSeats.length > 0
-      ? heldSeats.reduce((earliest, h) =>
-          new Date(h.holdExpireAt).getTime() < new Date(earliest.holdExpireAt).getTime()
-            ? h
-            : earliest
+      ? heldSeats.reduce<HeldSeat>(
+          (earliest, h) =>
+            new Date(h.holdExpireAt).getTime() < new Date(earliest.holdExpireAt).getTime()
+              ? h
+              : earliest,
+          heldSeats[0]
         ).holdExpireAt
       : undefined;
 
   const myHoldSeatIds = new Set(heldSeats.map((h) => h.seat.seatId));
 
+  /** API 응답에서 "내 HOLD" 목록을 HeldSeat[]으로 변환 (재진입 시 서버 기준 복원) */
+  const heldSeatsFromApi = useCallback((seatsList: SeatStatusItem[]): HeldSeat[] => {
+    return seatsList
+      .filter((s) => s.status === 'HOLD' && s.isHeldByCurrentUser && s.holdToken)
+      .map((s) => ({
+        seat: s,
+        holdToken: s.holdToken!,
+        holdExpireAt: s.holdExpireAt ?? '',
+        ttlSeconds: 0,
+      }));
+  }, []);
+
   const loadSeats = useCallback(async () => {
     if (id == null) return;
     try {
       const res = await seatsApi.getSeatLayout(id);
-      if (res.data?.seats) setSeats(res.data.seats);
+      if (res.data?.seats) {
+        setSeats(res.data.seats);
+        setHeldSeats(heldSeatsFromApi(res.data.seats));
+      }
     } catch (e) {
       showError(getErrorMessage(e));
     } finally {
       setLoading(false);
     }
-  }, [id, showError]);
+  }, [id, showError, heldSeatsFromApi]);
 
   useEffect(() => {
     if (id == null) {
@@ -124,20 +141,20 @@ export function SeatSelectPage() {
     }
 
     if (seat.status === 'HOLD' && myHoldSeatIds.has(seat.seatId)) {
-      const held = heldSeats.find((h) => h.seat.seatId === seat.seatId);
-      if (!held) return;
+      const token = seat.holdToken ?? heldSeats.find((h) => h.seat.seatId === seat.seatId)?.holdToken;
+      if (!token) return;
       setHoldLoading(true);
       try {
         await seatsApi.releaseHold({
           screeningId: id,
           seatId: seat.seatId,
-          holdToken: held.holdToken,
+          holdToken: token,
         });
         setHeldSeats((prev) => prev.filter((h) => h.seat.seatId !== seat.seatId));
         setSeats((prev) =>
           prev.map((s) =>
             s.seatId === seat.seatId
-              ? { ...s, status: 'AVAILABLE' as const, holdExpireAt: undefined }
+              ? { ...s, status: 'AVAILABLE' as const, holdExpireAt: undefined, holdToken: undefined, isHeldByCurrentUser: false }
               : s
           )
         );
@@ -147,6 +164,31 @@ export function SeatSelectPage() {
       } finally {
         setHoldLoading(false);
       }
+    }
+  };
+
+  const handleReleaseFromCart = async (held: HeldSeat) => {
+    if (id == null || holdLoading) return;
+    setHoldLoading(true);
+    try {
+      await seatsApi.releaseHold({
+        screeningId: id,
+        seatId: held.seat.seatId,
+        holdToken: held.holdToken,
+      });
+      setHeldSeats((prev) => prev.filter((h) => h.seat.seatId !== held.seat.seatId));
+      setSeats((prev) =>
+        prev.map((s) =>
+          s.seatId === held.seat.seatId
+            ? { ...s, status: 'AVAILABLE' as const, holdExpireAt: undefined, holdToken: undefined, isHeldByCurrentUser: false }
+            : s
+        )
+      );
+      showSuccess('선택이 해제되었습니다.');
+    } catch (e) {
+      showError(getErrorMessage(e));
+    } finally {
+      setHoldLoading(false);
     }
   };
 
@@ -216,9 +258,19 @@ export function SeatSelectPage() {
             {heldSeats.map((h) => (
               <li
                 key={h.seat.seatId}
-                className="rounded-lg border border-cinema-neon-blue/40 bg-cinema-neon-blue/10 px-3 py-1 text-sm text-cinema-neon-blue"
+                className="flex items-center gap-2 rounded-lg border border-cinema-neon-blue/40 bg-cinema-neon-blue/10 px-3 py-1.5 text-sm text-cinema-neon-blue"
               >
-                {h.seat.rowLabel}-{h.seat.seatNo}
+                <span>
+                  {h.seat.rowLabel}-{h.seat.seatNo}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => handleReleaseFromCart(h)}
+                  disabled={holdLoading}
+                  className="rounded bg-cinema-surface/80 px-2 py-0.5 text-xs text-cinema-muted transition hover:bg-cinema-glass-border hover:text-cinema-text disabled:opacity-50"
+                >
+                  취소
+                </button>
               </li>
             ))}
           </ul>

@@ -171,12 +171,12 @@ export function PaymentPage() {
           </p>
         </div>
         <p className="mt-3 text-xs text-cinema-muted-dark">
-          총 결제 금액은 결제 진행 후 서버에서 계산된 금액으로 표시됩니다.
+          총 결제 금액은 결제 완료 시 확정된 금액으로 표시됩니다.
         </p>
       </GlassCard>
 
       <GlassCard className="mb-6">
-        <h2 className="mb-3 font-medium text-cinema-text">결제 수단 (Mock)</h2>
+        <h2 className="mb-3 font-medium text-cinema-text">결제 수단</h2>
         <div className="flex flex-wrap gap-2">
           {PAY_METHOD_OPTIONS.map((method) => (
             <button

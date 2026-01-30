@@ -25,6 +25,8 @@ class SeatStatusItemModel {
     required this.rowLabel,
     required this.seatNo,
     this.holdExpireAt,
+    this.holdToken,
+    this.isHeldByCurrentUser,
   });
 
   final int seatId;
@@ -32,6 +34,10 @@ class SeatStatusItemModel {
   final String rowLabel;
   final int seatNo;
   final String? holdExpireAt;
+  /// 현재 사용자 소유 HOLD일 때만 API가 내려줌 (재진입 시 취소용)
+  final String? holdToken;
+  /// 현재 사용자 소유 HOLD 여부
+  final bool? isHeldByCurrentUser;
 
   factory SeatStatusItemModel.fromJson(Map<String, dynamic> json) {
     return SeatStatusItemModel(
@@ -40,6 +46,8 @@ class SeatStatusItemModel {
       rowLabel: json['rowLabel'] as String? ?? '',
       seatNo: (json['seatNo'] as num?)?.toInt() ?? 0,
       holdExpireAt: json['holdExpireAt']?.toString(),
+      holdToken: json['holdToken'] as String?,
+      isHeldByCurrentUser: json['isHeldByCurrentUser'] as bool?,
     );
   }
 

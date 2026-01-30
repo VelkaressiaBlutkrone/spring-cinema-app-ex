@@ -68,7 +68,23 @@ class _SeatSelectScreenState extends ConsumerState<SeatSelectScreen> {
     setState(() => _layout = const AsyncValue.loading());
     try {
       final layout = await ref.read(screeningApiServiceProvider).getSeatLayout(widget.screeningId);
-      if (mounted) setState(() => _layout = AsyncValue.data(layout));
+      if (mounted) {
+        setState(() {
+          _layout = AsyncValue.data(layout);
+          _heldSeats.clear();
+          for (final s in layout.seats) {
+            if (s.isHold && s.isHeldByCurrentUser == true && s.holdToken != null) {
+              _heldSeats[s.seatId] = SeatHoldModel(
+                holdToken: s.holdToken!,
+                screeningId: layout.screeningId,
+                seatId: s.seatId,
+                holdExpireAt: s.holdExpireAt,
+                ttlSeconds: null,
+              );
+            }
+          }
+        });
+      }
     } catch (e, st) {
       if (mounted) setState(() => _layout = AsyncValue.error(e, st));
     }
@@ -367,6 +383,81 @@ class _SeatSelectScreenState extends ConsumerState<SeatSelectScreen> {
                         ),
                       ),
                       _buildSeatStatusLegend(),
+                      if (_heldSeats.isNotEmpty) ...[
+                        const SizedBox(height: 16),
+                        Text(
+                          '선택한 좌석 (${_heldSeats.length}석)',
+                          style: GoogleFonts.roboto(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color: CinemaColors.textSecondary,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: _heldSeats.entries.map((e) {
+                            final seatId = e.key;
+                            SeatStatusItemModel? info;
+                            for (final s in layout.seats) {
+                              if (s.seatId == seatId) {
+                                info = s;
+                                break;
+                              }
+                            }
+                            final label = info != null
+                                ? '${info.rowLabel}-${info.seatNo}'
+                                : '좌석 $seatId';
+                            return Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: CinemaColors.seatMyHold.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: CinemaColors.seatMyHold.withValues(alpha: 0.5),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    label,
+                                    style: GoogleFonts.roboto(
+                                      fontSize: 13,
+                                      color: CinemaColors.textPrimary,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  TextButton(
+                                    onPressed: _isLoading
+                                        ? null
+                                        : () => _releaseSeat(seatId),
+                                    style: TextButton.styleFrom(
+                                      minimumSize: Size.zero,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
+                                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    ),
+                                    child: Text(
+                                      '취소',
+                                      style: GoogleFonts.roboto(
+                                        fontSize: 12,
+                                        color: CinemaColors.textMuted,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ],
                       const SizedBox(height: 24),
                     ],
                   ),
