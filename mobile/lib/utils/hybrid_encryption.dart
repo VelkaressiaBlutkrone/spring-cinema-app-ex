@@ -1,7 +1,7 @@
-/// Hybrid Encryption (RSA-OAEP + AES-256-GCM)
-/// - 클라이언트 → 서버 민감 데이터 암호화 (비밀번호, 개인정보 등)
-/// - 서버 공개키(/api/public-key)로 AES 키 암호화, AES-GCM으로 payload 암호화
-/// - Java OAEPWithSHA-1AndMGF1Padding 호환 (pointycastle OAEPEncoding.withSHA1)
+// Hybrid Encryption (RSA-OAEP + AES-256-GCM)
+// - 클라이언트 → 서버 민감 데이터 암호화 (비밀번호, 개인정보 등)
+// - 서버 공개키(/api/public-key)로 AES 키 암호화, AES-GCM으로 payload 암호화
+// - Java OAEPWithSHA-1AndMGF1Padding 호환 (pointycastle OAEPEncoding.withSHA1)
 
 import 'dart:convert';
 import 'dart:typed_data';

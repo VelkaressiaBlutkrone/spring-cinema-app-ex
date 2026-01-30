@@ -1,13 +1,17 @@
 // 영화관 예매 모바일 앱
 // 2026 Modern Premium Cinematic Style
+// 상태 관리: flutter_riverpod
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'theme/cinema_theme.dart';
-import 'screens/main_tab_screen.dart';
+import 'screens/auth/auth_gate.dart';
+import 'screens/auth/login_screen.dart';
+import 'screens/auth/signup_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  // Force dark status bar
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -16,7 +20,11 @@ void main() {
       systemNavigationBarIconBrightness: Brightness.light,
     ),
   );
-  runApp(const CinemaApp());
+  runApp(
+    const ProviderScope(
+      child: CinemaApp(),
+    ),
+  );
 }
 
 class CinemaApp extends StatelessWidget {
@@ -28,7 +36,11 @@ class CinemaApp extends StatelessWidget {
       title: '영화관 예매',
       debugShowCheckedModeBanner: false,
       theme: CinemaTheme.dark,
-      home: const MainTabScreen(),
+      home: const AuthGate(),
+      routes: {
+        '/login': (_) => const LoginScreen(),
+        '/signup': (_) => const SignupScreen(),
+      },
     );
   }
 }
