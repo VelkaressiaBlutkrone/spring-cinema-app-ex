@@ -7,6 +7,7 @@ import { AdminLayout } from '@/layouts/AdminLayout';
 import {
   HomePage,
   LoginPage,
+  SignupPage,
   MoviesPage,
   SeatSelectPage,
   PaymentPage,
@@ -35,7 +36,7 @@ export const router = createBrowserRouter([
       { path: 'reservations', element: <ReservationsPage /> },
       { path: 'reservations/:reservationId', element: <ReservationDetailPage /> },
       { path: 'login', element: <LoginPage /> },
-      { path: 'signup', element: <Navigate to="/login" replace /> }, // TODO: 회원가입 페이지
+      { path: 'signup', element: <SignupPage /> },
     ],
   },
   {

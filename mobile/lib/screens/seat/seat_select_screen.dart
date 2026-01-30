@@ -75,11 +75,12 @@ class _SeatSelectScreenState extends ConsumerState<SeatSelectScreen> {
   }
 
   Future<void> _onSeatTap(SeatStatusItemModel seat) async {
-    if (!seat.isSelectable) return;
+    // 토글: 이미 내가 선택한 좌석이면 해제
     if (_heldSeats.containsKey(seat.seatId)) {
       await _releaseSeat(seat.seatId);
       return;
     }
+    if (!seat.isSelectable) return;
     setState(() => _isLoading = true);
     try {
       final hold = await ref.read(screeningApiServiceProvider).hold(widget.screeningId, seat.seatId);
@@ -151,6 +152,62 @@ class _SeatSelectScreenState extends ConsumerState<SeatSelectScreen> {
     } catch (_) {
       return iso;
     }
+  }
+
+  /// 웹 SeatMap과 동일한 좌석 상태 색상
+  Color _seatColor(SeatStatusItemModel s, bool isHeldByMe) {
+    if (isHeldByMe) return CinemaColors.seatMyHold;
+    if (s.isHold) return CinemaColors.seatOtherHold;
+    if (s.isAvailable) return CinemaColors.seatAvailable;
+    if (s.isReserved) return CinemaColors.seatReserved;
+    return CinemaColors.seatBlocked;
+  }
+
+  bool _isSeatClickable(SeatStatusItemModel s, bool isHeldByMe) {
+    if (s.isAvailable) return true;
+    if (s.isHold && isHeldByMe) return true;
+    return false;
+  }
+
+  /// 좌석 상태 범례 (웹과 동일한 5종)
+  Widget _buildSeatStatusLegend() {
+    final items = [
+      (CinemaColors.seatAvailable, '예매 가능'),
+      (CinemaColors.seatMyHold, '내 선택'),
+      (CinemaColors.seatOtherHold, '다른 고객 선택'),
+      (CinemaColors.seatReserved, '예매 완료'),
+      (CinemaColors.seatBlocked, '운영 차단'),
+    ];
+    return Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: Wrap(
+        spacing: 12,
+        runSpacing: 8,
+        children: items.map((e) {
+          return Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 12,
+                height: 12,
+                decoration: BoxDecoration(
+                  color: e.$1,
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
+              const SizedBox(width: 4),
+              Text(
+                e.$2,
+                style: GoogleFonts.roboto(
+                  fontSize: 11,
+                  color: CinemaColors.textMuted,
+                ),
+              ),
+            ],
+          );
+        }).toList(),
+      ),
+    );
   }
 
   @override
@@ -266,8 +323,8 @@ class _SeatSelectScreenState extends ConsumerState<SeatSelectScreen> {
                                     const SizedBox(width: 4),
                                     ...seatList.map((s) {
                                       final isHeldByMe = _heldSeats.containsKey(s.seatId);
-                                      final isAvailable = s.isAvailable;
-                                      final isOtherHold = s.isHold && !isHeldByMe;
+                                      final seatColor = _seatColor(s, isHeldByMe);
+                                      final clickable = _isSeatClickable(s, isHeldByMe);
                                       return Padding(
                                         padding: EdgeInsets.only(
                                           right: seatList.indexOf(s) < seatList.length - 1
@@ -280,19 +337,13 @@ class _SeatSelectScreenState extends ConsumerState<SeatSelectScreen> {
                                             width: seatSize,
                                             height: seatSize,
                                             decoration: BoxDecoration(
-                                              color: isHeldByMe
-                                                  ? CinemaColors.neonBlue.withValues(alpha: 0.6)
-                                                  : isOtherHold
-                                                      ? CinemaColors.textMuted.withValues(alpha: 0.5)
-                                                      : isAvailable
-                                                          ? CinemaColors.surface
-                                                          : CinemaColors.neonRed.withValues(alpha: 0.3),
+                                              color: seatColor,
                                               borderRadius: BorderRadius.circular(8),
                                               border: Border.all(
-                                                color: isHeldByMe
-                                                    ? CinemaColors.neonBlue
+                                                color: clickable
+                                                    ? CinemaColors.seatMyHold
                                                     : CinemaColors.glassBorder,
-                                                width: 1,
+                                                width: clickable ? 2 : 1,
                                               ),
                                             ),
                                             child: Center(
@@ -300,7 +351,7 @@ class _SeatSelectScreenState extends ConsumerState<SeatSelectScreen> {
                                                 '${s.seatNo}',
                                                 style: GoogleFonts.roboto(
                                                   fontSize: 13,
-                                                  color: CinemaColors.textPrimary,
+                                                  color: Colors.white,
                                                 ),
                                               ),
                                             ),
@@ -315,6 +366,7 @@ class _SeatSelectScreenState extends ConsumerState<SeatSelectScreen> {
                           ),
                         ),
                       ),
+                      _buildSeatStatusLegend(),
                       const SizedBox(height: 24),
                     ],
                   ),

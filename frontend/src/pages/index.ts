@@ -1,5 +1,6 @@
 export { HomePage } from '@/pages/HomePage';
 export { LoginPage } from '@/pages/LoginPage';
+export { SignupPage } from '@/pages/SignupPage';
 export { MoviesPage } from '@/pages/MoviesPage';
 export { SeatSelectPage } from '@/pages/SeatSelectPage';
 export { PaymentPage } from '@/pages/PaymentPage';

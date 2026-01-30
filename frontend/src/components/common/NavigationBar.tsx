@@ -4,6 +4,8 @@
  */
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/stores';
+import { useIsAdmin } from '@/hooks/useIsAdmin';
+import { getSubFromToken } from '@/utils/jwt';
 
 const navLinks = [
   { to: '/', label: '홈' },
@@ -14,7 +16,9 @@ const navLinks = [
 export function NavigationBar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAuthenticated, clearAuth } = useAuthStore();
+  const { isAuthenticated, getAccessToken, clearAuth } = useAuthStore();
+  const isAdmin = useIsAdmin();
+  const loginId = isAuthenticated ? getSubFromToken(getAccessToken()) : null;
 
   const handleLogout = () => {
     clearAuth();
@@ -55,22 +59,30 @@ export function NavigationBar() {
               </Link>
             );
           })}
-          <Link
-            to="/admin"
-            className="rounded-lg px-3 py-2 text-sm text-cinema-muted transition hover:bg-cinema-glass hover:text-cinema-text sm:px-4"
-          >
-            관리자
-          </Link>
-          <span className="mx-1 h-4 w-px bg-cinema-glass-border" />
-          {isAuthenticated ? (
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="rounded-lg bg-cinema-glass px-3 py-2 text-sm font-medium text-cinema-muted transition hover:bg-cinema-glass-border hover:text-cinema-text"
+          {isAuthenticated && isAdmin && (
+            <Link
+              to="/admin"
+              className="rounded-lg px-3 py-2 text-sm text-cinema-muted transition hover:bg-cinema-glass hover:text-cinema-text sm:px-4"
             >
-              로그아웃
-            </button>
-          ) : (
+              관리자
+            </Link>
+          )}
+          {isAuthenticated && (
+            <>
+              <span className="mx-1 h-4 w-px bg-cinema-glass-border" />
+              <span className="max-w-[120px] truncate px-2 text-sm text-cinema-muted sm:max-w-[160px]">
+                {loginId ?? '회원'}
+              </span>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="rounded-lg bg-cinema-glass px-3 py-2 text-sm font-medium text-cinema-muted transition hover:bg-cinema-glass-border hover:text-cinema-text"
+              >
+                로그아웃
+              </button>
+            </>
+          )}
+          {!isAuthenticated && (
             <Link
               to="/login"
               className="rounded-lg bg-cinema-neon-blue px-3 py-2 text-sm font-medium text-cinema-bg transition hover:opacity-90"

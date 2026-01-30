@@ -34,6 +34,10 @@ export function getRoleFromToken(token: string | null): string | null {
   return parseJwtPayload(token)?.role ?? null;
 }
 
+export function getSubFromToken(token: string | null): string | null {
+  return parseJwtPayload(token)?.sub ?? null;
+}
+
 export function isAdminFromToken(token: string | null): boolean {
   return getRoleFromToken(token) === 'ADMIN';
 }

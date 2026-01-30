@@ -46,6 +46,7 @@ class SeatStatusItemModel {
   bool get isAvailable => status == 'AVAILABLE';
   bool get isHold => status == 'HOLD';
   bool get isReserved => status == 'RESERVED';
+  bool get isBlocked => status == 'BLOCKED';
   bool get isSelectable => isAvailable;
 }
 

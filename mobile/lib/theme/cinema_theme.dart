@@ -20,6 +20,13 @@ class CinemaColors {
   static const Color glassWhite = Color(0x18FFFFFF);
   static const Color glassBorder = Color(0x30FFFFFF);
   static const Color glassHighlight = Color(0x08FFFFFF);
+
+  /// 좌석 상태 색상 (웹 SeatMap과 동일)
+  static const Color seatAvailable = Color(0xFF22c55e);   // 예매 가능
+  static const Color seatMyHold = Color(0xFF3b82f6);     // 내 선택
+  static const Color seatOtherHold = Color(0xFFf59e0b);  // 다른 고객 선택
+  static const Color seatReserved = Color(0xFFef4444);   // 예매 완료
+  static const Color seatBlocked = Color(0xFF4b5563);    // 운영 차단
 }
 
 class CinemaTheme {
