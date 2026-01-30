@@ -35,6 +35,7 @@ const String apiPathMovieDetail = '/api/movies'; // /{movieId}
 const String apiPathScreenings = '/api/screenings';
 const String apiPathScreeningsByMovie = '/api/screenings/by-movie';
 const String apiPathScreeningSeats = '/api/screenings'; // /{screeningId}/seats
+const String apiPathSeatEvents = '/api/screenings'; // /{screeningId}/seat-events (SSE)
 const String apiPathHold = '/api/screenings'; // /{screeningId}/seats/{seatId}/hold
 const String apiPathHoldRelease = '/api/screenings/holds/release';
 

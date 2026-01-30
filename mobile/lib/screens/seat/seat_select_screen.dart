@@ -7,6 +7,7 @@ import '../../exception/app_exception.dart';
 import '../../models/payment.dart';
 import '../../models/seat.dart';
 import '../../provider/api_providers.dart';
+import '../../services/seat_sse_client.dart';
 import '../../theme/cinema_theme.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/dialog/error_dialog.dart';
@@ -38,11 +39,29 @@ class _SeatSelectScreenState extends ConsumerState<SeatSelectScreen> {
   AsyncValue<SeatLayoutModel> _layout = const AsyncValue.loading();
   final Map<int, SeatHoldModel> _heldSeats = {}; // seatId -> holdResponse
   bool _isLoading = false;
+  SeatEventSubscription? _seatEventSubscription;
 
   @override
   void initState() {
     super.initState();
     _loadLayout();
+    _startSeatEventSubscription();
+  }
+
+  @override
+  void dispose() {
+    _seatEventSubscription?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _startSeatEventSubscription() async {
+    final sub = await subscribeSeatEvents(
+      screeningId: widget.screeningId,
+      onSeatIdsChanged: (_) {
+        if (mounted) _loadLayout();
+      },
+    );
+    if (mounted) _seatEventSubscription = sub;
   }
 
   Future<void> _loadLayout() async {
@@ -223,7 +242,7 @@ class _SeatSelectScreenState extends ConsumerState<SeatSelectScreen> {
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: SizedBox(
-                          width: gridWidth < 1 ? double.infinity : gridWidth,
+                          width: gridWidth < 1 ? 200.0 : gridWidth,
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
