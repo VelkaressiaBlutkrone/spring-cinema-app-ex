@@ -52,7 +52,7 @@ class PublicKeyData {
 
 class AuthApiService {
   AuthApiService({
-    String baseUrl = apiBaseUrl,
+    required String baseUrl,
     FlutterSecureStorage? storage,
   })  : _baseUrl = baseUrl.endsWith('/') ? baseUrl : baseUrl,
         _storage = storage ?? const FlutterSecureStorage(
@@ -88,28 +88,28 @@ class AuthApiService {
   }
 
   /// API 에러 응답 파싱 후 ApiException 또는 AuthException throw + 로깅
-  Never _throwApiError(String context, http.Response response) {
+  /// [loginId] 로그인 실패 시에만 로그용으로 전달 (민감정보 로그 금지 규칙 준수)
+  Never _throwApiError(String context, http.Response response, {String? loginId}) {
     String message = '오류가 발생했습니다.';
+    String? code;
     if (response.body.isNotEmpty) {
       try {
         final json = jsonDecode(response.body);
         if (json is Map<String, dynamic>) {
           final err = ApiErrorResponse.fromJson(json);
           message = err.displayMessage;
-          appLogger.w(
-            '[ApiError] $context status=${response.statusCode} code=${err.code} message=$message',
-          );
-          throw ApiException(
-            message,
-            statusCode: response.statusCode,
-            code: err.code,
-          );
+          code = err.code;
         }
-      } catch (e) {
-        if (e is ApiException) rethrow;
-      }
+      } catch (_) {}
     }
-    appLogger.w('[ApiError] $context status=${response.statusCode}');
+    // 로그인/인증 실패 원인·결과 로그 (status, code, message만, loginId는 선택)
+    final idPart = loginId != null ? ' loginId=$loginId' : '';
+    appLogger.w(
+      '[Auth] $context failed$idPart → status=${response.statusCode} code=$code result=$message',
+    );
+    if (code != null) {
+      throw ApiException(message, statusCode: response.statusCode, code: code);
+    }
     throw AuthException(message, statusCode: response.statusCode);
   }
 
@@ -129,25 +129,33 @@ class AuthApiService {
 
   /// POST /api/members/login (EncryptedPayload) → accessToken, Set-Cookie → secure storage 저장
   Future<AccessTokenResponse> login(String loginId, String password) async {
-    final pem = await getPublicKey();
-    final payload = await encryptPayload(pem, {'loginId': loginId, 'password': password});
-    final body = jsonEncode(payload.toJson());
-    final response = await http.post(
-      Uri.parse(_loginUrl),
-      headers: {'Content-Type': 'application/json'},
-      body: body,
-    );
-    if (response.statusCode != 200) {
-      _throwApiError('login', response);
+    appLogger.i('[Auth] Login attempt loginId=$loginId');
+    try {
+      final pem = await getPublicKey();
+      final payload = await encryptPayload(pem, {'loginId': loginId, 'password': password});
+      final body = jsonEncode(payload.toJson());
+      final response = await http.post(
+        Uri.parse(_loginUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: body,
+      );
+      if (response.statusCode != 200) {
+        _throwApiError('login', response, loginId: loginId);
+      }
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      final accessTokenRes = AccessTokenResponse.fromJson(json);
+      final refreshToken = _extractRefreshTokenFromHeaders(response.headers);
+      await _storage.write(key: _storageKeyAccessToken, value: accessTokenRes.accessToken);
+      if (refreshToken != null && refreshToken.isNotEmpty) {
+        await _storage.write(key: _storageKeyRefreshToken, value: refreshToken);
+      }
+      appLogger.i('[Auth] Login success loginId=$loginId');
+      return accessTokenRes;
+    } catch (e) {
+      if (e is ApiException || e is AuthException) rethrow;
+      appLogger.e('[Auth] Login error loginId=$loginId', error: e);
+      rethrow;
     }
-    final json = jsonDecode(response.body) as Map<String, dynamic>;
-    final accessTokenRes = AccessTokenResponse.fromJson(json);
-    final refreshToken = _extractRefreshTokenFromHeaders(response.headers);
-    await _storage.write(key: _storageKeyAccessToken, value: accessTokenRes.accessToken);
-    if (refreshToken != null && refreshToken.isNotEmpty) {
-      await _storage.write(key: _storageKeyRefreshToken, value: refreshToken);
-    }
-    return accessTokenRes;
   }
 
   /// POST /api/members/signup (EncryptedPayload) → memberId

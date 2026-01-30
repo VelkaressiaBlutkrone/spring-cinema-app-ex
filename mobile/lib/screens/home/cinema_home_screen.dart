@@ -248,7 +248,7 @@ class CinemaHomeScreen extends StatelessWidget {
       _UpcomingItem(title: '배트맨', date: '12/27 11:00'),
     ];
     return SizedBox(
-      height: 140,
+      height: 158,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -417,28 +417,31 @@ class _UpcomingCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: 160,
+      height: 158,
       child: GlassCard(
         padding: const EdgeInsets.all(12),
         borderRadius: 16,
         blur: 16,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              height: 80,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                gradient: LinearGradient(
-                  colors: [
-                    CinemaColors.neonBlue.withValues(alpha: 0.2),
-                    CinemaColors.neonPurple.withValues(alpha: 0.15),
-                  ],
+            Expanded(
+              flex: 1,
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  gradient: LinearGradient(
+                    colors: [
+                      CinemaColors.neonBlue.withValues(alpha: 0.2),
+                      CinemaColors.neonPurple.withValues(alpha: 0.15),
+                    ],
+                  ),
                 ),
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             Text(
               item.title,
               style: GoogleFonts.bebasNeue(

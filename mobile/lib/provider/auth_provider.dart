@@ -1,9 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mobile/config/api_config.dart';
 import 'package:mobile/services/auth_api_service.dart';
 
-/// AuthApiService 싱글톤 프로바이더
+/// AuthApiService 싱글톤 프로바이더 (플랫폼별 apiBaseUrl 적용)
 final authApiServiceProvider = Provider<AuthApiService>((ref) {
-  return AuthApiService();
+  return AuthApiService(baseUrl: apiBaseUrl);
 });
 
 /// 인증 상태: true = 로그인됨, false = 미로그인, 로딩/에러는 AsyncValue로 표현

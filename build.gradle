@@ -101,6 +101,16 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+// bootRun 시 한글 로그 깨짐 방지 (Windows 터미널 등)
+// 애플리케이션 JVM에 UTF-8 인코딩 적용
+tasks.named('bootRun') {
+    jvmArgs = [
+        '-Dfile.encoding=UTF-8',
+        '-Dstdout.encoding=UTF-8',
+        '-Dstderr.encoding=UTF-8',
+    ]
+}
+
 /* ===============================
  * QueryDSL Q클래스 생성 디렉토리
  * =============================== */
