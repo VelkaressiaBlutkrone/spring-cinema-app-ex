@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile/config/api_config.dart';
 import 'package:mobile/provider/auth_provider.dart';
 import 'package:mobile/services/api_client.dart';
+import 'package:mobile/services/home_api_service.dart';
 import 'package:mobile/services/movie_api_service.dart';
 import 'package:mobile/services/reservation_api_service.dart';
 import 'package:mobile/services/screening_api_service.dart';
@@ -13,6 +14,11 @@ final apiClientProvider = Provider<ApiClient>((ref) {
     baseUrl: apiBaseUrl,
     getAccessToken: auth.getAccessToken,
   );
+});
+
+/// 홈 API 서비스
+final homeApiServiceProvider = Provider<HomeApiService>((ref) {
+  return HomeApiService(ref.watch(apiClientProvider));
 });
 
 /// 영화 API 서비스

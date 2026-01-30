@@ -43,3 +43,8 @@ const String apiPathReservations = '/api/reservations';
 const String apiPathReservationPay = '/api/reservations/pay';
 const String apiPathReservationDetail = '/api/reservations'; // /{reservationId}
 const String apiPathReservationCancel = '/api/reservations'; // /{reservationId}/cancel
+
+/// 홈 API (메인 화면)
+const String apiPathHome = '/api/home';
+const String apiPathHomeStats = '/api/home/stats';
+const String apiPathHomeUpcomingMovies = '/api/home/upcoming-movies';

@@ -1,47 +1,42 @@
 // Main tab screen with bottom navigation
 // 홈 / 영화찾기 / 예매내역 / 마이페이지
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../provider/main_tab_provider.dart';
 import '../theme/cinema_theme.dart';
 import 'home/cinema_home_screen.dart';
 import 'movies/movies_screen.dart';
 import 'reservations/reservations_screen.dart';
 
-class MainTabScreen extends StatefulWidget {
+class MainTabScreen extends ConsumerStatefulWidget {
   const MainTabScreen({super.key});
 
   @override
-  State<MainTabScreen> createState() => _MainTabScreenState();
+  ConsumerState<MainTabScreen> createState() => _MainTabScreenState();
 }
 
-class _MainTabScreenState extends State<MainTabScreen> {
-  int _currentIndex = 0;
-
-  static const List<_TabItem> _tabs = [
-    _TabItem(icon: Icons.home_rounded, label: '홈'),
-    _TabItem(icon: Icons.movie_creation_rounded, label: '영화찾기'),
-    _TabItem(icon: Icons.confirmation_number_rounded, label: '예매내역'),
-    _TabItem(icon: Icons.person_rounded, label: '마이페이지'),
-  ];
+class _MainTabScreenState extends ConsumerState<MainTabScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final currentIndex = ref.watch(mainTabIndexProvider);
     return Scaffold(
       backgroundColor: CinemaColors.background,
       body: IndexedStack(
-        index: _currentIndex,
-        children: [
-          const CinemaHomeScreen(),
-          const MoviesScreen(),
-          const ReservationsScreen(),
+        index: currentIndex,
+        children: const [
+          CinemaHomeScreen(),
+          MoviesScreen(),
+          ReservationsScreen(),
           _PlaceholderScreen(title: '마이페이지'),
         ],
       ),
-      bottomNavigationBar: _buildBottomNav(),
+      bottomNavigationBar: _buildBottomNav(currentIndex),
     );
   }
 
-  Widget _buildBottomNav() {
+  Widget _buildBottomNav(int currentIndex) {
     return Container(
       decoration: BoxDecoration(
         color: CinemaColors.surface.withValues(alpha: 0.95),
@@ -58,12 +53,12 @@ class _MainTabScreenState extends State<MainTabScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: List.generate(
-              _tabs.length,
+              _MainTabScreenState._tabs.length,
               (index) => _NavItem(
-                icon: _tabs[index].icon,
-                label: _tabs[index].label,
-                isActive: _currentIndex == index,
-                onTap: () => setState(() => _currentIndex = index),
+                icon: _MainTabScreenState._tabs[index].icon,
+                label: _MainTabScreenState._tabs[index].label,
+                isActive: currentIndex == index,
+                onTap: () => ref.read(mainTabIndexProvider.notifier).setIndex(index),
               ),
             ),
           ),
@@ -71,6 +66,13 @@ class _MainTabScreenState extends State<MainTabScreen> {
       ),
     );
   }
+
+  static const List<_TabItem> _tabs = [
+    _TabItem(icon: Icons.home_rounded, label: '홈'),
+    _TabItem(icon: Icons.movie_creation_rounded, label: '영화찾기'),
+    _TabItem(icon: Icons.confirmation_number_rounded, label: '예매내역'),
+    _TabItem(icon: Icons.person_rounded, label: '마이페이지'),
+  ];
 }
 
 class _TabItem {
