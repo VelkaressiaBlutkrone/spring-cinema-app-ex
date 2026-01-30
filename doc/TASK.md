@@ -1082,6 +1082,25 @@ domain/
   - [x] HOLD 기능
   - [ ] 실시간 좌석 갱신 (WebSocket/SSE) — 선택 구현
 - [x] 결제 화면:
+
+#### 실시간 좌석 갱신 (WebSocket/SSE) — 작업 구성 (대기)
+
+- **목적**: 좌석 선택 화면에서 다른 사용자의 HOLD/해제·결제 반영을 새로고침 없이 반영
+- **서버**: Step 8 완료 — `GET /api/screenings/{screeningId}/seat-events` (SSE), 이벤트 `seat-status-changed`, 페이로드 `{ eventId, screeningId, seatIds }`
+- **작업 구성**:
+  1. **SSE 클라이언트 (모바일)**
+     - [ ] SSE 구독 유틸/훅 구현 (Dart: `http` 스트림 또는 `sse` 패키지로 `GET .../seat-events` 연결)
+     - [ ] 이벤트 `seat-status-changed` 수신 및 페이로드 파싱 (`eventId`, `screeningId`, `seatIds`)
+     - [ ] 연결 해제(dispose) 및 화면 이탈 시 구독 해제
+  2. **좌석 선택 화면 연동**
+     - [ ] 좌석 선택 화면 진입 시 `screeningId` 기준 SSE 구독 시작
+     - [ ] 수신한 `seatIds` 기준 좌석 상태 갱신 (해당 좌석만 재조회 또는 로컬 상태 반영)
+     - [ ] 이벤트 멱등성: `eventId` 기반 중복 처리(선택)
+  3. **에러·재연결**
+     - [ ] 연결 끊김/에러 시 로그 처리, 필요 시 재연결 또는 안내 메시지
+     - [ ] 타임아웃(서버 30분) 고려
+- **참고**: 프론트엔드(React) `useSeatEvents` 훅 및 Step 8 이벤트 포맷 참고
+- **상태**: 작업 대기
   - [x] 예매 정보 표시
   - [x] 결제 처리
   - [x] 결제 완료 화면
