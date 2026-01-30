@@ -15,6 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.filter.CorsFilter;
 
 import com.cinema.global.jwt.JwtAuthenticationFilter;
+import com.cinema.global.security.ApiRateLimitFilter;
 import com.cinema.global.security.AuthRateLimitFilter;
 
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,7 @@ public class SecurityConfig {
     private final CorsFilter corsFilter;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthRateLimitFilter authRateLimitFilter;
+    private final ApiRateLimitFilter apiRateLimitFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -47,6 +49,8 @@ public class SecurityConfig {
         http
                 // Rate limit (인증 API DoS 방어)
                 .addFilterBefore(authRateLimitFilter, CorsFilter.class)
+                // API Rate limit (예매/관리자 API, Step 17)
+                .addFilterBefore(apiRateLimitFilter, CorsFilter.class)
                 // CORS 필터 추가
                 .addFilter(corsFilter)
 

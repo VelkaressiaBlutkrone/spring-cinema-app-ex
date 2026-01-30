@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cinema.domain.member.entity.Member;
 import com.cinema.domain.member.repository.MemberRepository;
 import com.cinema.domain.payment.entity.Payment;
-import com.cinema.domain.payment.entity.PaymentMethod;
 import com.cinema.domain.payment.repository.PaymentRepository;
 import com.cinema.domain.payment.service.MockPaymentService;
 import com.cinema.domain.reservation.dto.PaymentRequest;
@@ -76,13 +75,15 @@ public class ReservationPaymentService {
 
         for (PaymentRequest.SeatHoldItem item : request.getSeatHoldItems()) {
             seatCommandService.startPaymentForReservation(
-                    request.getScreeningId(), item.getSeatId(), item.getHoldToken());
+                    request.getScreeningId(), item.getSeatId(), item.getHoldToken(), memberId);
         }
 
         boolean paySuccess = mockPaymentService.processPayment(
                 priceResult.totalAmount(), request.getPayMethod());
 
         if (!paySuccess) {
+            log.warn("[ReservationPayment] 결제 실패 - memberId={}, screeningId={}, amount={} (결제 상세 미기록)",
+                    memberId, request.getScreeningId(), priceResult.totalAmount());
             for (PaymentRequest.SeatHoldItem item : request.getSeatHoldItems()) {
                 seatCommandService.releaseOnPaymentFailure(request.getScreeningId(), item.getSeatId());
             }

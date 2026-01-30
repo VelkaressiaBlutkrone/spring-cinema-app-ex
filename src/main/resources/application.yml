@@ -110,6 +110,16 @@ cors:
   max-age: 3600                        # Preflight 요청 캐시 시간 (초)
 
 ########################################
+# API Rate Limit (Step 17)
+########################################
+reservation:
+  rate-limit:
+    per-minute: 60          # 예매 API(hold/release/pay/cancel) 분당 요청 수
+admin:
+  rate-limit:
+    per-minute: 120         # 관리자 API 분당 요청 수
+
+########################################
 # Seat HOLD
 ########################################
 seat:

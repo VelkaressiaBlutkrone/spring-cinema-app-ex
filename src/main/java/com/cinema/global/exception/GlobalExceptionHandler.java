@@ -183,6 +183,7 @@ public class GlobalExceptionHandler {
 
     /**
      * 일반 예외 처리 (최후의 방어선)
+     * RULE: 클라이언트에는 일반 메시지만 반환, 스택 트레이스·내부 메시지 노출 금지 (Step 17)
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception e) {

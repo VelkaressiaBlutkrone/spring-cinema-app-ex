@@ -1114,31 +1114,31 @@ domain/
 
 ### 작업 내용
 
-- [ ] API Rate Limit 구현:
-  - [ ] 예매 API Rate Limit
-  - [ ] 관리자 API 별도 Rate Limit
-  - [ ] Redis 기반 Rate Limit
-- [ ] 보안 강화:
-  - [ ] HOLD Token 검증 강화
-  - [ ] 결제 위변조 방지 검증 강화
-  - [ ] 입력값 검증 강화
-  - [ ] SQL Injection 방지 확인
-  - [ ] XSS 방지 확인
-- [ ] 로깅 강화:
-  - [ ] 필수 로그 구현 (HOLD/해제, 결제 성공/실패, 락 획득 실패)
-  - [ ] 개인정보 로그 금지 확인
-  - [ ] 결제 상세 정보 로그 금지 확인
-  - [ ] JWT Token 마스킹 처리
-- [ ] 에러 메시지 보안 (민감 정보 노출 방지)
+- [x] API Rate Limit 구현:
+  - [x] 예매 API Rate Limit
+  - [x] 관리자 API 별도 Rate Limit
+  - [x] Redis 기반 Rate Limit
+- [x] 보안 강화:
+  - [x] HOLD Token 검증 강화 (memberId 일치 검증)
+  - [x] 결제 위변조 방지 검증 강화 (서버 가격 계산, HOLD 소유자 검증)
+  - [x] 입력값 검증 강화 (@Valid)
+  - [x] SQL Injection 방지 확인 (JPA/파라미터 바인딩)
+  - [x] XSS 방지 확인 (API JSON 응답)
+- [x] 로깅 강화:
+  - [x] 필수 로그 구현 (HOLD/해제, 결제 성공/실패, 락 획득 실패)
+  - [x] 개인정보 로그 금지 확인
+  - [x] 결제 상세 정보 로그 금지 확인
+  - [x] JWT Token 마스킹 처리
+- [x] 에러 메시지 보안 (민감 정보 노출 방지)
 
 ### 체크리스트
 
-- [ ] 예매 API Rate Limit 적용 확인
-- [ ] 관리자 API 별도 Rate Limit 적용 확인
-- [ ] HOLD Token 검증 확인
-- [ ] 필수 로그 구현 확인
-- [ ] 개인정보 로그 금지 확인
-- [ ] 보안 취약점 점검 완료
+- [x] 예매 API Rate Limit 적용 확인
+- [x] 관리자 API 별도 Rate Limit 적용 확인
+- [x] HOLD Token 검증 확인
+- [x] 필수 로그 구현 확인
+- [x] 개인정보 로그 금지 확인
+- [x] 보안 취약점 점검 완료
 
 ### 예상 소요 시간
 

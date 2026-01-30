@@ -192,10 +192,10 @@ public class SeatCommandService {
 
     /**
      * 결제 진행용: HOLD → PAYMENT_PENDING
-     * holdToken 검증 후 startPayment 호출. 락 획득 실패 시 즉시 실패.
+     * holdToken 검증 및 HOLD 생성자(memberId) 일치 검증 후 startPayment. (Step 17: HOLD Token 검증 강화)
      */
     @Transactional
-    public void startPaymentForReservation(Long screeningId, Long seatId, String holdToken) {
+    public void startPaymentForReservation(Long screeningId, Long seatId, String holdToken, Long memberId) {
         if (!lockManager.tryLockSeat(screeningId, seatId)) {
             throw SeatException.lockFailed(screeningId, seatId);
         }
@@ -203,6 +203,9 @@ public class SeatCommandService {
             if (!redisService.validateHoldToken(screeningId, seatId, holdToken)) {
                 throw SeatException.invalidHoldToken(screeningId, seatId);
             }
+            redisService.getHold(screeningId, seatId)
+                    .filter(hold -> hold.memberId() != null && hold.memberId().equals(memberId))
+                    .orElseThrow(() -> SeatException.invalidHoldToken(screeningId, seatId));
             ScreeningSeat ss = screeningSeatRepository.findByScreeningIdAndSeatId(screeningId, seatId)
                     .orElseThrow(() -> new BusinessException(ErrorCode.SEAT_NOT_FOUND));
             ss.validateHoldTokenOrThrow(holdToken);
@@ -216,7 +219,7 @@ public class SeatCommandService {
 
     /**
      * 예매 확정: PAYMENT_PENDING → RESERVED
-     * holdToken 검증 후 reserve 호출, Redis HOLD 삭제.
+     * holdToken 및 HOLD 생성자(memberId) 검증 후 reserve, Redis HOLD 삭제. (Step 17)
      */
     @Transactional
     public void reserveForPayment(Long screeningId, Long seatId, Long memberId, String holdToken) {
@@ -227,6 +230,9 @@ public class SeatCommandService {
             if (!redisService.validateHoldToken(screeningId, seatId, holdToken)) {
                 throw SeatException.invalidHoldToken(screeningId, seatId);
             }
+            redisService.getHold(screeningId, seatId)
+                    .filter(hold -> hold.memberId() != null && hold.memberId().equals(memberId))
+                    .orElseThrow(() -> SeatException.invalidHoldToken(screeningId, seatId));
             Member member = memberRepository.findById(memberId)
                     .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
             ScreeningSeat ss = screeningSeatRepository.findByScreeningIdAndSeatId(screeningId, seatId)
