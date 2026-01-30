@@ -26,3 +26,20 @@ const String apiPathLogout = '$apiPathMembers/logout';
 
 /// Refresh Token 쿠키 이름 (서버 application.yml과 동일)
 const String refreshTokenCookieName = 'cinema_refresh';
+
+/// 영화 API (Step16)
+const String apiPathMovies = '/api/movies';
+const String apiPathMovieDetail = '/api/movies'; // /{movieId}
+
+/// 상영 API (Step16)
+const String apiPathScreenings = '/api/screenings';
+const String apiPathScreeningsByMovie = '/api/screenings/by-movie';
+const String apiPathScreeningSeats = '/api/screenings'; // /{screeningId}/seats
+const String apiPathHold = '/api/screenings'; // /{screeningId}/seats/{seatId}/hold
+const String apiPathHoldRelease = '/api/screenings/holds/release';
+
+/// 예매·결제 API (Step16)
+const String apiPathReservations = '/api/reservations';
+const String apiPathReservationPay = '/api/reservations/pay';
+const String apiPathReservationDetail = '/api/reservations'; // /{reservationId}
+const String apiPathReservationCancel = '/api/reservations'; // /{reservationId}/cancel

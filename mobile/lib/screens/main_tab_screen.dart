@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/cinema_theme.dart';
 import 'home/cinema_home_screen.dart';
+import 'movies/movies_screen.dart';
+import 'reservations/reservations_screen.dart';
 
 class MainTabScreen extends StatefulWidget {
   const MainTabScreen({super.key});
@@ -30,8 +32,8 @@ class _MainTabScreenState extends State<MainTabScreen> {
         index: _currentIndex,
         children: [
           const CinemaHomeScreen(),
-          _PlaceholderScreen(title: '영화찾기'),
-          _PlaceholderScreen(title: '예매내역'),
+          const MoviesScreen(),
+          const ReservationsScreen(),
           _PlaceholderScreen(title: '마이페이지'),
         ],
       ),

@@ -1,0 +1,336 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+
+import '../../exception/app_exception.dart';
+import '../../models/payment.dart';
+import '../../models/seat.dart';
+import '../../provider/api_providers.dart';
+import '../../theme/cinema_theme.dart';
+import '../../widgets/custom_button.dart';
+import '../../widgets/dialog/error_dialog.dart';
+import '../../widgets/glass_card.dart';
+import '../payment/payment_screen.dart';
+
+/// 좌석 선택 화면 (HOLD 후 결제하기)
+class SeatSelectScreen extends ConsumerStatefulWidget {
+  const SeatSelectScreen({
+    super.key,
+    required this.screeningId,
+    required this.movieTitle,
+    required this.screenName,
+    required this.theaterName,
+    required this.startTime,
+  });
+
+  final int screeningId;
+  final String movieTitle;
+  final String screenName;
+  final String theaterName;
+  final String startTime;
+
+  @override
+  ConsumerState<SeatSelectScreen> createState() => _SeatSelectScreenState();
+}
+
+class _SeatSelectScreenState extends ConsumerState<SeatSelectScreen> {
+  AsyncValue<SeatLayoutModel> _layout = const AsyncValue.loading();
+  final Map<int, SeatHoldModel> _heldSeats = {}; // seatId -> holdResponse
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadLayout();
+  }
+
+  Future<void> _loadLayout() async {
+    setState(() => _layout = const AsyncValue.loading());
+    try {
+      final layout = await ref.read(screeningApiServiceProvider).getSeatLayout(widget.screeningId);
+      if (mounted) setState(() => _layout = AsyncValue.data(layout));
+    } catch (e, st) {
+      if (mounted) setState(() => _layout = AsyncValue.error(e, st));
+    }
+  }
+
+  Future<void> _onSeatTap(SeatStatusItemModel seat) async {
+    if (!seat.isSelectable) return;
+    if (_heldSeats.containsKey(seat.seatId)) {
+      await _releaseSeat(seat.seatId);
+      return;
+    }
+    setState(() => _isLoading = true);
+    try {
+      final hold = await ref.read(screeningApiServiceProvider).hold(widget.screeningId, seat.seatId);
+      if (mounted) {
+        setState(() {
+          _heldSeats[seat.seatId] = hold;
+          _isLoading = false;
+        });
+      }
+      await _loadLayout();
+    } on AppException catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        showDialog(
+          context: context,
+          builder: (ctx) => ErrorDialog(exception: e, title: '좌석 선점 실패'),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isLoading = false);
+        showDialog(
+          context: context,
+          builder: (ctx) => ErrorDialog(
+            exception: AuthException('좌석 선점 중 오류가 발생했습니다.'),
+            title: '오류',
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _releaseSeat(int seatId) async {
+    final hold = _heldSeats[seatId];
+    if (hold == null) return;
+    try {
+      await ref.read(screeningApiServiceProvider).releaseHold(
+            widget.screeningId,
+            seatId,
+            hold.holdToken,
+          );
+      if (mounted) setState(() => _heldSeats.remove(seatId));
+      await _loadLayout();
+    } catch (_) {}
+  }
+
+  void _goToPayment() {
+    if (_heldSeats.isEmpty) return;
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => PaymentScreen(
+          screeningId: widget.screeningId,
+          movieTitle: widget.movieTitle,
+          screenName: widget.screenName,
+          theaterName: widget.theaterName,
+          startTime: widget.startTime,
+          holdItems: _heldSeats.values
+              .map((h) => SeatHoldItemModel(seatId: h.seatId, holdToken: h.holdToken))
+              .toList(),
+        ),
+      ),
+    );
+  }
+
+  static String _formatTime(String? iso) {
+    if (iso == null || iso.isEmpty) return '-';
+    try {
+      return DateFormat('MM/dd HH:mm').format(DateTime.parse(iso));
+    } catch (_) {
+      return iso;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: CinemaColors.background,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: Text(
+          '좌석 선택',
+          style: GoogleFonts.bebasNeue(
+            fontSize: 20,
+            color: CinemaColors.textPrimary,
+            letterSpacing: 1,
+          ),
+        ),
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            child: GlassCard(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.movieTitle,
+                  style: GoogleFonts.bebasNeue(
+                    fontSize: 16,
+                    color: CinemaColors.textPrimary,
+                    letterSpacing: 1,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '${widget.theaterName} ${widget.screenName} · ${_formatTime(widget.startTime)}',
+                  style: GoogleFonts.roboto(
+                    fontSize: 12,
+                    color: CinemaColors.textMuted,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          ),
+          Expanded(
+            child: _layout.when(
+              data: (layout) {
+                final rows = <String, List<SeatStatusItemModel>>{};
+                for (final s in layout.seats) {
+                  rows.putIfAbsent(s.rowLabel, () => []).add(s);
+                }
+                final sortedRows = rows.keys.toList()..sort();
+                for (final k in sortedRows) {
+                  rows[k]!.sort((a, b) => a.seatNo.compareTo(b.seatNo));
+                }
+                const double seatSize = 44;
+                const double seatSpacing = 8;
+                const double rowLabelWidth = 28;
+                int maxCols = 0;
+                for (final r in sortedRows) {
+                  final len = (rows[r] ?? []).length;
+                  if (len > maxCols) maxCols = len;
+                }
+                final gridWidth = maxCols == 0
+                    ? 0.0
+                    : rowLabelWidth + 4 + maxCols * (seatSize + seatSpacing) - seatSpacing;
+
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 16),
+                      Text(
+                        '스크린',
+                        style: GoogleFonts.roboto(
+                          fontSize: 12,
+                          color: CinemaColors.textMuted,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: SizedBox(
+                          width: gridWidth < 1 ? double.infinity : gridWidth,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: sortedRows.map((rowLabel) {
+                              final seatList = rows[rowLabel] ?? [];
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: seatSpacing),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SizedBox(
+                                      width: rowLabelWidth,
+                                      child: Text(
+                                        rowLabel,
+                                        style: GoogleFonts.roboto(
+                                          fontSize: 13,
+                                          color: CinemaColors.textSecondary,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    ...seatList.map((s) {
+                                      final isHeldByMe = _heldSeats.containsKey(s.seatId);
+                                      final isAvailable = s.isAvailable;
+                                      final isOtherHold = s.isHold && !isHeldByMe;
+                                      return Padding(
+                                        padding: EdgeInsets.only(
+                                          right: seatList.indexOf(s) < seatList.length - 1
+                                              ? seatSpacing
+                                              : 0,
+                                        ),
+                                        child: GestureDetector(
+                                          onTap: _isLoading ? null : () => _onSeatTap(s),
+                                          child: Container(
+                                            width: seatSize,
+                                            height: seatSize,
+                                            decoration: BoxDecoration(
+                                              color: isHeldByMe
+                                                  ? CinemaColors.neonBlue.withValues(alpha: 0.6)
+                                                  : isOtherHold
+                                                      ? CinemaColors.textMuted.withValues(alpha: 0.5)
+                                                      : isAvailable
+                                                          ? CinemaColors.surface
+                                                          : CinemaColors.neonRed.withValues(alpha: 0.3),
+                                              borderRadius: BorderRadius.circular(8),
+                                              border: Border.all(
+                                                color: isHeldByMe
+                                                    ? CinemaColors.neonBlue
+                                                    : CinemaColors.glassBorder,
+                                                width: 1,
+                                              ),
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                '${s.seatNo}',
+                                                style: GoogleFonts.roboto(
+                                                  fontSize: 13,
+                                                  color: CinemaColors.textPrimary,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                    ],
+                  ),
+                );
+              },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (e, _) => Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      e.toString(),
+                      style: GoogleFonts.roboto(color: CinemaColors.neonRed, fontSize: 12),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    CustomButton(text: '다시 시도', onPressed: _loadLayout, size: ButtonSize.small),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: CustomButton(
+              text: _heldSeats.isEmpty
+                  ? '좌석을 선택하세요'
+                  : '결제하기 (${_heldSeats.length}석)',
+              onPressed: _heldSeats.isEmpty ? null : _goToPayment,
+              isFullWidth: true,
+              size: ButtonSize.large,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
