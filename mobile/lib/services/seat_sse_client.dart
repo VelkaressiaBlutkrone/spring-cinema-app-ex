@@ -91,7 +91,7 @@ Future<SeatEventSubscription?> subscribeSeatEvents({
         client.close();
       },
     );
-  } catch (e, st) {
+  } catch (e, _) {
     client.close();
     appLogger.w('SeatEventSubscription: connect error $e');
     return null;
