@@ -1193,7 +1193,7 @@ domain/
 - **작업**:
   - [x] 좌석 배치 모델·API 응답 파싱에 `holdToken`, `isHeldByCurrentUser`(있을 경우) 반영.
   - [x] 좌석 선택 화면에서 "내 선택" vs "다른 고객 선택" 색상/표시 구분, "내 선택" 터치 시 HOLD 해제 API 호출(holdToken 사용).
-  - [x] _loadLayout 시 API 응답에서 "내 HOLD"(isHeldByCurrentUser + holdToken)로 _heldSeats 복원. getSeatLayout 호출 시 useAuth: true로 인증 전달.
+  - [x] _loadLayout 시 API 응답에서 "내 HOLD"(isHeldByCurrentUser + holdToken)로_heldSeats 복원. getSeatLayout 호출 시 useAuth: true로 인증 전달.
 - **결과**: 요구사항 1·3(앱) 충족.
 
 #### 4. 장바구니식 좌석 선택 목록 (웹/앱 공통)
@@ -1281,10 +1281,10 @@ domain/
 
 - **목표**: 인증된 사용자 본인의 회원 정보 조회 및 수정(비밀번호, 이메일, 연락처) API 제공.
 - **작업**:
-  - [ ] `GET /api/members/me` (또는 `/api/members/profile`): 현재 로그인 사용자 정보 조회. 응답에 loginId, name, email, phone 등 포함 (비밀번호 제외).
-  - [ ] `PATCH /api/members/me` (또는 `PUT`): 본인 정보 수정. 요청 본문에 password(선택), email, phone 등. 수정 시 Hybrid Encryption 사용 여부는 기존 로그인/회원가입 정책과 통일.
-  - [ ] 비밀번호 변경 시 기존 비밀번호 확인 또는 별도 엔드포인트(`PUT /api/members/me/password`) 검토.
-  - [ ] Member 엔티티/서비스에서 이메일·연락처 수정 및 비밀번호 변경 로직 구현.
+  - [x] `GET /api/members/me`: 현재 로그인 사용자 정보 조회. 응답에 loginId, name, email, phone 포함 (비밀번호 제외). `MemberProfileResponse` DTO 사용.
+  - [x] `PATCH /api/members/me`: 본인 정보 수정. 요청 본문 JSON: password(선택), name(선택), email(선택), phone(선택) — 전달된 필드만 수정. 비밀번호는 BCrypt 인코딩 후 저장. 이메일 중복 시 `DUPLICATE_EMAIL` 반환.
+  - [ ] 비밀번호 변경 시 기존 비밀번호 확인 또는 별도 엔드포인트(`PUT /api/members/me/password`) 검토 (필요 시 추후 구현).
+  - [x] Member 엔티티 `updatePassword`, `updateInfo` 활용; `MemberService.getMyProfile`, `updateMyProfile` 및 `MemberRepository.findByEmail` 구현.
 - **결과**: 웹/앱에서 마이페이지에서 회원 정보 조회 및 수정 가능.
 
 #### 2. 백엔드: 장바구니(HOLD)·결제 내역 조회 (기존 API 활용 또는 확장)

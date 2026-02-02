@@ -5,6 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cinema.domain.member.dto.MemberProfileResponse;
 import com.cinema.domain.member.dto.MemberRequest;
 import com.cinema.domain.member.dto.TokenResponse;
 import com.cinema.domain.member.entity.Member;
@@ -156,5 +157,52 @@ public class MemberService {
     public void logout(String loginId) {
         refreshTokenService.deleteRefreshToken(loginId);
         log.info("로그아웃 완료: loginId={}", loginId);
+    }
+
+    /**
+     * 본인 프로필 조회
+     *
+     * @param loginId 로그인 ID (인증 주체)
+     * @return 프로필 응답 (loginId, name, email, phone)
+     */
+    @Transactional(readOnly = true)
+    public MemberProfileResponse getMyProfile(String loginId) {
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+        if (!member.isActive()) {
+            throw new BusinessException(ErrorCode.MEMBER_DISABLED);
+        }
+        return MemberProfileResponse.from(member);
+    }
+
+    /**
+     * 본인 정보 수정 (비밀번호, 이름, 이메일, 연락처)
+     * 전달된 필드만 반영; 비밀번호는 평문 전달 시 BCrypt 인코딩 후 저장.
+     *
+     * @param loginId 로그인 ID (인증 주체)
+     * @param request 수정 요청 (password, name, email, phone 모두 선택)
+     */
+    @Transactional
+    public void updateMyProfile(String loginId, MemberRequest.UpdateProfile request) {
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+        if (!member.isActive()) {
+            throw new BusinessException(ErrorCode.MEMBER_DISABLED);
+        }
+
+        if (request.getPassword() != null && !request.getPassword().isBlank()) {
+            member.updatePassword(passwordEncoder.encode(request.getPassword()));
+        }
+
+        String name = request.getName() != null ? request.getName() : member.getName();
+        String email = request.getEmail() != null ? request.getEmail() : member.getEmail();
+        String phone = request.getPhone() != null ? request.getPhone() : member.getPhone();
+
+        if (!email.equals(member.getEmail()) && memberRepository.findByEmail(email).isPresent()) {
+            throw new BusinessException(ErrorCode.DUPLICATE_EMAIL);
+        }
+
+        member.updateInfo(name, phone, email);
+        log.info("회원 정보 수정 완료: loginId={}", loginId);
     }
 }

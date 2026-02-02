@@ -5,12 +5,15 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cinema.domain.member.dto.AccessTokenResponse;
+import com.cinema.domain.member.dto.MemberProfileResponse;
 import com.cinema.domain.member.dto.EncryptedPayload;
 import com.cinema.domain.member.dto.MemberRequest;
 import com.cinema.domain.member.dto.TokenResponse;
@@ -93,6 +96,29 @@ public class MemberController {
         String loginId = authentication.getName();
         memberService.logout(loginId);
         refreshCookie.clearRefreshTokenCookie(response);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * 본인 프로필 조회 (인증 필수)
+     * 응답: loginId, name, email, phone (비밀번호 제외)
+     */
+    @GetMapping("/me")
+    public ResponseEntity<MemberProfileResponse> getMyProfile(Authentication authentication) {
+        String loginId = authentication.getName();
+        return ResponseEntity.ok(memberService.getMyProfile(loginId));
+    }
+
+    /**
+     * 본인 정보 수정 (인증 필수)
+     * 요청 본문: password(선택), name(선택), email(선택), phone(선택) — 전달된 필드만 수정
+     */
+    @PatchMapping("/me")
+    public ResponseEntity<Void> updateMyProfile(
+            Authentication authentication,
+            @RequestBody MemberRequest.UpdateProfile request) {
+        String loginId = authentication.getName();
+        memberService.updateMyProfile(loginId, request);
         return ResponseEntity.ok().build();
     }
 
