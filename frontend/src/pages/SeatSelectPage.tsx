@@ -274,29 +274,45 @@ export function SeatSelectPage() {
               </li>
             ))}
           </ul>
-          <NeonButton
-            to={`/payment/${id}`}
-            state={{
-              screening,
-              heldSeats: heldSeats.map((h) => ({
-                seatId: h.seat.seatId,
-                holdToken: h.holdToken,
-                rowLabel: h.seat.rowLabel,
-                seatNo: h.seat.seatNo,
-              })),
-            }}
-          >
-            결제하기
-          </NeonButton>
+          <div className="flex flex-wrap gap-3">
+            <NeonButton
+              to={`/payment/${id}`}
+              state={{
+                screening,
+                heldSeats: heldSeats.map((h) => ({
+                  seatId: h.seat.seatId,
+                  holdToken: h.holdToken,
+                  rowLabel: h.seat.rowLabel,
+                  seatNo: h.seat.seatNo,
+                })),
+              }}
+            >
+              결제하기
+            </NeonButton>
+            <NeonButton
+              type="button"
+              variant="ghost"
+              onClick={() => {
+                const go = globalThis.confirm('장바구니로 이동하시겠습니까?');
+                if (go) navigate('/mypage', { state: { tab: 'holds' } });
+              }}
+            >
+              장바구니 등록
+            </NeonButton>
+            <NeonButton to="/movies">
+              영화 목록으로 돌아가기
+            </NeonButton>
+          </div>
         </GlassCard>
       )}
 
-      <p className="mt-4 text-sm text-cinema-muted">
-        <Link to="/movies" className="text-cinema-neon-blue hover:underline">
-          영화 목록
-        </Link>
-        으로 돌아가기
-      </p>
+      {heldSeats.length === 0 && (
+        <div className="mt-4">
+          <NeonButton to="/movies">
+            영화 목록으로 돌아가기
+          </NeonButton>
+        </div>
+      )}
     </div>
   );
 }

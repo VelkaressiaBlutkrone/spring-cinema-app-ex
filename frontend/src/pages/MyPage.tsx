@@ -3,7 +3,7 @@
  * 탭: 내 정보 / 장바구니 / 결제·예매 내역
  */
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { membersApi } from '@/api/members';
 import { reservationsApi } from '@/api/reservations';
 import { seatsApi } from '@/api/seats';
@@ -29,9 +29,13 @@ const TABS: { id: TabId; label: string }[] = [
 
 export function MyPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { isAuthenticated } = useAuthStore();
   const { showSuccess, showError } = useToast();
-  const [tab, setTab] = useState<TabId>('profile');
+  const initialTab = (location.state as { tab?: TabId } | undefined)?.tab;
+  const [tab, setTab] = useState<TabId>(
+    initialTab === 'holds' || initialTab === 'reservations' ? initialTab : 'profile'
+  );
 
   // 내 정보
   const [profile, setProfile] = useState<MemberProfileResponse | null>(null);
