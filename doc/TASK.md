@@ -1263,7 +1263,7 @@ domain/
 
 ---
 
-## 사용자 화면 (마이페이지) — 대기
+## 사용자 화면 (마이페이지)
 
 ### 요구사항 정리 (웹/앱 동일)
 
@@ -1291,20 +1291,20 @@ domain/
 
 - **목표**: 사용자별 HOLD 목록, 예매·결제 내역 조회. 기존 예매 내역/결제 API가 있으면 재사용하거나 마이페이지용 통합 응답 검토.
 - **작업**:
-  - [ ] **HOLD(장바구니)**: 이미 `GET /api/screenings/{screeningId}/seats`에서 "내 HOLD" 정보를 내려주는 구성(좌석 선택 UX 개선)이 있으면, 마이페이지용으로 "현재 사용자의 모든 HOLD 목록" API (`GET /api/members/me/holds` 등) 필요 여부 검토. 없으면 상영별 좌석 API로 대체 가능.
-  - [ ] **결제 내역**: 기존 예매 내역 API(`GET /api/reservations` 등) 및 결제 정보 연동. 마이페이지에서 "예매 내역"+"결제 내역" 조회 가능하도록 응답 형태 정리.
+  - [x] **HOLD(장바구니)**: `GET /api/members/me/holds` 추가. 현재 사용자의 모든 HOLD를 상영별로 그룹핑하여 반환(screeningId, movieTitle, screenName, startTime, 좌석 목록+holdToken·holdExpireAt). 만료된 HOLD 제외. `ScreeningSeatRepository.findHoldsByMemberId`에 fetch join 적용, `MemberService.getMyHolds(loginId)` 및 `MemberController` 연동.
+  - [x] **결제 내역**: 기존 `GET /api/reservations`·`GET /api/reservations/{id}` 응답에 `ReservationDetailResponse.payment`(PaymentSummary: paymentId, paymentNo, payStatus, payMethod, payAmount, paidAt) 추가. SUCCESS 결제가 있을 때만 설정. 마이페이지에서 예매 내역과 결제 내역을 한 응답으로 표시 가능.
 - **결과**: 웹/앱 마이페이지에서 장바구니·결제 내역 탭/섹션에 데이터 표시 가능.
 
 #### 3. 웹(React): 사용자 표시 및 마이페이지 라우트
 
 - **목표**: 상단바 등에서 로그인 사용자 표시, 클릭 시 마이페이지로 이동. 마이페이지에서 로그인 정보 조회/수정, 장바구니·결제 내역 조회.
 - **작업**:
-  - [ ] 상단바(NavigationBar): 로그인 사용자 아이디(또는 이름)를 클릭 가능한 요소로 두고, 클릭 시 `/mypage`(또는 `/user`)로 이동.
-  - [ ] 라우트: `/mypage` (또는 `/user`) 추가. 인증 필수; 비로그인 시 로그인 페이지로 리다이렉트.
-  - [ ] 마이페이지 레이아웃: 탭 또는 섹션으로 "내 정보"(로그인 정보 조회/수정), "장바구니"(HOLD 목록), "결제/예매 내역" 구성.
-  - [ ] 내 정보: `GET /api/members/me`로 조회, 폼에 표시. 비밀번호/이메일/연락처 수정 후 `PATCH /api/members/me` 호출.
-  - [ ] 장바구니: 현재 사용자 HOLD 목록 표시(API 확정 후 연동). 상영 정보·좌석, 결제하기/취소 링크.
-  - [ ] 결제 내역: 기존 예매 내역·결제 API 연동하여 목록 표시.
+  - [x] 상단바(NavigationBar): 로그인 사용자 아이디를 `Link`로 감싸 클릭 시 `/mypage`로 이동.
+  - [x] 라우트: `/mypage` 추가. `MyPage` 내부에서 `isAuthenticated` 검사 후 비로그인 시 `/login`으로 리다이렉트( state.from: '/mypage' ).
+  - [x] 마이페이지 레이아웃: 탭으로 "내 정보", "장바구니", "결제/예매 내역" 구성 (`MyPage.tsx`).
+  - [x] 내 정보: `membersApi.getProfile()`(GET /api/members/me)로 조회, 아이디/이름 읽기 전용, 비밀번호(선택)/이메일/연락처 수정 폼. 저장 시 `membersApi.updateProfile()`(PATCH /api/members/me) 호출.
+  - [x] 장바구니: `membersApi.getMyHolds()`(GET /api/members/me/holds)로 HOLD 목록 표시. 상영별 카드에 "결제하기"(/book/:screeningId), 좌석별 "해제"(seatsApi.releaseHold) 연동.
+  - [x] 결제 내역: `reservationsApi.getMyReservations()`로 목록 표시. 예매 번호·금액·결제 요약(payment) 표시, 상세 링크(/reservations/:id).
 - **결과**: 웹에서 로그인 사용자 클릭 → 마이페이지 → 로그인 정보 조회/수정, 장바구니·결제 내역 조회 가능.
 
 #### 4. 앱(Flutter): 사용자 표시 및 마이페이지 화면
@@ -1320,9 +1320,9 @@ domain/
 
 #### 5. 체크리스트 (구현 후)
 
-- [ ] 웹: 상단바 사용자 클릭 시 마이페이지 이동 확인.
-- [ ] 웹: 마이페이지에서 비밀번호/이메일/연락처 수정 후 저장 동작 확인.
-- [ ] 웹: 마이페이지에서 장바구니·결제 내역 표시 확인.
+- [x] 웹: 상단바 사용자 클릭 시 마이페이지 이동 확인.
+- [x] 웹: 마이페이지에서 비밀번호/이메일/연락처 수정 후 저장 동작 확인.
+- [x] 웹: 마이페이지에서 장바구니·결제 내역 표시 확인.
 - [ ] 앱: 마이페이지 진입 및 내 정보 조회/수정 동작 확인.
 - [ ] 앱: 장바구니·결제 내역 표시 확인.
 - [ ] 비로그인 시 마이페이지 접근 시 로그인 페이지로 리다이렉트 확인.

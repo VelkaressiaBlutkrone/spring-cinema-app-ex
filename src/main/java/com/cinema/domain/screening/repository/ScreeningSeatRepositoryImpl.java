@@ -56,6 +56,10 @@ public class ScreeningSeatRepositoryImpl implements ScreeningSeatRepositoryCusto
     public List<ScreeningSeat> findHoldsByMemberId(Long memberId) {
         return queryFactory
                 .selectFrom(screeningSeat)
+                .join(screeningSeat.screening).fetchJoin()
+                .join(screeningSeat.screening.movie).fetchJoin()
+                .join(screeningSeat.screening.screen).fetchJoin()
+                .join(screeningSeat.seat).fetchJoin()
                 .where(
                         screeningSeat.holdMember.id.eq(memberId),
                         screeningSeat.status.eq(SeatStatus.HOLD))

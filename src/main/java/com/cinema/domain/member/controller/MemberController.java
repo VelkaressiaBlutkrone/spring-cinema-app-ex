@@ -12,7 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 import com.cinema.domain.member.dto.AccessTokenResponse;
+import com.cinema.domain.member.dto.MemberHoldSummaryResponse;
 import com.cinema.domain.member.dto.MemberProfileResponse;
 import com.cinema.domain.member.dto.EncryptedPayload;
 import com.cinema.domain.member.dto.MemberRequest;
@@ -120,6 +123,16 @@ public class MemberController {
         String loginId = authentication.getName();
         memberService.updateMyProfile(loginId, request);
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * 본인 HOLD(장바구니) 목록 조회 (인증 필수)
+     * 상영별로 그룹핑, 만료된 HOLD 제외. 좌석별 holdToken으로 결제/해제 API 호출 가능.
+     */
+    @GetMapping("/me/holds")
+    public ResponseEntity<List<MemberHoldSummaryResponse>> getMyHolds(Authentication authentication) {
+        String loginId = authentication.getName();
+        return ResponseEntity.ok(memberService.getMyHolds(loginId));
     }
 
     private MemberRequest.Login decryptToLogin(EncryptedPayload p) {

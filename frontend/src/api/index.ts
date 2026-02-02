@@ -6,6 +6,7 @@ export { authApi } from '@/api/auth';
 export { moviesApi, screeningsApi } from '@/api/movies';
 export { seatsApi } from '@/api/seats';
 export { reservationsApi } from '@/api/reservations';
+export { membersApi } from '@/api/members';
 export { homeApi } from '@/api/home';
 export {
   adminMoviesApi,

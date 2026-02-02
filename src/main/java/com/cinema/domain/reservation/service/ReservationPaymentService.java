@@ -10,6 +10,7 @@ import com.cinema.domain.member.repository.MemberRepository;
 import com.cinema.domain.payment.entity.Payment;
 import com.cinema.domain.payment.repository.PaymentRepository;
 import com.cinema.domain.payment.service.MockPaymentService;
+import com.cinema.domain.payment.entity.PaymentStatus;
 import com.cinema.domain.reservation.dto.PaymentRequest;
 import com.cinema.domain.reservation.dto.PaymentResponse;
 import com.cinema.domain.reservation.dto.ReservationDetailResponse;
@@ -174,7 +175,7 @@ public class ReservationPaymentService {
     }
 
     /**
-     * 예매 상세 조회
+     * 예매 상세 조회 (결제 정보 포함 — 마이페이지 결제 내역용)
      */
     @Transactional(readOnly = true)
     public ReservationDetailResponse getReservationDetail(Long memberId, Long reservationId) {
@@ -192,6 +193,7 @@ public class ReservationPaymentService {
                         .price(rs.getPrice())
                         .build())
                 .toList();
+        ReservationDetailResponse.PaymentSummary paymentSummary = buildPaymentSummary(r.getId());
         return ReservationDetailResponse.builder()
                 .reservationId(r.getId())
                 .reservationNo(r.getReservationNo())
@@ -205,11 +207,12 @@ public class ReservationPaymentService {
                 .totalAmount(r.getTotalAmount())
                 .seats(seats)
                 .createdAt(r.getCreatedAt())
+                .payment(paymentSummary)
                 .build();
     }
 
     /**
-     * 회원의 예매 목록 조회
+     * 회원의 예매 목록 조회 (결제 정보 포함 — 마이페이지 예매·결제 내역용)
      */
     @Transactional(readOnly = true)
     public List<ReservationDetailResponse> getReservationsByMember(Long memberId) {
@@ -224,6 +227,7 @@ public class ReservationPaymentService {
                                     .price(rs.getPrice())
                                     .build())
                             .toList();
+                    ReservationDetailResponse.PaymentSummary paymentSummary = buildPaymentSummary(r.getId());
                     return ReservationDetailResponse.builder()
                             .reservationId(r.getId())
                             .reservationNo(r.getReservationNo())
@@ -237,8 +241,22 @@ public class ReservationPaymentService {
                             .totalAmount(r.getTotalAmount())
                             .seats(seats)
                             .createdAt(r.getCreatedAt())
+                            .payment(paymentSummary)
                             .build();
                 })
                 .toList();
+    }
+
+    private ReservationDetailResponse.PaymentSummary buildPaymentSummary(Long reservationId) {
+        return paymentRepository.findByReservationIdAndPayStatus(reservationId, PaymentStatus.SUCCESS)
+                .map(p -> ReservationDetailResponse.PaymentSummary.builder()
+                        .paymentId(p.getId())
+                        .paymentNo(p.getPaymentNo())
+                        .payStatus(p.getPayStatus())
+                        .payMethod(p.getPayMethod())
+                        .payAmount(p.getPayAmount())
+                        .paidAt(p.getPaidAt())
+                        .build())
+                .orElse(null);
     }
 }

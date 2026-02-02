@@ -70,9 +70,12 @@ export function NavigationBar() {
           {isAuthenticated && (
             <>
               <span className="mx-1 h-4 w-px bg-cinema-glass-border" />
-              <span className="max-w-[120px] truncate px-2 text-sm text-cinema-muted sm:max-w-[160px]">
+              <Link
+                to="/mypage"
+                className="max-w-[120px] truncate px-2 text-sm text-cinema-muted transition hover:text-cinema-neon-blue sm:max-w-[160px]"
+              >
                 {loginId ?? '회원'}
-              </span>
+              </Link>
               <button
                 type="button"
                 onClick={handleLogout}

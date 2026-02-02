@@ -3,6 +3,8 @@ package com.cinema.domain.reservation.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.cinema.domain.payment.entity.PaymentMethod;
+import com.cinema.domain.payment.entity.PaymentStatus;
 import com.cinema.domain.reservation.entity.ReservationStatus;
 
 import lombok.AllArgsConstructor;
@@ -12,6 +14,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * 예매 상세 응답 DTO (Step 7)
+ * 마이페이지용: payment 필드로 결제 내역 연동 (GET /api/reservations 등)
  */
 @Getter
 @Builder
@@ -31,6 +34,8 @@ public class ReservationDetailResponse {
     private Integer totalAmount;
     private List<SeatItem> seats;
     private LocalDateTime createdAt;
+    /** 결제 정보 (SUCCESS 결제가 있을 때만 설정, 마이페이지 결제 내역 표시용) */
+    private PaymentSummary payment;
 
     @Getter
     @Builder
@@ -42,5 +47,18 @@ public class ReservationDetailResponse {
         private Integer seatNo;
         private String displayName;
         private Integer price;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PaymentSummary {
+        private Long paymentId;
+        private String paymentNo;
+        private PaymentStatus payStatus;
+        private PaymentMethod payMethod;
+        private Integer payAmount;
+        private LocalDateTime paidAt;
     }
 }

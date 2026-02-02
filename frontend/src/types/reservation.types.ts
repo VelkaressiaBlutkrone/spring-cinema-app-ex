@@ -32,6 +32,16 @@ export interface ReservationSeatItem {
   price: number;
 }
 
+/** 결제 요약 (마이페이지·예매 내역용) */
+export interface PaymentSummary {
+  paymentId: number;
+  paymentNo: string;
+  payStatus: string;
+  payMethod: PaymentMethod;
+  payAmount: number;
+  paidAt: string | null;
+}
+
 export interface ReservationDetailResponse {
   reservationId: number;
   reservationNo: string;
@@ -45,4 +55,5 @@ export interface ReservationDetailResponse {
   totalAmount: number;
   seats: ReservationSeatItem[];
   createdAt: string;
+  payment?: PaymentSummary | null;
 }

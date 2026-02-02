@@ -5,16 +5,24 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.cinema.domain.member.dto.MemberHoldSummaryResponse;
 import com.cinema.domain.member.dto.MemberProfileResponse;
 import com.cinema.domain.member.dto.MemberRequest;
 import com.cinema.domain.member.dto.TokenResponse;
 import com.cinema.domain.member.entity.Member;
 import com.cinema.domain.member.repository.MemberRepository;
+import com.cinema.domain.screening.entity.ScreeningSeat;
+import com.cinema.domain.screening.repository.ScreeningSeatRepository;
 import com.cinema.global.exception.BusinessException;
 import com.cinema.global.exception.ErrorCode;
 import com.cinema.global.jwt.JwtTokenProvider;
 import com.cinema.global.jwt.RefreshTokenService;
 import com.cinema.global.security.LoginBruteForceService;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final ScreeningSeatRepository screeningSeatRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenService refreshTokenService;
@@ -204,5 +213,55 @@ public class MemberService {
 
         member.updateInfo(name, phone, email);
         log.info("회원 정보 수정 완료: loginId={}", loginId);
+    }
+
+    /**
+     * 본인 HOLD(장바구니) 목록 조회 — 상영별로 그룹핑, 만료된 HOLD 제외
+     *
+     * @param loginId 로그인 ID (인증 주체)
+     * @return 상영별 HOLD 요약 목록 (screeningId, 영화/상영관/시간, 좌석 목록 + holdToken)
+     */
+    @Transactional(readOnly = true)
+    public List<MemberHoldSummaryResponse> getMyHolds(String loginId) {
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+        if (!member.isActive()) {
+            throw new BusinessException(ErrorCode.MEMBER_DISABLED);
+        }
+
+        List<ScreeningSeat> holds = screeningSeatRepository.findHoldsByMemberId(member.getId()).stream()
+                .filter(ss -> !ss.isHoldExpired())
+                .toList();
+
+        Map<Long, List<ScreeningSeat>> byScreening = holds.stream()
+                .collect(Collectors.groupingBy(ss -> ss.getScreening().getId()));
+
+        List<MemberHoldSummaryResponse> result = new ArrayList<>();
+        for (Map.Entry<Long, List<ScreeningSeat>> e : byScreening.entrySet()) {
+            List<ScreeningSeat> list = e.getValue();
+            if (list.isEmpty()) {
+                continue;
+            }
+            ScreeningSeat first = list.get(0);
+            var screening = first.getScreening();
+            List<MemberHoldSummaryResponse.HoldSeatItem> seatItems = list.stream()
+                    .map(ss -> MemberHoldSummaryResponse.HoldSeatItem.builder()
+                            .seatId(ss.getSeat().getId())
+                            .rowLabel(ss.getSeat().getRowLabel())
+                            .seatNo(ss.getSeat().getSeatNo())
+                            .displayName(ss.getSeat().getDisplayName())
+                            .holdToken(ss.getHoldToken())
+                            .holdExpireAt(ss.getHoldExpireAt())
+                            .build())
+                    .toList();
+            result.add(MemberHoldSummaryResponse.builder()
+                    .screeningId(screening.getId())
+                    .movieTitle(screening.getMovie().getTitle())
+                    .screenName(screening.getScreen().getName())
+                    .startTime(screening.getStartTime())
+                    .seats(seatItems)
+                    .build());
+        }
+        return result;
     }
 }
