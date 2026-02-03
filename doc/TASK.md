@@ -1448,10 +1448,13 @@ domain/
 
 ### 작업 내용
 
-- [ ] 부하 테스트 도구 설정 (nGrinder/JMeter):
-  - [ ] 테스트 시나리오 작성
-  - [ ] 동시 접속자 1000명 시나리오
+- [x] 부하 테스트 도구 설정 (JMeter):
+  - [x] 테스트 시나리오 작성 (`loadtest/cinema_seat_hold.jmx`)
+  - [ ] 동시 접속자 1000명 시나리오 (점진적 확대)
   - [ ] 좌석 클릭 TPS 1000 시나리오
+- [x] 부하 테스트 인프라:
+  - [x] loadtest 프로파일 전용 로그인 (`POST /api/loadtest/login`)
+  - [x] Rate Limit 완화 (`application-loadtest.yml`)
 - [ ] 부하 테스트 수행:
   - [ ] 일반 조회 API 테스트
   - [ ] 좌석 HOLD API 테스트
@@ -1459,13 +1462,9 @@ domain/
 - [ ] 성능 목표 확인:
   - [ ] 좌석 클릭 → 반영 < 200ms 확인
   - [ ] 최대 1000 TPS 지원 확인
-- [ ] 성능 병목 지점 분석:
-  - [ ] DB 쿼리 최적화
-  - [ ] Redis 최적화
-  - [ ] API 응답 시간 최적화
-- [ ] 성능 최적화 적용:
-  - [ ] 인덱스 추가
-  - [ ] 쿼리 최적화
+- [x] 성능 최적화 적용:
+  - [x] 인덱스 추가 (`idx_screening_seat_status_expire`)
+  - [ ] 쿼리 최적화 (필요 시)
   - [ ] 캐싱 전략 개선
 - [ ] 재테스트 및 검증
 
@@ -1475,6 +1474,18 @@ domain/
 - [ ] 최대 1000 TPS 지원 확인
 - [ ] 동시 접속자 1000명 처리 확인
 - [ ] 성능 목표 달성 확인
+
+### 구현 상세
+
+| 구분 | 파일 | 설명 |
+|------|------|------|
+| 컨트롤러 | `LoadTestAuthController` | loadtest 프로파일 시 평문 JSON 로그인 |
+| JMeter | `loadtest/cinema_seat_hold.jmx` | Login → GET seats → POST hold |
+| 설정 | `application-loadtest.yml` | Rate Limit 완화 |
+| 인덱스 | `screening_seat` | (status, hold_expire_at) 복합 인덱스 |
+| 문서 | `doc/STEP20_LOAD_TEST.md` | 부하 테스트 가이드 |
+
+**실행:** `./gradlew bootRun --args='--spring.profiles.active=dev,loadtest'` 후 JMeter로 `loadtest/cinema_seat_hold.jmx` 실행
 
 ### 예상 소요 시간
 

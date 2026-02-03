@@ -84,6 +84,9 @@ public class SecurityConfig {
                         // 클라이언트 로그 수신 (프론트/모바일 → 파일 저장)
                         .requestMatchers(HttpMethod.POST, "/api/logs").permitAll()
 
+                        // 부하 테스트 전용 로그인 (loadtest 프로파일 시에만 컨트롤러 노출)
+                        .requestMatchers(HttpMethod.POST, "/api/loadtest/**").permitAll()
+
                         // Health Check
                         .requestMatchers("/health", "/actuator/health").permitAll()
 

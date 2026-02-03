@@ -141,6 +141,7 @@ CREATE TABLE IF NOT EXISTS screening_seat (
     UNIQUE KEY uk_screening_seat (screening_id, seat_id),
     INDEX idx_screening_seat_status (status),
     INDEX idx_screening_seat_hold_expire (hold_expire_at),
+    INDEX idx_screening_seat_status_expire (status, hold_expire_at),
     INDEX idx_screening_seat_hold_member (hold_member_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

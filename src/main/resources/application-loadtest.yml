@@ -1,0 +1,18 @@
+########################################
+# Load Test Profile (부하 테스트)
+# - loadtest 프로파일 활성화 시에만 적용
+# - Rate Limit 완화 (부하 테스트 목표 달성)
+########################################
+reservation:
+  rate-limit:
+    per-minute: 10000
+
+admin:
+  rate-limit:
+    per-minute: 10000
+
+auth:
+  rate-limit:
+    login-per-minute: 1000
+    signup-per-minute: 500
+    refresh-per-minute: 2000

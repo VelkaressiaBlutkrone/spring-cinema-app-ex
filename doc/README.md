@@ -249,6 +249,10 @@ MySQL, Redis를 제외한 백엔드/프론트엔드/모바일 애플리케이션
 
 ---
 
+#### [STEP20_LOAD_TEST.md](./STEP20_LOAD_TEST.md) - 부하 테스트 가이드
+
+부하 테스트 설정, JMeter 시나리오, 성능 목표 확인 방법을 설명합니다.
+
 #### [STEP1_19_RULE_COMPLIANCE_REVIEW.md](./STEP1_19_RULE_COMPLIANCE_REVIEW.md) - Step 1~19 RULE 준수 검토
 
 Step 1~19 구현 코드와 RULE.md 준수 여부를 검토한 문서입니다.

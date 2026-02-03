@@ -161,6 +161,10 @@ $RECYCLE.BIN/
 logs/
 *.log.*
 
+# Load test results
+loadtest/results.jtl
+loadtest/report/
+
 # Temporary files
 *.tmp
 *.temp
