@@ -16,10 +16,15 @@ class PasswordHashGenerator {
 
     @Test
     void printHashForPassword123() throws Exception {
+        // given: BCrypt 인코더, 비밀번호 "password123", 출력 경로 build/password123_hash.txt
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        String hash = encoder.encode("password123");
         Path out = Paths.get("build/password123_hash.txt");
         Files.createDirectories(out.getParent());
+
+        // when: password123을 BCrypt로 인코딩 후 파일에 저장
+        String hash = encoder.encode("password123");
         Files.writeString(out, hash);
+
+        // then: build/password123_hash.txt에 해시 문자열 기록됨 (테스트 데이터용)
     }
 }

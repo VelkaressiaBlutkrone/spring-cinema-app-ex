@@ -49,6 +49,9 @@ class ScreeningApiIntegrationTest {
     @Test
     @DisplayName("GET /api/public-key - 인증 불필요")
     void getPublicKey() throws Exception {
+        // given: 공개키 API 요청 (인증 없음)
+        // when: GET /api/public-key 호출
+        // then: 200 OK
         mockMvc.perform(get("/api/public-key"))
                 .andExpect(status().isOk());
     }
@@ -56,6 +59,9 @@ class ScreeningApiIntegrationTest {
     @Test
     @DisplayName("GET /api/movies - 인증 불필요")
     void getMovies() throws Exception {
+        // given: 영화 목록 API 요청 (page=0, size=10, 인증 없음)
+        // when: GET /api/movies?page=0&size=10 호출
+        // then: 200 OK
         mockMvc.perform(get("/api/movies")
                         .param("page", "0")
                         .param("size", "10"))
