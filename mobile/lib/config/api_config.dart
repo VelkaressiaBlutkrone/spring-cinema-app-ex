@@ -10,9 +10,19 @@ const String _apiBaseUrlEnv = String.fromEnvironment(
   defaultValue: 'http://10.0.2.2:8080',
 );
 
-/// 플랫폼별 API 기본 URL. Web(Chrome)에서는 localhost:8080 사용.
+/// Docker/nginx 배포 시 상대 경로 사용 (예: --dart-define=API_BASE_URL=)
+const String _webApiBaseUrl = String.fromEnvironment(
+  'WEB_API_BASE_URL',
+  defaultValue: 'http://localhost:8080',
+);
+
+/// 플랫폼별 API 기본 URL.
+/// - Web: 로컬 개발 시 localhost:8080, Docker 빌드 시 ''(상대경로)
+/// - Native: API_BASE_URL 또는 10.0.2.2:8080 (Android 에뮬레이터)
 String get apiBaseUrl {
-  if (kIsWeb) return 'http://localhost:8080';
+  if (kIsWeb) {
+    return _webApiBaseUrl.isEmpty ? '' : _webApiBaseUrl;
+  }
   return _apiBaseUrlEnv;
 }
 

@@ -157,6 +157,39 @@ Flutter 모바일 앱의 아키텍처를 설명합니다.
 
 ### 4. 개발 가이드
 
+#### [DEVELOPMENT_ENVIRONMENT.md](./DEVELOPMENT_ENVIRONMENT.md) - 개발환경 세팅 가이드
+
+개발환경 설정을 위한 종합 가이드입니다.
+
+**주요 내용:**
+
+- Java 21, Spring Boot 4.0.2, Gradle 9.1.0 설치 및 경로 설정
+- Node.js, npm, React, TypeScript, Vite 버전 및 설치 방법
+- Dart, Flutter 모바일 개발 환경
+- MySQL, Redis, Docker 인프라 설정
+- 환경 변수 및 PATH 설정 (Windows/macOS/Linux)
+- IDE 권장 설정 및 인코딩
+- 환경 검증 체크리스트
+
+**대상 독자:** 신규 개발자, DevOps, 프로젝트 온보딩
+
+---
+
+#### [DOCKER_SETUP.md](./DOCKER_SETUP.md) - Docker 앱 환경 설정 가이드
+
+MySQL, Redis를 제외한 백엔드/프론트엔드/모바일 애플리케이션을 Docker로 실행하는 설정 가이드입니다.
+
+**주요 내용:**
+
+- Backend, Frontend, Mobile Dockerfile 및 docker-compose 프로파일
+- 프로파일별 실행 방법 (backend, frontend, mobile, app)
+- 포트, 접속 정보, 환경 변수
+- 빌드, 로그, 문제 해결
+
+**대상 독자:** Docker 기반 로컬/통합 테스트 환경 구축 시 참고
+
+---
+
 #### [SERVER_STARTUP_GUIDE.md](./SERVER_STARTUP_GUIDE.md) - 서버 구동 가이드
 
 서버 구동 및 연결 상태 확인 가이드입니다.
@@ -209,8 +242,9 @@ Flutter 모바일 앱의 아키텍처를 설명합니다.
    - 백엔드: [ARCHITECTURE_BACKEND.md](./ARCHITECTURE_BACKEND.md) → [BACKEND_MODULES.md](./BACKEND_MODULES.md)
    - 프론트엔드: [FRONTEND_MODULES.md](./FRONTEND_MODULES.md)
    - 모바일: [ARCHITECTURE_MOBILE.md](./ARCHITECTURE_MOBILE.md)
-5. [SERVER_STARTUP_GUIDE.md](./SERVER_STARTUP_GUIDE.md) - 개발 환경 설정
-6. [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) - 문제 발생 시 참고
+5. [DEVELOPMENT_ENVIRONMENT.md](./DEVELOPMENT_ENVIRONMENT.md) - 개발환경 세팅
+6. [SERVER_STARTUP_GUIDE.md](./SERVER_STARTUP_GUIDE.md) - 서버 구동 가이드
+7. [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) - 문제 발생 시 참고
 
 ### 프로젝트 관리자
 

@@ -67,11 +67,16 @@ docker-compose logs -f
 
 ## 서비스 구성
 
-| 서비스 | 컨테이너명 | 포트 | 설명 |
-|--------|------------|------|------|
-| MySQL | cinema-db | 3306 | 메인 데이터베이스 |
-| Redis | cinema-redis | 6379 | 캐시/세션/분산락 |
-| Nginx | cinema-nginx | 80, 443 | 리버스 프록시 (선택) |
+| 서비스 | 컨테이너명 | 포트 | 프로파일 | 설명 |
+|--------|------------|------|----------|------|
+| MySQL | cinema-db | 3306 | (기본) | 메인 데이터베이스 |
+| Redis | cinema-redis | 6379 | (기본) | 캐시/세션/분산락 |
+| Backend | cinema-backend | 8080 | backend | Spring Boot API |
+| Frontend | cinema-frontend | 5173 | frontend | React 웹 |
+| Mobile | cinema-mobile | 5174 | mobile | Flutter Web |
+| Nginx | cinema-nginx | 80, 443 | with-nginx | 리버스 프록시 (선택) |
+
+> **Backend/Frontend/Mobile** 상세 설정은 [doc/DOCKER_SETUP.md](../doc/DOCKER_SETUP.md) 참고
 
 ---
 

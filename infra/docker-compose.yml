@@ -57,6 +57,87 @@ services:
     restart: unless-stopped
 
   # ========================================
+  # Backend (Spring Boot)
+  # 프로파일: backend | frontend | mobile | app
+  # ========================================
+  cinema-backend:
+    build:
+      context: ..
+      dockerfile: infra/docker/backend/Dockerfile
+    container_name: cinema-backend
+    env_file:
+      - .env
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://cinema-db:3306/${MYSQL_DATABASE:-cinema}?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&connectTimeout=5000&socketTimeout=5000&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-cinema_user}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-cinema_26118791}
+      SPRING_DATA_REDIS_HOST: cinema-redis
+      SPRING_DATA_REDIS_PORT: 6379
+      TZ: Asia/Seoul
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    depends_on:
+      cinema-db:
+        condition: service_healthy
+      cinema-redis:
+        condition: service_healthy
+    networks:
+      - cinema-net
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/api/public-key"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+    profiles:
+      - backend
+      - frontend
+      - mobile
+      - app
+
+  # ========================================
+  # Frontend (React + Vite)
+  # 프로파일: frontend | app
+  # ========================================
+  cinema-frontend:
+    build:
+      context: ..
+      dockerfile: infra/docker/frontend/Dockerfile
+    container_name: cinema-frontend
+    ports:
+      - "${FRONTEND_PORT:-5173}:80"
+    depends_on:
+      - cinema-backend
+    networks:
+      - cinema-net
+    restart: unless-stopped
+    profiles:
+      - frontend
+      - app
+
+  # ========================================
+  # Mobile (Flutter Web)
+  # 프로파일: mobile | app
+  # ========================================
+  cinema-mobile:
+    build:
+      context: ..
+      dockerfile: infra/docker/mobile/Dockerfile
+    container_name: cinema-mobile
+    ports:
+      - "${MOBILE_PORT:-5174}:80"
+    depends_on:
+      - cinema-backend
+    networks:
+      - cinema-net
+    restart: unless-stopped
+    profiles:
+      - mobile
+      - app
+
+  # ========================================
   # Nginx Reverse Proxy (추후 사용)
   # ========================================
   cinema-nginx:
