@@ -1,4 +1,4 @@
-package com.cinema.domain.screening.scheduler;
+package com.cinema.infrastructure.scheduler;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -21,6 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * HOLD 타임아웃 자동 해제 스케줄러 (Step 6)
+ *
+ * RULE 2.2: Domain Layer에 Spring Annotation 사용 금지 → infrastructure 패키지에 위치
  *
  * - 만료된 HOLD: DB releaseExpiredHolds, Redis deleteHold, 좌석 상태 캐시 무효화
  * - Step 8: 만료 해제 시 실시간 좌석 이벤트 발행 (변경 좌석 ID만 Push)

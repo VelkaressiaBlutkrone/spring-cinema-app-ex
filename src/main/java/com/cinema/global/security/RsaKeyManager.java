@@ -1,5 +1,6 @@
 package com.cinema.global.security;
 
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -7,10 +8,12 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 import org.springframework.stereotype.Component;
+
+import com.cinema.global.exception.BusinessException;
+import com.cinema.global.exception.ErrorCode;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +45,7 @@ public class RsaKeyManager {
             this.privateKey = (RSAPrivateKey) pair.getPrivate();
             log.info("RSA key pair generated ({} bits) for hybrid encryption", KEY_SIZE);
         } catch (NoSuchAlgorithmException e) {
-            throw new IllegalStateException("RSA not available", e);
+            throw new BusinessException(ErrorCode.INTERNAL_SERVER_ERROR, e);
         }
     }
 

@@ -305,9 +305,9 @@ lock:screening:{screeningId}:seat:{seatId}
 ### 7.1 Key 네이밍 규칙
 
 ```
-seat:hold:{screeningId}:{seatId}      # HOLD 정보
-seat:status:{screeningId}              # 좌석 상태 캐시
-lock:seat:{screeningId}:{seatId}       # 분산 락
+seat:hold:{screeningId}:{seatId}           # HOLD 정보
+seat:status:{screeningId}                  # 좌석 상태 캐시
+lock:screening:{screeningId}:seat:{seatId} # 분산 락 (RULE 4.3.1과 동일)
 ```
 
 - Key 네이밍은 일관된 패턴 유지

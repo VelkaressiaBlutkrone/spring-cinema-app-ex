@@ -249,6 +249,20 @@ MySQL, Redis를 제외한 백엔드/프론트엔드/모바일 애플리케이션
 
 ---
 
+#### [STEP1_19_RULE_COMPLIANCE_REVIEW.md](./STEP1_19_RULE_COMPLIANCE_REVIEW.md) - Step 1~19 RULE 준수 검토
+
+Step 1~19 구현 코드와 RULE.md 준수 여부를 검토한 문서입니다.
+
+**주요 내용:**
+
+- RULE.md 항목별 준수 확인 (좌석 상태 제어, Redis/DB, QueryDSL, 트랜잭션 등)
+- 위반 항목 식별 및 수정 내역
+- Step별 핵심 검증 요약
+
+**대상 독자:** 코드 리뷰어, 아키텍트, 품질 관리
+
+---
+
 ## 📖 문서 읽기 순서 권장
 
 ### 신규 팀원 온보딩

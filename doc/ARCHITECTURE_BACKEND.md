@@ -145,7 +145,8 @@ sequenceDiagram
 | `domain.member` | 회원, 인증(JWT), Refresh Token |
 | `domain.movie` | 영화 정보 |
 | `domain.theater` | 극장, 상영관, 좌석 |
-| `domain.screening` | **[Aggregate Root]** 상영 스케줄, 좌석 상태 관리, HOLD/해제, HoldExpiryScheduler |
+| `domain.screening` | **[Aggregate Root]** 상영 스케줄, 좌석 상태 관리, HOLD/해제 |
+| `infrastructure.scheduler` | HoldExpiryScheduler (HOLD 만료 자동 해제) |
 | `domain.reservation` | 예매 생성, 취소 |
 | `domain.payment` | 결제 처리, 검증 (Mock) |
 | `domain.admin` | 관리자 API (영화/극장/상영관/상영/좌석/예매/결제) |
