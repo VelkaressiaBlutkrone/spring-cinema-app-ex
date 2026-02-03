@@ -50,26 +50,31 @@
 ### 2.1 Java (JDK 21)
 
 #### 버전 요구사항
+
 - **Java 21** (LTS) 이상
 - `build.gradle`에서 `JavaLanguageVersion.of(21)` 사용
 
 #### 설치 방법
 
 **Windows (Chocolatey):**
+
 ```powershell
 choco install openjdk21
 ```
 
 **Windows (수동):**
+
 1. [Adoptium Eclipse Temurin](https://adoptium.net/) 또는 [Oracle JDK](https://www.oracle.com/java/technologies/downloads/)에서 JDK 21 다운로드
 2. 설치 후 환경 변수 설정 (아래 [6. 환경 변수 및 경로 설정](#6-환경-변수-및-경로-설정) 참고)
 
 **macOS (Homebrew):**
+
 ```bash
 brew install openjdk@21
 ```
 
 **Linux (Ubuntu/Debian):**
+
 ```bash
 sudo apt update
 sudo apt install openjdk-21-jdk
@@ -81,6 +86,7 @@ sudo apt install openjdk-21-jdk
 - `PATH`에 `%JAVA_HOME%\bin` 추가
 
 #### 검증
+
 ```bash
 java -version
 # openjdk version "21.x.x" ...
@@ -112,11 +118,13 @@ Spring Boot는 Gradle 의존성으로 관리되므로 별도 설치 불필요합
 #### 직접 설치 (선택 사항)
 
 **Windows (Chocolatey):**
+
 ```powershell
 choco install gradle
 ```
 
 **macOS (Homebrew):**
+
 ```bash
 brew install gradle
 ```
@@ -128,37 +136,44 @@ brew install gradle
 ### 3.1 Node.js
 
 #### 버전 요구사항
+
 - **Node.js 18.x 이상** (권장: **20 LTS**)
 - Vite 7.x, React 19.x 호환
 
 #### 설치 방법
 
 **Windows (공식 installer):**
+
 1. [nodejs.org](https://nodejs.org/)에서 LTS 버전 다운로드
 2. 설치 시 "Add to PATH" 옵션 체크
 
 **Windows (Chocolatey):**
+
 ```powershell
 choco install nodejs-lts
 ```
 
 **macOS (Homebrew):**
+
 ```bash
 brew install node@20
 ```
 
 **nvm 사용 (Windows/macOS/Linux):**
+
 ```bash
 nvm install 20
 nvm use 20
 ```
 
 #### 경로 설정
+
 - Node.js 설치 시 기본적으로 `PATH`에 추가됨
 - Windows: `C:\Program Files\nodejs\`
 - npm 전역 패키지 경로: `npm config get prefix`로 확인
 
 #### 검증
+
 ```bash
 node -v
 # v20.x.x
@@ -190,6 +205,7 @@ Node.js 설치 시 함께 포함됩니다.
 | Vite | ^7.3.1 | 빌드·개발 서버 |
 
 #### 설치 방법
+
 ```bash
 cd frontend
 npm install
@@ -204,22 +220,26 @@ npm install
 Flutter를 설치하면 Dart SDK가 함께 설치됩니다.
 
 #### 버전 요구사항
+
 - **Flutter**: 3.31.x 이상 (Dart 3.10.7 포함)
 - **Dart SDK**: ^3.10.7 (`mobile/pubspec.yaml` 환경 설정)
 
 #### 설치 방법
 
 **Windows:**
+
 1. [Flutter 공식 사이트](https://docs.flutter.dev/get-started/install/windows)에서 SDK 다운로드
 2. 압축 해제 후 원하는 경로에 배치 (예: `C:\src\flutter`)
 3. `PATH`에 `flutter/bin` 추가
 
 **macOS:**
+
 ```bash
 brew install --cask flutter
 ```
 
 **Linux:**
+
 ```bash
 # 공식 스크립트 사용
 git clone https://github.com/flutter/flutter.git -b stable
@@ -227,15 +247,18 @@ export PATH="$PATH:`pwd`/flutter/bin"
 ```
 
 #### 경로 설정
+
 - `PATH`에 `flutter/bin` 디렉터리 추가
 - 예: `C:\src\flutter\bin` (Windows)
 
 #### 검증
+
 ```bash
 flutter doctor
 ```
 
 #### Android 빌드 시 Java 버전
+
 - 모바일 Android 빌드: **Java 17** (`mobile/android/app/build.gradle.kts` 참조)
 - 백엔드: Java 21 사용
 - 둘 다 설치하고 `JAVA_HOME`을 필요한 쪽에 맞게 전환 가능
@@ -251,21 +274,25 @@ flutter doctor
 #### 설치 방법
 
 **Docker (권장):**
+
 ```bash
 cd infra
 docker-compose up -d cinema-db
 ```
 
 **Windows (수동):**
+
 - [MySQL Community Server](https://dev.mysql.com/downloads/mysql/) 다운로드 후 설치
 
 **macOS:**
+
 ```bash
 brew install mysql@8.0
 brew services start mysql@8.0
 ```
 
 **접속 정보 (application-prod.yml 기본값):**
+
 - Host: `localhost`
 - Port: `3306`
 - Database: `cinema`
@@ -281,27 +308,32 @@ brew services start mysql@8.0
 #### 설치 방법
 
 **Docker (권장):**
+
 ```bash
 cd infra
 docker-compose up -d cinema-redis
 ```
 
 **Windows (수동):**
+
 - [Redis for Windows](https://github.com/microsoftarchive/redis/releases) 또는 WSL2에서 Linux Redis 사용
 
 **macOS:**
+
 ```bash
 brew install redis
 brew services start redis
 ```
 
 **Linux:**
+
 ```bash
 sudo apt install redis-server
 sudo systemctl start redis
 ```
 
 **접속 정보 (application.yml):**
+
 - Host: `localhost`
 - Port: `6379`
 
@@ -329,6 +361,7 @@ MySQL, Redis를 컨테이너로 실행할 때 사용합니다.
 | `Path` | `C:\src\flutter\bin` | Flutter (수동 추가) |
 
 **PowerShell에서 임시 설정:**
+
 ```powershell
 $env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-21"
 $env:Path = "$env:JAVA_HOME\bin;$env:Path"
@@ -359,6 +392,7 @@ export PATH=$PATH:$HOME/flutter/bin
 ### 7.2 인코딩 (Windows 한글 깨짐 방지)
 
 PowerShell에서:
+
 ```powershell
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 chcp 65001
@@ -399,12 +433,14 @@ redis-cli ping
 ### 8.2 빠른 실행 확인
 
 **백엔드 (dev 프로파일, H2 사용):**
+
 ```bash
 ./gradlew bootRun
 # 기본 포트: 8080
 ```
 
 **프론트엔드:**
+
 ```bash
 cd frontend
 npm install
@@ -413,16 +449,19 @@ npm run dev
 ```
 
 **Docker 인프라 (MySQL + Redis):**
+
 ```bash
 cd infra
 docker-compose up -d
 ```
 
 **Docker 앱 전체 (Backend + Frontend + Mobile):**
+
 ```bash
 cd infra
 docker compose --profile app up -d
 ```
+
 → 상세: [DOCKER_SETUP.md](./DOCKER_SETUP.md)
 
 ---

@@ -77,10 +77,12 @@ spring:
 `build.gradle`의 `bootRun` 태스크에 UTF-8 JVM 인자가 설정되어 있습니다. 터미널에서 여전히 한글이 깨지면 **터미널 인코딩**을 UTF-8로 맞춰 주세요.
 
 - **PowerShell** (실행 후 한 번만 실행):
+
   ```powershell
   [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
   chcp 65001
   ```
+
 - **CMD**: 실행 전 `chcp 65001` 실행 후 `gradlew.bat bootRun`
 - **VS Code / Cursor 터미널**: 설정에서 `terminal.integrated.shellArgs` 또는 터미널 프로파일에서 UTF-8 사용 권장
 

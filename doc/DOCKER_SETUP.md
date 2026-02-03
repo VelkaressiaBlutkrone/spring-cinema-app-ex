@@ -211,14 +211,14 @@ docker compose --profile app --profile with-nginx up -d
 |--------|------|----------|
 | MySQL | 3306 | `localhost:3306` (cinema_user / cinema_26118791) |
 | Redis | 6379 | `localhost:6379` |
-| Backend | 8080 | http://localhost:8080 |
-| Frontend | 5173 | http://localhost:5173 |
-| Mobile | 5174 | http://localhost:5174 |
+| Backend | 8080 | <http://localhost:8080> |
+| Frontend | 5173 | <http://localhost:5173> |
+| Mobile | 5174 | <http://localhost:5174> |
 
 ### 7.2 Frontend / Mobile 접속 시
 
-- Frontend: http://localhost:5173 → React SPA, `/api` 요청은 Backend로 프록시
-- Mobile: http://localhost:5174 → Flutter Web, `/api` 요청은 Backend로 프록시
+- Frontend: <http://localhost:5173> → React SPA, `/api` 요청은 Backend로 프록시
+- Mobile: <http://localhost:5174> → Flutter Web, `/api` 요청은 Backend로 프록시
 - 두 앱 모두 같은 Backend(8080) API를 사용합니다.
 
 ---
@@ -284,6 +284,7 @@ docker exec -it cinema-frontend cat /etc/nginx/conf.d/default.conf
 **증상**: cinema-backend가 재시작을 반복함
 
 **확인 사항**:
+
 - cinema-db, cinema-redis가 `healthy` 상태인지 확인
 - `.env`의 `MYSQL_PASSWORD`가 `application-prod.yml` 또는 init 스크립트와 일치하는지 확인
 - MySQL 초기화가 완료되었는지 확인 (최초 실행 시 30초 이상 소요)
@@ -298,8 +299,9 @@ docker compose logs cinema-backend
 **증상**: 로그인/API 호출 시 CORS 또는 연결 오류
 
 **확인 사항**:
+
 - cinema-backend가 정상 동작 중인지 확인
-- 브라우저에서 http://localhost:5173 또는 http://localhost:5174 로 접속했는지 확인 (다른 포트면 프록시 경로 확인)
+- 브라우저에서 <http://localhost:5173> 또는 <http://localhost:5174> 로 접속했는지 확인 (다른 포트면 프록시 경로 확인)
 - nginx 설정에서 `proxy_pass http://cinema-backend:8080`이 올바른지 확인
 
 ### 9.3 Flutter Web 빌드 실패
@@ -307,6 +309,7 @@ docker compose logs cinema-backend
 **증상**: `cinema-mobile` 빌드 시 Flutter 오류
 
 **확인 사항**:
+
 - Flutter Docker 이미지(`ghcr.io/cirruslabs/flutter:stable`) 다운로드가 완료되었는지 확인
 - `mobile/pubspec.yaml`의 `sdk: ^3.10.7`이 Flutter 이미지와 호환되는지 확인
 
@@ -321,6 +324,7 @@ docker compose build --no-cache cinema-mobile
 **증상**: `port is already allocated`
 
 **해결**:
+
 - `.env`에서 `BACKEND_PORT`, `FRONTEND_PORT`, `MOBILE_PORT` 변경
 - 또는 기존 프로세스 종료 후 재시작
 
