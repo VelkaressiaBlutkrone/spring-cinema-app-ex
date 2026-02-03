@@ -49,6 +49,10 @@ const String apiPathSeatEvents = '/api/screenings'; // /{screeningId}/seat-event
 const String apiPathHold = '/api/screenings'; // /{screeningId}/seats/{seatId}/hold
 const String apiPathHoldRelease = '/api/screenings/holds/release';
 
+/// 회원 프로필/마이페이지 API
+const String apiPathMembersMe = '$apiPathMembers/me';
+const String apiPathMembersMeHolds = '$apiPathMembers/me/holds';
+
 /// 예매·결제 API (Step16)
 const String apiPathReservations = '/api/reservations';
 const String apiPathReservationPay = '/api/reservations/pay';

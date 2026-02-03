@@ -3,10 +3,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../provider/auth_provider.dart';
 import '../provider/main_tab_provider.dart';
 import '../theme/cinema_theme.dart';
+import '../utils/jwt_utils.dart';
 import 'home/cinema_home_screen.dart';
 import 'movies/movies_screen.dart';
+import 'mypage/my_page_screen.dart';
 import 'reservations/reservations_screen.dart';
 
 class MainTabScreen extends ConsumerStatefulWidget {
@@ -17,19 +20,65 @@ class MainTabScreen extends ConsumerStatefulWidget {
 }
 
 class _MainTabScreenState extends ConsumerState<MainTabScreen> {
+  String? _loginId;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadLoginId());
+  }
+
+  Future<void> _loadLoginId() async {
+    final auth = ref.read(authApiServiceProvider);
+    final token = await auth.getAccessToken();
+    final id = getLoginIdFromToken(token);
+    if (mounted) setState(() => _loginId = id);
+  }
 
   @override
   Widget build(BuildContext context) {
     final currentIndex = ref.watch(mainTabIndexProvider);
+    final isLoggedIn = ref.watch(authStateProvider).value == true;
     return Scaffold(
       backgroundColor: CinemaColors.background,
+      appBar: isLoggedIn
+          ? AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              title: Text(
+                '영화관 예매',
+                style: GoogleFonts.bebasNeue(
+                  fontSize: 20,
+                  color: CinemaColors.textPrimary,
+                  letterSpacing: 2,
+                ),
+              ),
+              actions: [
+                GestureDetector(
+                  onTap: () => ref.read(mainTabIndexProvider.notifier).setIndex(3),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Text(
+                      _loginId ?? '회원',
+                      style: GoogleFonts.roboto(
+                        fontSize: 14,
+                        color: CinemaColors.textMuted,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  ),
+                ),
+              ],
+            )
+          : null,
       body: IndexedStack(
         index: currentIndex,
         children: const [
           CinemaHomeScreen(),
           MoviesScreen(),
           ReservationsScreen(),
-          _PlaceholderScreen(title: '마이페이지'),
+          MyPageScreen(),
         ],
       ),
       bottomNavigationBar: _buildBottomNav(currentIndex),
@@ -134,22 +183,3 @@ class _NavItem extends StatelessWidget {
   }
 }
 
-class _PlaceholderScreen extends StatelessWidget {
-  const _PlaceholderScreen({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        title,
-        style: GoogleFonts.bebasNeue(
-          fontSize: 24,
-          color: CinemaColors.textMuted,
-          letterSpacing: 2,
-        ),
-      ),
-    );
-  }
-}

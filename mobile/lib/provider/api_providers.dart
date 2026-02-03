@@ -4,6 +4,7 @@ import 'package:mobile/provider/auth_provider.dart';
 import 'package:mobile/services/api_client.dart';
 import 'package:mobile/services/home_api_service.dart';
 import 'package:mobile/services/movie_api_service.dart';
+import 'package:mobile/services/member_api_service.dart';
 import 'package:mobile/services/reservation_api_service.dart';
 import 'package:mobile/services/screening_api_service.dart';
 
@@ -34,4 +35,9 @@ final screeningApiServiceProvider = Provider<ScreeningApiService>((ref) {
 /// 예매·결제 API 서비스
 final reservationApiServiceProvider = Provider<ReservationApiService>((ref) {
   return ReservationApiService(ref.watch(apiClientProvider));
+});
+
+/// 회원 프로필/마이페이지 API 서비스
+final memberApiServiceProvider = Provider<MemberApiService>((ref) {
+  return MemberApiService(ref.watch(apiClientProvider));
 });

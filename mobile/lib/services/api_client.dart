@@ -80,4 +80,18 @@ class ApiClient {
       body: body != null ? (body is String ? body : jsonEncode(body)) : null,
     );
   }
+
+  Future<http.Response> patch(
+    String path, {
+    Object? body,
+    bool useAuth = true,
+  }) async {
+    final uri = Uri.parse(_url(path));
+    final headers = await _headers(useAuth: useAuth);
+    return http.patch(
+      uri,
+      headers: headers,
+      body: body != null ? (body is String ? body : jsonEncode(body)) : null,
+    );
+  }
 }
