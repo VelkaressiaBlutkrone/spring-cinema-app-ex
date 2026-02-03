@@ -114,26 +114,29 @@ export function HomePage() {
             </section>
           )}
 
-          {/* 3일 이내 상영 예정 */}
+          {/* 3일 이내 상영 예정 — 수평 스크롤 (앨범 넘기기) */}
           <section>
             <SectionTitle>3일 이내 상영 예정 영화</SectionTitle>
-            <GlassCard>
+            <GlassCard padding={false} className="overflow-hidden">
               {upcoming.length === 0 ? (
-                <p className="text-cinema-muted">상영 예정 영화가 없습니다.</p>
+                <p className="p-6 text-cinema-muted">상영 예정 영화가 없습니다.</p>
               ) : (
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                <ul
+                  className="flex gap-4 overflow-x-auto pb-4 pt-2 scroll-snap-x px-4 md:px-6 list-none"
+                  aria-label="상영 예정 영화 목록"
+                >
                   {upcoming.map((m) => (
-                    <Link
-                      key={m.id}
+                    <li key={m.id} className="scroll-snap-item shrink-0">
+                      <Link
                       to="/movies"
-                      className="group overflow-hidden rounded-xl border border-cinema-glass-border bg-cinema-surface transition hover:border-cinema-neon-blue/40 hover:shadow-[0_0_24px_rgba(0,212,255,0.12)]"
+                      className="group flex flex-col overflow-hidden rounded-xl border border-cinema-glass-border bg-cinema-surface transition-all duration-300 hover:scale-[1.03] hover:border-cinema-neon-blue/50 hover:shadow-[0_0_32px_rgba(0,212,255,0.2)] focus:outline-none focus:ring-2 focus:ring-cinema-neon-blue/50 block w-[min(160px,28vw)]"
                     >
-                      <div className="aspect-[2/3] bg-cinema-surface-elevated">
+                      <div className="aspect-[2/3] overflow-hidden bg-cinema-surface-elevated">
                         {m.posterUrl ? (
                           <img
                             src={m.posterUrl}
                             alt={m.title}
-                            className="h-full w-full object-cover"
+                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                           />
                         ) : (
                           <div className="flex h-full w-full items-center justify-center text-4xl text-cinema-muted-dark">
@@ -142,13 +145,14 @@ export function HomePage() {
                         )}
                       </div>
                       <div className="p-2">
-                        <p className="line-clamp-2 text-xs font-medium text-cinema-text group-hover:text-cinema-neon-blue transition">
+                        <p className="line-clamp-2 text-xs font-medium text-cinema-text transition group-hover:text-cinema-neon-blue">
                           {m.title}
                         </p>
                       </div>
                     </Link>
+                    </li>
                   ))}
-                </div>
+                </ul>
               )}
             </GlassCard>
           </section>

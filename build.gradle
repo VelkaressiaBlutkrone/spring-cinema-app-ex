@@ -39,6 +39,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
+    /* ===============================
+     * API 문서 (OpenAPI 3 / Swagger) — Spring Boot 4.x 공식 호환
+     * =============================== */
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1'
+
     // AOP - Spring AOP + AspectJ
     implementation 'org.springframework:spring-aop'
     implementation 'org.aspectj:aspectjweaver'

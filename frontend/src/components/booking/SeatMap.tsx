@@ -1,8 +1,8 @@
 /**
  * 좌석 맵 컴포넌트 (SVG)
- * 좌석 상태별 시각적 구분, 클릭 시 HOLD/해제
+ * 좌석 상태별 시각적 구분, 클릭 시 HOLD/해제, 선택 시 bouncy 애니메이션
  */
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import type { SeatStatusItem } from '@/types/seat.types';
 
 const CELL_W = 56;
@@ -46,12 +46,25 @@ function groupSeatsByRow(seats: SeatStatusItem[]): [string, SeatStatusItem[]][] 
   return rows;
 }
 
+const BOUNCE_DURATION_MS = 400;
+
 export function SeatMap({
   seats,
   myHoldSeatIds,
   onSeatClick,
   disabled = false,
 }: Readonly<SeatMapProps>) {
+  const [bouncingSeatId, setBouncingSeatId] = useState<number | null>(null);
+
+  const handleSeatClick = useCallback(
+    (seat: SeatStatusItem) => {
+      setBouncingSeatId(seat.seatId);
+      globalThis.setTimeout(() => setBouncingSeatId(null), BOUNCE_DURATION_MS);
+      onSeatClick(seat);
+    },
+    [onSeatClick]
+  );
+
   const { rows, width, height } = useMemo(() => {
     const rows = groupSeatsByRow(seats);
     const cols = Math.max(1, ...rows.map(([, arr]) => arr.length));
@@ -77,6 +90,11 @@ export function SeatMap({
     return false;
   };
 
+  const getClickHandler = (seat: SeatStatusItem) => {
+    if (!isClickable(seat)) return undefined;
+    return () => handleSeatClick(seat);
+  };
+
   if (seats.length === 0) {
     return (
       <div className="rounded-xl border border-cinema-glass-border bg-cinema-surface p-8 text-center text-cinema-muted">
@@ -94,8 +112,13 @@ export function SeatMap({
             const y = 24 + ri * (CELL_H + GAP);
             const fill = getFill(seat);
             const clickable = isClickable(seat);
+            const isBouncing = bouncingSeatId === seat.seatId;
             return (
-              <g key={seat.seatId}>
+              <g
+                key={seat.seatId}
+                className={isBouncing ? 'animate-seat-bounce' : undefined}
+                style={isBouncing ? { transformOrigin: `${x + CELL_W / 2}px ${y + CELL_H / 2}px` } : undefined}
+              >
                 <rect
                   x={x}
                   y={y}
@@ -106,7 +129,7 @@ export function SeatMap({
                   stroke={clickable ? '#1e40af' : '#e5e7eb'}
                   strokeWidth={clickable ? 2 : 1}
                   className={clickable ? 'cursor-pointer hover:opacity-90' : 'cursor-not-allowed'}
-                  onClick={() => clickable && onSeatClick(seat)}
+                  onClick={getClickHandler(seat)}
                   aria-label={`${rowLabel}-${seat.seatNo} ${seat.status}`}
                 />
                 <text

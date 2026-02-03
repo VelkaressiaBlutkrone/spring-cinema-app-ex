@@ -76,20 +76,23 @@ export function MoviesPage() {
       {isEmpty ? (
         <EmptyState title="등록된 영화가 없습니다" message="곧 다양한 영화가 상영될 예정입니다." />
       ) : (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        <ul
+          className="flex gap-5 overflow-x-auto pb-4 scroll-snap-x list-none"
+          aria-label="영화 목록"
+        >
           {list.map((movie) => (
-            <button
-              type="button"
-              key={movie.id}
-              onClick={() => openDetail(movie)}
-              className="group flex flex-col overflow-hidden rounded-2xl border border-cinema-glass-border bg-cinema-surface text-left shadow-lg transition hover:border-cinema-neon-blue/40 hover:shadow-[0_0_24px_rgba(0,212,255,0.12)] focus:outline-none focus:ring-2 focus:ring-cinema-neon-blue/50"
-            >
-              <div className="aspect-[2/3] bg-cinema-surface-elevated">
+            <li key={movie.id} className="scroll-snap-item shrink-0">
+              <button
+                type="button"
+                onClick={() => openDetail(movie)}
+                className="group flex w-[min(180px,40vw)] flex-col overflow-hidden rounded-2xl border border-cinema-glass-border bg-cinema-surface text-left shadow-lg transition-all duration-300 hover:scale-[1.04] hover:border-cinema-neon-blue/50 hover:shadow-[0_0_32px_rgba(0,212,255,0.2)] focus:outline-none focus:ring-2 focus:ring-cinema-neon-blue/50"
+              >
+              <div className="aspect-[2/3] overflow-hidden bg-cinema-surface-elevated">
                 {movie.posterUrl ? (
                   <img
                     src={movie.posterUrl}
                     alt={movie.title}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center text-4xl text-cinema-muted-dark">
@@ -98,7 +101,7 @@ export function MoviesPage() {
                 )}
               </div>
               <div className="p-3">
-                <h2 className="line-clamp-2 font-medium text-cinema-text group-hover:text-cinema-neon-blue transition">
+                <h2 className="line-clamp-2 font-medium text-cinema-text transition group-hover:text-cinema-neon-blue">
                   {movie.title}
                 </h2>
                 {movie.releaseDate && (
@@ -107,9 +110,10 @@ export function MoviesPage() {
                   </p>
                 )}
               </div>
-            </button>
+              </button>
+            </li>
           ))}
-        </div>
+        </ul>
       )}
 
       <Modal isOpen={!!selectedMovie} onClose={closeDetail} title={selectedMovie?.title} size="lg">

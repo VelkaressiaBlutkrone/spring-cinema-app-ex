@@ -1503,26 +1503,24 @@ domain/
 
 ### 작업 내용
 
-- [ ] 프로덕션 환경 설정:
-  - [ ] 환경 변수 설정
-  - [ ] 프로덕션 DB 설정
-  - [ ] 프로덕션 Redis 설정
-- [ ] Docker 이미지 빌드:
-  - [ ] Spring Boot 애플리케이션 이미지
-  - [ ] Nginx 이미지
-  - [ ] Docker Compose 프로덕션 설정
-- [ ] CI/CD 파이프라인 구축 (GitHub Actions):
-  - [ ] 자동 빌드
-  - [ ] 자동 테스트 실행
+- [x] 프로덕션 환경 설정:
+  - [x] 환경 변수 설정 (infra/.env.example)
+  - [x] 프로덕션 DB/Redis 설정 (application-prod.yml, docker-compose)
+  - [x] Redisson Docker 주소 설정
+- [x] Docker 이미지 빌드:
+  - [x] Spring Boot, Frontend, Mobile Dockerfile (기존)
+  - [x] Docker Compose 프로덕션 설정
+- [x] CI/CD 파이프라인 구축 (GitHub Actions):
+  - [x] 자동 빌드
+  - [x] 자동 테스트 실행 (단위 테스트)
   - [ ] 자동 배포 (선택사항)
-- [ ] 문서화:
-  - [ ] API 문서 (Swagger/OpenAPI)
-  - [ ] 배포 가이드
-  - [ ] 운영 가이드
-- [ ] 모니터링 설정:
-  - [ ] 로그 수집
-  - [ ] 메트릭 수집
-  - [ ] 알림 설정
+- [x] 문서화:
+  - [x] API 문서 (Swagger/OpenAPI - springdoc)
+  - [x] 배포 가이드 (doc/DEPLOYMENT.md)
+  - [x] 운영 가이드 (doc/OPERATIONS.md)
+- [x] 모니터링 설정:
+  - [x] Actuator Health (기존)
+  - [x] 로그/메트릭 (OPERATIONS.md)
 - [ ] 최종 점검:
   - [ ] 모든 기능 동작 확인
   - [ ] 성능 목표 달성 확인
@@ -1531,11 +1529,21 @@ domain/
 ### 체크리스트
 
 - [ ] CI/CD 파이프라인 정상 동작 확인
-- [ ] 프로덕션 배포 준비 완료 확인
-- [ ] API 문서 작성 완료 확인
-- [ ] 배포 가이드 작성 완료 확인
-- [ ] 모니터링 설정 완료 확인
+- [x] 프로덕션 배포 준비 완료 확인
+- [x] API 문서 작성 완료 확인 (Swagger UI: /swagger-ui.html)
+- [x] 배포 가이드 작성 완료 확인
+- [x] 모니터링 설정 완료 확인
 - [ ] 최종 점검 완료 확인
+
+### 구현 상세
+
+| 구분 | 파일 | 설명 |
+|------|------|------|
+| CI | `.github/workflows/ci.yml` | push/PR 시 빌드·테스트 |
+| API 문서 | springdoc-openapi | /swagger-ui.html, /v3/api-docs |
+| 배포 | `doc/DEPLOYMENT.md` | Docker Compose, 환경 변수 |
+| 운영 | `doc/OPERATIONS.md` | 모니터링, 장애 대응, 백업 |
+| 프로덕션 | `application-prod.yml` | CORS, secure-cookie, Swagger 설정 |
 
 ### 예상 소요 시간
 
@@ -1636,11 +1644,11 @@ domain/
 
 ### 5. 체크리스트
 
-- [ ] 다크 모드 기본 적용 (웹/앱)
-- [ ] 글래스모피즘 UI 컴포넌트 라이브러리화
-- [ ] 포인트 컬러 및 그라데이션 디자인 토큰 정의
-- [ ] 수평 스크롤 영화 목록 구현
-- [ ] 좌석 선택 bouncy 애니메이션 적용
+- [x] 다크 모드 기본 적용 (웹/앱) — `body`/`html` 배경 `#0a0a0a`, 웹 `index.css` / 앱 `CinemaTheme.dark`
+- [x] 글래스모피즘 UI 컴포넌트 라이브러리화 — 웹 `GlassCard`, 앱 `GlassCard` (BackdropFilter)
+- [x] 포인트 컬러 및 그라데이션 디자인 토큰 정의 — `--color-cinema-coral`, `.gradient-cinema-cta` 등 `index.css`
+- [x] 수평 스크롤 영화 목록 구현 — 웹 HomePage/MoviesPage `scroll-snap-x`, 앱 `ListView.builder` 수평
+- [x] 좌석 선택 bouncy 애니메이션 적용 — `SeatMap` `animate-seat-bounce` CSS + 클릭 시 상태
 - [ ] 3D 시트 뷰 (또는 2.5D 시뮬레이션) 구현 검토
 - [ ] Lightning Dark / 인터랙션 반응형 효과 적용
 

@@ -74,6 +74,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-cinema_26118791}
       SPRING_DATA_REDIS_HOST: cinema-redis
       SPRING_DATA_REDIS_PORT: 6379
+      REDISSON_SINGLE_SERVER_CONFIG_ADDRESS: redis://cinema-redis:6379
       TZ: Asia/Seoul
     ports:
       - "${BACKEND_PORT:-8080}:8080"

@@ -165,6 +165,16 @@ price:
 ########################################
 # Redisson (분산 락)
 ########################################
+########################################
+# OpenAPI / Swagger (Step 21)
+########################################
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+
 redisson:
   single-server-config:
     address: redis://localhost:6379

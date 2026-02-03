@@ -258,11 +258,12 @@ class _CinemaHomeScreenState extends ConsumerState<CinemaHomeScreen> {
     );
   }
 
+  /// 상영 예정 영화 — 수평 스크롤 (앨범 넘기기, 웹과 동일 UX)
   Widget _buildUpcomingSection() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: GlassCard(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
         borderRadius: 20,
         blur: 20,
         child: _upcoming.isEmpty
@@ -276,18 +277,17 @@ class _CinemaHomeScreenState extends ConsumerState<CinemaHomeScreen> {
                   ),
                 ),
               )
-            : LayoutBuilder(
-                builder: (context, constraints) {
-                  const crossAxisCount = 2;
-                  const spacing = 12.0;
-                  final itemWidth =
-                      (constraints.maxWidth - spacing * (crossAxisCount - 1)) / crossAxisCount;
-                  return Wrap(
-                    spacing: spacing,
-                    runSpacing: spacing,
-                    children: _upcoming.map((m) {
-                      return SizedBox(
-                        width: itemWidth,
+            : SizedBox(
+                height: 220,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _upcoming.length,
+                  itemBuilder: (context, index) {
+                    final m = _upcoming[index];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 6),
+                      child: SizedBox(
+                        width: 120,
                         child: _UpcomingMovieTile(
                           movie: m,
                           onTap: () {
@@ -298,10 +298,10 @@ class _CinemaHomeScreenState extends ConsumerState<CinemaHomeScreen> {
                             );
                           },
                         ),
-                      );
-                    }).toList(),
-                  );
-                },
+                      ),
+                    );
+                  },
+                ),
               ),
       ),
     );

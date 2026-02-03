@@ -7,6 +7,7 @@ import { clsx } from 'clsx';
 interface GlassCardProps {
   children: ReactNode;
   className?: string;
+  /** 기본 true — false면 padding 없음 (수평 스크롤 등 레이아웃용) */
   padding?: boolean;
 }
 

@@ -21,8 +21,8 @@ spring:
     password: cinema_26118791
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
-      initialization-fail-timeout: -1       # DB 연결 실패해도 서버 시작
-      connection-timeout: 5000              # 연결 타임아웃 5초
+      initialization-fail-timeout: -1 # DB 연결 실패해도 서버 시작
+      connection-timeout: 5000 # 연결 타임아웃 5초
       maximum-pool-size: 10
       minimum-idle: 2
 
@@ -31,14 +31,34 @@ spring:
   ########################################
   jpa:
     open-in-view: false
-    defer-datasource-initialization: true   # DataSource 초기화 지연
+    defer-datasource-initialization: true # DataSource 초기화 지연
     hibernate:
-      ddl-auto: none                        # 운영 환경: 스키마 자동 생성 비활성화
-    show-sql: false                         # 운영 환경: SQL 로그 비활성화
+      ddl-auto: none # 운영 환경: 스키마 자동 생성 비활성화
+    show-sql: false # 운영 환경: SQL 로그 비활성화
     properties:
       hibernate:
         format_sql: false
-        dialect: org.hibernate.dialect.MySQLDialect  # MySQL용 dialect
+        dialect: org.hibernate.dialect.MySQLDialect # MySQL용 dialect
+
+########################################
+# API 문서 (운영: 필요 시 비활성화)
+########################################
+springdoc:
+  swagger-ui:
+    enabled: true  # false로 설정 시 Swagger UI 비활성화
+
+########################################
+# Auth (운영: HTTPS 환경 시 secure-cookie: true)
+########################################
+auth:
+  refresh-token:
+    secure-cookie: true  # HTTPS 필수
+
+########################################
+# CORS (운영: 허용 오리진 제한)
+########################################
+cors:
+  allowed-origins: https://your-domain.com  # 운영 도메인으로 변경
 
 ########################################
 # Logging (운영 환경)
