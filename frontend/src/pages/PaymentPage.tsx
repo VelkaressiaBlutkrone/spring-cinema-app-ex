@@ -12,6 +12,7 @@ import { useToast } from '@/hooks';
 import { useAuthStore } from '@/stores';
 import { getErrorMessage } from '@/utils/errorHandler';
 import { formatDate } from '@/utils/dateUtils';
+import { logReservationComplete } from '@/utils/logger';
 import { formatPrice } from '@/utils/formatters';
 import type { Screening } from '@/types/movie.types';
 import type { PaymentMethod, PaymentResponse } from '@/types/reservation.types';
@@ -87,6 +88,7 @@ export function PaymentPage() {
       if (data) {
         setResult(data);
         showSuccess('예매가 완료되었습니다.');
+        logReservationComplete(id, data.reservationNo, heldSeats.length);
       }
     } catch (e) {
       showError(getErrorMessage(e));

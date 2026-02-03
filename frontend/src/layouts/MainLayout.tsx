@@ -4,10 +4,12 @@
  */
 import { Outlet } from 'react-router-dom';
 import { NavigationBar } from '@/components/common/NavigationBar';
+import { NavigationLogger } from '@/components/common/NavigationLogger';
 
 export function MainLayout() {
   return (
     <div className="min-h-screen bg-cinema-bg text-cinema-text">
+      <NavigationLogger />
       <NavigationBar />
       <main className="container mx-auto px-4 py-6">
         <Outlet />

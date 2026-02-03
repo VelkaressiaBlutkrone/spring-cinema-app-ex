@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../exception/app_exception.dart';
+import '../../utils/app_logger.dart';
 import '../../models/payment.dart';
 import '../../provider/api_providers.dart';
 import '../../theme/cinema_theme.dart';
@@ -48,6 +49,11 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
       );
       final result = await ref.read(reservationApiServiceProvider).pay(request);
       if (!mounted) return;
+      logReservationComplete(
+        widget.screeningId,
+        result.reservationNo,
+        widget.holdItems.length,
+      );
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
           builder: (_) => PaymentCompleteScreen(

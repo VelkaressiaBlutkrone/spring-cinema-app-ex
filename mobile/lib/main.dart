@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'theme/cinema_theme.dart';
+import 'utils/app_navigator_observer.dart';
 import 'screens/auth/auth_gate.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/auth/signup_screen.dart';
@@ -36,6 +37,7 @@ class CinemaApp extends StatelessWidget {
       title: '영화관 예매',
       debugShowCheckedModeBanner: false,
       theme: CinemaTheme.dark,
+      navigatorObservers: [AppNavigatorObserver()],
       home: const AuthGate(),
       routes: {
         '/login': (_) => const LoginScreen(),

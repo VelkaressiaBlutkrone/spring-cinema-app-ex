@@ -3,6 +3,7 @@
  * /admin/login 은 비인증 허용, 그 외 /admin/* 는 ADMIN Role 필요
  */
 import { Outlet, Link, useNavigate, useLocation, Navigate } from 'react-router-dom';
+import { NavigationLogger } from '@/components/common/NavigationLogger';
 import { useAuthStore } from '@/stores';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 
@@ -28,6 +29,7 @@ export function AdminLayout() {
   if (isLoginPage) {
     return (
       <div className="min-h-screen bg-gray-100">
+        <NavigationLogger isAdmin />
         <Outlet />
       </div>
     );
@@ -48,6 +50,7 @@ export function AdminLayout() {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
+      <NavigationLogger isAdmin />
       <aside className="w-56 shrink-0 border-r border-gray-200 bg-white">
         <div className="flex h-14 items-center border-b border-gray-200 px-4">
           <Link to="/admin" className="font-semibold text-gray-800">

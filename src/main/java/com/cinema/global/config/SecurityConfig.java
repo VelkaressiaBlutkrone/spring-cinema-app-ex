@@ -81,6 +81,9 @@ public class SecurityConfig {
                         // 메인 화면 홈 API (Step 10)
                         .requestMatchers(HttpMethod.GET, "/api/home/**").permitAll()
 
+                        // 클라이언트 로그 수신 (프론트/모바일 → 파일 저장)
+                        .requestMatchers(HttpMethod.POST, "/api/logs").permitAll()
+
                         // Health Check
                         .requestMatchers("/health", "/actuator/health").permitAll()
 

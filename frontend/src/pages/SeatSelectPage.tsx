@@ -14,6 +14,7 @@ import { useToast } from '@/hooks';
 import { useAuthStore } from '@/stores';
 import { getErrorMessage } from '@/utils/errorHandler';
 import { formatDate } from '@/utils/dateUtils';
+import { logSeatHold, logSeatRelease } from '@/utils/logger';
 import type { SeatStatusItem } from '@/types/seat.types';
 import type { Screening } from '@/types/movie.types';
 import { SCREENING_STATUS_LABEL } from '@/types/movie.types';
@@ -131,6 +132,7 @@ export function SeatSelectPage() {
             )
           );
           showSuccess('좌석이 선택되었습니다.');
+          logSeatHold(id, [seat.seatId], 1);
         }
       } catch (e) {
         showError(getErrorMessage(e));
@@ -159,6 +161,7 @@ export function SeatSelectPage() {
           )
         );
         showSuccess('선택이 해제되었습니다.');
+        logSeatRelease(id, [seat.seatId]);
       } catch (e) {
         showError(getErrorMessage(e));
       } finally {
@@ -177,14 +180,15 @@ export function SeatSelectPage() {
         holdToken: held.holdToken,
       });
       setHeldSeats((prev) => prev.filter((h) => h.seat.seatId !== held.seat.seatId));
-      setSeats((prev) =>
-        prev.map((s) =>
-          s.seatId === held.seat.seatId
-            ? { ...s, status: 'AVAILABLE' as const, holdExpireAt: undefined, holdToken: undefined, isHeldByCurrentUser: false }
-            : s
-        )
-      );
+        setSeats((prev) =>
+          prev.map((s) =>
+            s.seatId === held.seat.seatId
+              ? { ...s, status: 'AVAILABLE' as const, holdExpireAt: undefined, holdToken: undefined, isHeldByCurrentUser: false }
+              : s
+          )
+        );
       showSuccess('선택이 해제되었습니다.');
+      logSeatRelease(id, [held.seat.seatId]);
     } catch (e) {
       showError(getErrorMessage(e));
     } finally {

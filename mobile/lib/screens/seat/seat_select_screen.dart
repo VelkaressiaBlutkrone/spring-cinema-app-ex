@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
 import '../../exception/app_exception.dart';
+import '../../utils/app_logger.dart';
 import '../../models/payment.dart';
 import '../../models/seat.dart';
 import '../../provider/api_providers.dart';
@@ -105,6 +106,7 @@ class _SeatSelectScreenState extends ConsumerState<SeatSelectScreen> {
           _heldSeats[seat.seatId] = hold;
           _isLoading = false;
         });
+        logSeatHold(widget.screeningId, 1);
       }
       await _loadLayout();
     } on AppException catch (e) {
@@ -138,7 +140,10 @@ class _SeatSelectScreenState extends ConsumerState<SeatSelectScreen> {
             seatId,
             hold.holdToken,
           );
-      if (mounted) setState(() => _heldSeats.remove(seatId));
+      if (mounted) {
+        setState(() => _heldSeats.remove(seatId));
+        logSeatRelease(widget.screeningId, 1);
+      }
       await _loadLayout();
     } catch (_) {}
   }

@@ -10,6 +10,7 @@ import { Pagination } from '@/components/common/ui/Pagination';
 import { ConfirmDialog } from '@/components/common/ui/ConfirmDialog';
 import { useToast } from '@/hooks';
 import { getErrorMessage } from '@/utils/errorHandler';
+import { logAdminCreate, logAdminUpdate } from '@/utils/logger';
 import { getPageIndex } from '@/types/api.types';
 import type {
   AdminScreenResponse,
@@ -148,8 +149,9 @@ export function AdminScreensPage() {
         };
         await adminScreensApi.update(editing.id, body);
         showSuccess('상영관이 수정되었습니다.');
+        logAdminUpdate('screen', editing.id);
       } else {
-        await adminScreensApi.create({
+        const created = await adminScreensApi.create({
           theaterId: form.theaterId,
           name: form.name.trim(),
           totalRows: form.totalRows,
@@ -157,6 +159,7 @@ export function AdminScreensPage() {
           screenType: form.screenType,
         });
         showSuccess('상영관이 등록되었습니다.');
+        if (created.data != null) logAdminCreate('screen', created.data as number);
       }
       closeModal();
       fetchList(page);

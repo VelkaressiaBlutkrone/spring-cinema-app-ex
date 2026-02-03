@@ -25,13 +25,13 @@
     </appender>
 
     <!-- ========================================
-         파일 Appender (선택적)
+         파일 Appender (선택적) - 최대 7일 보관
          ======================================== -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>logs/application.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>logs/application.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>30</maxHistory>
+            <maxHistory>7</maxHistory>
         </rollingPolicy>
         <encoder>
             <pattern>${LOG_PATTERN_FILE}</pattern>
@@ -40,17 +40,53 @@
     </appender>
 
     <!-- ========================================
-         개발 환경 (dev)
+         클라이언트 로그 (프론트엔드/모바일) - 최대 7일 보관
+         ======================================== -->
+    <appender name="FILE_FRONTEND" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/frontend.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/frontend.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${LOG_PATTERN_FILE}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="FILE_MOBILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/mobile.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/mobile.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${LOG_PATTERN_FILE}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <logger name="app.frontend" level="INFO" additivity="false">
+        <appender-ref ref="FILE_FRONTEND"/>
+    </logger>
+    <logger name="app.mobile" level="INFO" additivity="false">
+        <appender-ref ref="FILE_MOBILE"/>
+    </logger>
+
+    <!-- ========================================
+         개발 환경 (dev) - 콘솔 + 파일(7일)
          ======================================== -->
     <springProfile name="dev">
         <!-- 루트 로거 -->
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
         </root>
 
         <!-- 애플리케이션 로그 -->
         <logger name="com.cinema" level="DEBUG" additivity="false">
             <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
         </logger>
 
         <!-- Spring 로그 -->

@@ -10,6 +10,7 @@ import { Pagination } from '@/components/common/ui/Pagination';
 import { ConfirmDialog } from '@/components/common/ui/ConfirmDialog';
 import { useToast } from '@/hooks';
 import { getErrorMessage } from '@/utils/errorHandler';
+import { logAdminCreate, logAdminUpdate } from '@/utils/logger';
 import { formatDate } from '@/utils/dateUtils';
 import { getPageIndex } from '@/types/api.types';
 import type {
@@ -164,14 +165,16 @@ export function AdminScreeningsPage() {
         };
         await adminScreeningsApi.update(editing.id, body);
         showSuccess('상영 스케줄이 수정되었습니다.');
+        logAdminUpdate('screening', editing.id);
       } else {
         const body: AdminScreeningCreateRequest = {
           movieId: form.movieId,
           screenId: form.screenId,
           startTime: startTimeISO,
         };
-        await adminScreeningsApi.create(body);
+        const created = await adminScreeningsApi.create(body);
         showSuccess('상영 스케줄이 등록되었습니다.');
+        if (created.data != null) logAdminCreate('screening', created.data as number);
       }
       closeModal();
       fetchList(page);

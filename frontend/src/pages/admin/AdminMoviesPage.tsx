@@ -10,6 +10,7 @@ import { Pagination } from '@/components/common/ui/Pagination';
 import { ConfirmDialog } from '@/components/common/ui/ConfirmDialog';
 import { useToast } from '@/hooks';
 import { getErrorMessage } from '@/utils/errorHandler';
+import { logAdminCreate, logAdminUpdate } from '@/utils/logger';
 import { getPageIndex } from '@/types/api.types';
 import type {
   AdminMovieResponse,
@@ -126,6 +127,7 @@ export function AdminMoviesPage() {
         };
         await adminMoviesApi.update(editing.id, body);
         showSuccess('영화가 수정되었습니다.');
+        logAdminUpdate('movie', editing.id);
       } else {
         const body: AdminMovieCreateRequest = {
           ...form,
@@ -133,8 +135,9 @@ export function AdminMoviesPage() {
           runningTime: form.runningTime,
           releaseDate: form.releaseDate || undefined,
         };
-        await adminMoviesApi.create(body);
+        const created = await adminMoviesApi.create(body);
         showSuccess('영화가 등록되었습니다.');
+        if (created.data != null) logAdminCreate('movie', created.data as number);
       }
       closeModal();
       fetchList(page);

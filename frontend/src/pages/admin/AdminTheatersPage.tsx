@@ -10,6 +10,7 @@ import { Pagination } from '@/components/common/ui/Pagination';
 import { ConfirmDialog } from '@/components/common/ui/ConfirmDialog';
 import { useToast } from '@/hooks';
 import { getErrorMessage } from '@/utils/errorHandler';
+import { logAdminCreate, logAdminUpdate } from '@/utils/logger';
 import { getPageIndex } from '@/types/api.types';
 import type {
   AdminTheaterResponse,
@@ -109,14 +110,16 @@ export function AdminTheatersPage() {
         };
         await adminTheatersApi.update(editing.id, body);
         showSuccess('영화관이 수정되었습니다.');
+        logAdminUpdate('theater', editing.id);
       } else {
-        await adminTheatersApi.create({
+        const created = await adminTheatersApi.create({
           name: form.name.trim(),
           location: form.location || undefined,
           address: form.address || undefined,
           phone: form.phone || undefined,
         });
         showSuccess('영화관이 등록되었습니다.');
+        if (created.data != null) logAdminCreate('theater', created.data as number);
       }
       closeModal();
       fetchList(page);

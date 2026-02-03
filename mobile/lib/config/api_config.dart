@@ -59,6 +59,9 @@ const String apiPathReservationPay = '/api/reservations/pay';
 const String apiPathReservationDetail = '/api/reservations'; // /{reservationId}
 const String apiPathReservationCancel = '/api/reservations'; // /{reservationId}/cancel
 
+/// 클라이언트 로그 전송 (파일 저장용)
+const String apiPathLogs = '/api/logs';
+
 /// 홈 API (메인 화면)
 const String apiPathHome = '/api/home';
 const String apiPathHomeStats = '/api/home/stats';

@@ -9,6 +9,7 @@ import { Modal } from '@/components/common/ui/Modal';
 import { ConfirmDialog } from '@/components/common/ui/ConfirmDialog';
 import { useToast } from '@/hooks';
 import { getErrorMessage } from '@/utils/errorHandler';
+import { logAdminCreate, logAdminUpdate } from '@/utils/logger';
 import type {
   AdminSeatResponse,
   AdminSeatCreateRequest,
@@ -139,13 +140,14 @@ export function AdminSeatsPage() {
     }
     setSubmitLoading(true);
     try {
-      await adminSeatsApi.create({
+      const created = await adminSeatsApi.create({
         screenId: form.screenId,
         rowLabel: form.rowLabel.trim(),
         seatNo: form.seatNo,
         seatType: form.seatType,
       });
       showSuccess('좌석이 등록되었습니다.');
+      if (created.data != null) logAdminCreate('seat', created.data as number);
       closeModal();
       if (selectedScreenId === form.screenId) {
         fetchSeatsByScreen(form.screenId);
@@ -167,6 +169,7 @@ export function AdminSeatsPage() {
         baseStatus: updateForm.baseStatus,
       });
       showSuccess('좌석이 수정되었습니다.');
+      logAdminUpdate('seat', editing.id);
       closeModal();
       if (selectedScreenId != null) {
         fetchSeatsByScreen(selectedScreenId);
