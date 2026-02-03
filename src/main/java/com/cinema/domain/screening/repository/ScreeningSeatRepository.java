@@ -25,6 +25,8 @@ public interface ScreeningSeatRepository extends JpaRepository<ScreeningSeat, Lo
 
     List<ScreeningSeat> findByScreeningIdAndStatus(Long screeningId, SeatStatus status);
 
+    List<ScreeningSeat> findByStatus(SeatStatus status);
+
     Optional<ScreeningSeat> findByScreeningIdAndSeatId(Long screeningId, Long seatId);
 
     // ========================================

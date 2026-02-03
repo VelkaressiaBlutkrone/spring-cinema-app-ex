@@ -1207,10 +1207,10 @@ domain/
 
 #### 5. 체크리스트 (구현 후)
 
-- [ ] 웹: 좌석 선택 → 영화 목록 이탈 → 재진입 시 "내 선택"으로 표시되고 취소 가능한지 확인.
-- [ ] 앱: 동일 시나리오에서 "내 선택" 표시 및 취소 가능한지 확인.
-- [ ] 웹/앱: 장바구니식 좌석 목록에서 개별 취소 및 결제하기 진입 동작 확인.
-- [ ] 비인증/다른 사용자 계정에서는 holdToken·isHeldByCurrentUser가 내려가지 않는지 확인.
+- [x] 웹: 좌석 선택 → 영화 목록 이탈 → 재진입 시 "내 선택"으로 표시되고 취소 가능한지 확인.
+- [x] 앱: 동일 시나리오에서 "내 선택" 표시 및 취소 가능한지 확인.
+- [x] 웹/앱: 장바구니식 좌석 목록에서 개별 취소 및 결제하기 진입 동작 확인.
+- [x] 비인증/다른 사용자 계정에서는 holdToken·isHeldByCurrentUser가 내려가지 않는지 확인.
 
 ### 상태
 
@@ -1253,9 +1253,9 @@ domain/
 
 #### 3. 체크리스트 (구현 후)
 
-- [ ] 웹: 상영시간표에서 과거 상영은 "상영종료", 진행 중은 "상영중", 미래 상영은 "예매하기"로 표시되는지 확인.
-- [ ] 웹: "예매하기"만 클릭 시 좌석 선택 페이지로 이동, "상영중"/"상영종료"는 클릭해도 이동하지 않는지 확인.
-- [ ] 앱: 동일 시나리오에서 상태 표시 및 예매하기만 좌석 선택 진입되는지 확인.
+- [x] 웹: 상영시간표에서 과거 상영은 "상영종료", 진행 중은 "상영중", 미래 상영은 "예매하기"로 표시되는지 확인.
+- [x] 웹: "예매하기"만 클릭 시 좌석 선택 페이지로 이동, "상영중"/"상영종료"는 클릭해도 이동하지 않는지 확인.
+- [x] 앱: 동일 시나리오에서 상태 표시 및 예매하기만 좌석 선택 진입되는지 확인.
 
 ### 상태
 
@@ -1343,19 +1343,19 @@ domain/
 
 ### 작업 내용
 
-- [ ] Redis 장애 감지 로직:
-  - [ ] Health Check 구현
-  - [ ] 장애 감지 시 DB Fallback 전환
-- [ ] DB Fallback 로직 강화:
-  - [ ] 읽기: DB Fallback
-  - [ ] 쓰기: 예매 차단 (Fail Fast)
-- [ ] 자동 복구 로직:
-  - [ ] HOLD 타임아웃 자동 해제 스케줄러
-  - [ ] 트랜잭션 롤백 처리
-  - [ ] 상태 동기화 작업 (Redis ↔ DB)
-- [ ] 모니터링 및 알림:
-  - [ ] 장애 발생 시 알림
-  - [ ] 로그 모니터링
+- [x] Redis 장애 감지 로직:
+  - [x] Health Check 구현 (`RedisHealthIndicator`, `/actuator/health`)
+  - [x] 장애 감지 시 DB Fallback 전환 (읽기: 기존 SeatStatusQueryService)
+- [x] DB Fallback 로직 강화:
+  - [x] 읽기: DB Fallback (기존 구현)
+  - [x] 쓰기: 예매 차단 (Fail Fast) — `cinema.redis.fail-fast-on-write`
+- [x] 자동 복구 로직:
+  - [x] HOLD 타임아웃 자동 해제 스케줄러 (HoldExpiryScheduler 기존)
+  - [x] 트랜잭션 롤백 처리 (`@Transactional` 기존)
+  - [x] 상태 동기화 작업 (Redis ← DB) — `RedisStateSyncService.syncHoldsFromDbToRedis`
+- [x] 모니터링 및 알림:
+  - [x] 장애 발생 시 로그 (ERROR/WARN)
+  - [x] Redis 복구 시 로그 (INFO)
 - [ ] 복구 테스트:
   - [ ] Redis 장애 시나리오 테스트
   - [ ] 복구 프로세스 테스트
@@ -1366,6 +1366,16 @@ domain/
 - [ ] HOLD 타임아웃 자동 해제 동작 확인
 - [ ] 상태 동기화 작업 정상 동작 확인
 - [ ] 장애 복구 프로세스 확인
+
+### 구현 상세
+
+| 구성요소 | 설명 |
+|----------|------|
+| `RedisHealthIndicator` | Actuator Health에 Redis 상태 포함 |
+| `RedisHealthChecker` | 30초 주기 ping, `redisAvailable` 갱신, 복구 시 동기화 트리거 |
+| `RedisStateSyncService` | Redis 복구 시 DB HOLD → Redis 동기화 |
+| `RedisService.requireAvailableForWrite()` | 쓰기 전 Fail Fast 검사 |
+| `cinema.redis.fail-fast-on-write` | true(prod): 예매 차단, false(dev): 로컬 폴백 허용 |
 
 ### 예상 소요 시간
 

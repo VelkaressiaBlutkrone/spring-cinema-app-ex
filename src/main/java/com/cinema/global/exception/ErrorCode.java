@@ -102,6 +102,7 @@ public enum ErrorCode {
     // ========================================
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "SERVER_001", "서버 내부 오류가 발생했습니다."),
     REDIS_CONNECTION_FAILED(HttpStatus.SERVICE_UNAVAILABLE, "SERVER_002", "캐시 서버 연결에 실패했습니다."),
+    REDIS_SERVICE_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "SERVER_004", "예매 기능이 일시적으로 이용 불가합니다. 잠시 후 다시 시도해 주세요."),
     DATABASE_ERROR(HttpStatus.SERVICE_UNAVAILABLE, "SERVER_003", "데이터베이스 오류가 발생했습니다."),
 
     // ========================================

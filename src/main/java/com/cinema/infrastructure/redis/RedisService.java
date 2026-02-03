@@ -6,9 +6,12 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import com.cinema.global.exception.BusinessException;
+import com.cinema.global.exception.ErrorCode;
 import com.google.gson.Gson;
 
 import lombok.RequiredArgsConstructor;
@@ -33,6 +36,9 @@ public class RedisService {
     /** Redis 연결 가용 여부 (런타임에 동적으로 확인) */
     private volatile boolean redisAvailable = true;
 
+    /** Redis 장애 시 쓰기(예매) Fail Fast 여부 */
+    private volatile boolean failFastOnWrite = true;
+
     /** Redis 미연결 시 로컬(인메모리) HOLD 폴백 (개발/로컬 용도) */
     private final Map<String, LocalHold> localHolds = new ConcurrentHashMap<>();
 
@@ -45,11 +51,33 @@ public class RedisService {
     // 좌석 HOLD 관련
     // ========================================
 
+    @Value("${cinema.redis.fail-fast-on-write:true}")
+    public void setFailFastOnWrite(boolean failFastOnWrite) {
+        this.failFastOnWrite = failFastOnWrite;
+    }
+
     /**
      * Redis 연결 가용 여부 확인
      */
     public boolean isAvailable() {
         return redisAvailable;
+    }
+
+    /**
+     * Health Checker에서 호출 - Redis 가용 상태 동적 업데이트
+     */
+    public void setAvailable(boolean available) {
+        this.redisAvailable = available;
+    }
+
+    /**
+     * 쓰기(예매/HOLD/결제) 전 Redis 가용 여부 확인.
+     * Fail Fast 모드에서 Redis 장애 시 예외 throw
+     */
+    public void requireAvailableForWrite() {
+        if (failFastOnWrite && !redisAvailable) {
+            throw new BusinessException(ErrorCode.REDIS_SERVICE_UNAVAILABLE);
+        }
     }
 
     /**
@@ -63,6 +91,8 @@ public class RedisService {
      * @return HOLD Token (Redis 실패 시 null)
      */
     public String saveHold(Long screeningId, Long seatId, Long memberId, long ttlMinutes) {
+        requireAvailableForWrite();
+
         String key = createHoldKey(screeningId, seatId);
         String holdToken = generateHoldToken();
 
@@ -81,13 +111,25 @@ public class RedisService {
             redisAvailable = false;
             log.error("[Redis] HOLD 저장 실패 - screeningId={}, seatId={}, error={}",
                     screeningId, seatId, e.getMessage());
-            // Redis 장애 시 로컬 폴백 저장 (TTL 포함)
+            if (failFastOnWrite) {
+                throw new BusinessException(ErrorCode.REDIS_SERVICE_UNAVAILABLE);
+            }
             long expireAtMillis = System.currentTimeMillis() + Duration.ofMinutes(ttlMinutes).toMillis();
             localHolds.put(key, new LocalHold(holdInfo, expireAtMillis));
             log.warn("[Redis] (LOCAL) HOLD 저장 폴백 - screeningId={}, seatId={}, memberId={}, ttl={}분",
                     screeningId, seatId, memberId, ttlMinutes);
             return holdToken;
         }
+    }
+
+    /**
+     * 상태 동기화 전용 - Redis에 HOLD 직접 저장 (예외 시 throw, 로컬 폴백 없음)
+     */
+    public void saveHoldInternal(Long screeningId, Long seatId, Long memberId, String holdToken, long ttlMinutes) {
+        String key = createHoldKey(screeningId, seatId);
+        HoldInfo holdInfo = new HoldInfo(holdToken, memberId, System.currentTimeMillis());
+        String value = gson.toJson(holdInfo);
+        redisTemplate.opsForValue().set(key, value, Duration.ofMinutes(ttlMinutes));
     }
 
     /**

@@ -67,6 +67,18 @@ server:
   port: 8080
 
 ########################################
+# Actuator (Step 18 - Health Check)
+########################################
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always  # Redis 등 상세 상태 노출 (모니터링용)
+
+########################################
 # Logging
 ########################################
 logging:
@@ -118,6 +130,15 @@ reservation:
 admin:
   rate-limit:
     per-minute: 120         # 관리자 API 분당 요청 수
+
+########################################
+# Redis 장애 대응 (Step 18)
+########################################
+cinema:
+  redis:
+    fail-fast-on-write: true     # true: Redis 장애 시 예매(HOLD/결제) 차단(Fail Fast)
+    health-check-interval-ms: 30000  # Health Check 주기 (30초)
+    recovery-sync-enabled: true  # Redis 복구 시 DB→Redis 상태 동기화
 
 ########################################
 # Seat HOLD

@@ -63,6 +63,7 @@ public class SeatCommandService {
      */
     @Transactional
     public SeatHoldResponse hold(Long screeningId, Long seatId, Long memberId) {
+        redisService.requireAvailableForWrite();
         // 좌석 별 분산 락 획득 시도
         if (!lockManager.tryLockSeat(screeningId, seatId)) {
             // 락 획득 실패 시 예외 반환
@@ -144,6 +145,7 @@ public class SeatCommandService {
      */
     @Transactional
     public void releaseHold(Long screeningId, Long seatId, String holdToken) {
+        redisService.requireAvailableForWrite();
         // 좌석 별 분산 락 획득
         if (!lockManager.tryLockSeat(screeningId, seatId)) {
             // 락 획득 실패 시 예외 반환
@@ -196,6 +198,7 @@ public class SeatCommandService {
      */
     @Transactional
     public void startPaymentForReservation(Long screeningId, Long seatId, String holdToken, Long memberId) {
+        redisService.requireAvailableForWrite();
         if (!lockManager.tryLockSeat(screeningId, seatId)) {
             throw SeatException.lockFailed(screeningId, seatId);
         }
@@ -223,6 +226,7 @@ public class SeatCommandService {
      */
     @Transactional
     public void reserveForPayment(Long screeningId, Long seatId, Long memberId, String holdToken) {
+        redisService.requireAvailableForWrite();
         if (!lockManager.tryLockSeat(screeningId, seatId)) {
             throw SeatException.lockFailed(screeningId, seatId);
         }
