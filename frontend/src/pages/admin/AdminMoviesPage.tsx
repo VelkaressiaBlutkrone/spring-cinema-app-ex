@@ -264,27 +264,27 @@ export function AdminMoviesPage() {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">제목 *</label>
+            <label className="mb-1 block text-sm font-medium text-cinema-text">제목 *</label>
             <input
               type="text"
               value={form.title}
               onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text placeholder:text-cinema-muted focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">설명</label>
+            <label className="mb-1 block text-sm font-medium text-cinema-text">설명</label>
             <textarea
               value={form.description ?? ''}
               onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
               rows={2}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text placeholder:text-cinema-muted focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">상영 시간(분) *</label>
+              <label className="mb-1 block text-sm font-medium text-cinema-text">상영 시간(분) *</label>
               <input
                 type="number"
                 min={1}
@@ -292,87 +292,87 @@ export function AdminMoviesPage() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, runningTime: Number.parseInt(e.target.value, 10) || 0 }))
                 }
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text placeholder:text-cinema-muted focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">개봉일</label>
+              <label className="mb-1 block text-sm font-medium text-cinema-text">개봉일</label>
               <input
                 type="date"
                 value={form.releaseDate ?? ''}
                 onChange={(e) =>
                   setForm((f) => ({ ...f, releaseDate: e.target.value || undefined }))
                 }
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue disabled:opacity-60"
                 disabled={!!editing}
               />
               {editing && (
-                <p className="mt-1 text-xs text-gray-500">개봉일은 수정할 수 없습니다.</p>
+                <p className="mt-1 text-xs text-cinema-muted">개봉일은 수정할 수 없습니다.</p>
               )}
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">등급</label>
+              <label className="mb-1 block text-sm font-medium text-cinema-text">등급</label>
               <input
                 type="text"
                 value={form.rating ?? ''}
                 onChange={(e) => setForm((f) => ({ ...f, rating: e.target.value }))}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm"
+                className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text placeholder:text-cinema-muted focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
                 placeholder="예: 12세이상"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">장르</label>
+              <label className="mb-1 block text-sm font-medium text-cinema-text">장르</label>
               <input
                 type="text"
                 value={form.genre ?? ''}
                 onChange={(e) => setForm((f) => ({ ...f, genre: e.target.value }))}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm"
+                className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text placeholder:text-cinema-muted focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
                 placeholder="예: 액션, 드라마"
               />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">감독</label>
+            <label className="mb-1 block text-sm font-medium text-cinema-text">감독</label>
             <input
               type="text"
               value={form.director ?? ''}
               onChange={(e) => setForm((f) => ({ ...f, director: e.target.value }))}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm"
+              className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text placeholder:text-cinema-muted focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">출연</label>
+            <label className="mb-1 block text-sm font-medium text-cinema-text">출연</label>
             <input
               type="text"
               value={form.actors ?? ''}
               onChange={(e) => setForm((f) => ({ ...f, actors: e.target.value }))}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm"
+              className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text placeholder:text-cinema-muted focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">포스터 URL</label>
+            <label className="mb-1 block text-sm font-medium text-cinema-text">포스터 URL</label>
             <input
               type="url"
               value={form.posterUrl ?? ''}
               onChange={(e) => setForm((f) => ({ ...f, posterUrl: e.target.value }))}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm"
+              className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text placeholder:text-cinema-muted focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
             />
           </div>
           <div className="flex justify-end gap-3 pt-4">
             <button
               type="button"
               onClick={closeModal}
-              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="rounded-xl border border-cinema-glass-border bg-cinema-glass px-4 py-2 text-sm font-medium text-cinema-text transition hover:bg-cinema-glass-border"
             >
               취소
             </button>
             <button
               type="submit"
               disabled={submitLoading}
-              className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+              className="rounded-xl bg-cinema-neon-blue px-4 py-2 text-sm font-medium text-black transition hover:opacity-90 disabled:opacity-50"
             >
               {submitLoading ? '처리 중...' : editing ? '수정' : '등록'}
             </button>

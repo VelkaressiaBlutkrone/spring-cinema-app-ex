@@ -298,13 +298,13 @@ export function AdminScreensPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           {!editing && (
             <div>
-              <label className="block text-sm font-medium text-gray-700">영화관 *</label>
+              <label className="mb-1 block text-sm font-medium text-cinema-text">영화관 *</label>
               <select
                 value={form.theaterId || ''}
                 onChange={(e) =>
                   setForm((f) => ({ ...f, theaterId: Number.parseInt(e.target.value, 10) || 0 }))
                 }
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
                 required
               >
                 <option value="">선택</option>
@@ -318,23 +318,23 @@ export function AdminScreensPage() {
           )}
           {editing && (
             <div>
-              <label className="block text-sm font-medium text-gray-700">영화관</label>
-              <p className="mt-1 text-sm text-gray-600">{editing.theaterName}</p>
+              <label className="mb-1 block text-sm font-medium text-cinema-text">영화관</label>
+              <p className="text-sm text-cinema-muted">{editing.theaterName}</p>
             </div>
           )}
           <div>
-            <label className="block text-sm font-medium text-gray-700">상영관 이름 *</label>
+            <label className="mb-1 block text-sm font-medium text-cinema-text">상영관 이름 *</label>
             <input
               type="text"
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text placeholder:text-cinema-muted focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
               required
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700">총 행 수 *</label>
+              <label className="mb-1 block text-sm font-medium text-cinema-text">총 행 수 *</label>
               <input
                 type="number"
                 min={1}
@@ -342,12 +342,12 @@ export function AdminScreensPage() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, totalRows: Number.parseInt(e.target.value, 10) || 0 }))
                 }
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm"
+                className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700">행당 좌석 수 *</label>
+              <label className="mb-1 block text-sm font-medium text-cinema-text">행당 좌석 수 *</label>
               <input
                 type="number"
                 min={1}
@@ -355,19 +355,19 @@ export function AdminScreensPage() {
                 onChange={(e) =>
                   setForm((f) => ({ ...f, totalCols: Number.parseInt(e.target.value, 10) || 0 }))
                 }
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm"
+                className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
                 required
               />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">상영관 타입 *</label>
+            <label className="mb-1 block text-sm font-medium text-cinema-text">상영관 타입 *</label>
             <select
               value={form.screenType}
               onChange={(e) =>
                 setForm((f) => ({ ...f, screenType: e.target.value as AdminScreenType }))
               }
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm"
+              className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
             >
               {(Object.keys(SCREEN_TYPE_LABEL) as AdminScreenType[]).map((k) => (
                 <option key={k} value={k}>
@@ -380,14 +380,14 @@ export function AdminScreensPage() {
             <button
               type="button"
               onClick={closeModal}
-              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="rounded-xl border border-cinema-glass-border bg-cinema-glass px-4 py-2 text-sm font-medium text-cinema-text transition hover:bg-cinema-glass-border"
             >
               취소
             </button>
             <button
               type="submit"
               disabled={submitLoading}
-              className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+              className="rounded-xl bg-cinema-neon-blue px-4 py-2 text-sm font-medium text-black transition hover:opacity-90 disabled:opacity-50"
             >
               {submitLoading ? '처리 중...' : editing ? '수정' : '등록'}
             </button>

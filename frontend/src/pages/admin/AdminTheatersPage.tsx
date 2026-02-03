@@ -244,55 +244,55 @@ export function AdminTheatersPage() {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">이름 *</label>
+            <label className="mb-1 block text-sm font-medium text-cinema-text">이름 *</label>
             <input
               type="text"
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text placeholder:text-cinema-muted focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">위치</label>
+            <label className="mb-1 block text-sm font-medium text-cinema-text">위치</label>
             <input
               type="text"
               value={form.location ?? ''}
               onChange={(e) => setForm((f) => ({ ...f, location: e.target.value }))}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm"
+              className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text placeholder:text-cinema-muted focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
               placeholder="예: 강남구"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">주소</label>
+            <label className="mb-1 block text-sm font-medium text-cinema-text">주소</label>
             <input
               type="text"
               value={form.address ?? ''}
               onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm"
+              className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text placeholder:text-cinema-muted focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">전화</label>
+            <label className="mb-1 block text-sm font-medium text-cinema-text">전화</label>
             <input
               type="text"
               value={form.phone ?? ''}
               onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm"
+              className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text placeholder:text-cinema-muted focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
             />
           </div>
           <div className="flex justify-end gap-3 pt-4">
             <button
               type="button"
               onClick={closeModal}
-              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="rounded-xl border border-cinema-glass-border bg-cinema-glass px-4 py-2 text-sm font-medium text-cinema-text transition hover:bg-cinema-glass-border"
             >
               취소
             </button>
             <button
               type="submit"
               disabled={submitLoading}
-              className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+              className="rounded-xl bg-cinema-neon-blue px-4 py-2 text-sm font-medium text-black transition hover:opacity-90 disabled:opacity-50"
             >
               {submitLoading ? '처리 중...' : editing ? '수정' : '등록'}
             </button>

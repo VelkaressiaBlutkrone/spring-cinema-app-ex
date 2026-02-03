@@ -311,7 +311,7 @@ export function AdminSeatsPage() {
       <Modal isOpen={modalOpen && !editing} onClose={closeModal} title="좌석 등록" size="md">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="seat-screen" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="seat-screen" className="mb-1 block text-sm font-medium text-cinema-text">
               상영관 *
             </label>
             <select
@@ -323,7 +323,7 @@ export function AdminSeatsPage() {
                   screenId: Number.parseInt(e.target.value, 10) || 0,
                 }))
               }
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
               required
             >
               <option value="">선택</option>
@@ -336,7 +336,7 @@ export function AdminSeatsPage() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="seat-row" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="seat-row" className="mb-1 block text-sm font-medium text-cinema-text">
                 행 라벨 *
               </label>
               <input
@@ -344,13 +344,13 @@ export function AdminSeatsPage() {
                 type="text"
                 value={form.rowLabel}
                 onChange={(e) => setForm((f) => ({ ...f, rowLabel: e.target.value }))}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text placeholder:text-cinema-muted focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
                 placeholder="예: A"
                 required
               />
             </div>
             <div>
-              <label htmlFor="seat-no" className="block text-sm font-medium text-gray-700">
+              <label htmlFor="seat-no" className="mb-1 block text-sm font-medium text-cinema-text">
                 좌석 번호 *
               </label>
               <input
@@ -364,13 +364,13 @@ export function AdminSeatsPage() {
                     seatNo: Number.parseInt(e.target.value, 10) || 0,
                   }))
                 }
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
                 required
               />
             </div>
           </div>
           <div>
-            <label htmlFor="seat-type" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="seat-type" className="mb-1 block text-sm font-medium text-cinema-text">
               좌석 타입 *
             </label>
             <select
@@ -379,7 +379,7 @@ export function AdminSeatsPage() {
               onChange={(e) =>
                 setForm((f) => ({ ...f, seatType: e.target.value as AdminSeatType }))
               }
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm"
+              className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
             >
               {(Object.keys(SEAT_TYPE_LABEL) as AdminSeatType[]).map((k) => (
                 <option key={k} value={k}>
@@ -392,14 +392,14 @@ export function AdminSeatsPage() {
             <button
               type="button"
               onClick={closeModal}
-              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="rounded-xl border border-cinema-glass-border bg-cinema-glass px-4 py-2 text-sm font-medium text-cinema-text transition hover:bg-cinema-glass-border"
             >
               취소
             </button>
             <button
               type="submit"
               disabled={submitLoading}
-              className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+              className="rounded-xl bg-cinema-neon-blue px-4 py-2 text-sm font-medium text-black transition hover:opacity-90 disabled:opacity-50"
             >
               {submitLoading ? '처리 중...' : '등록'}
             </button>
@@ -411,12 +411,12 @@ export function AdminSeatsPage() {
       <Modal isOpen={modalOpen && !!editing} onClose={closeModal} title="좌석 수정" size="sm">
         <form onSubmit={handleUpdateSubmit} className="space-y-4">
           {editing && (
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-cinema-muted">
               {editing.screenName} - {editing.displayName}
             </p>
           )}
           <div>
-            <label htmlFor="edit-seat-type" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="edit-seat-type" className="mb-1 block text-sm font-medium text-cinema-text">
               좌석 타입
             </label>
             <select
@@ -428,7 +428,7 @@ export function AdminSeatsPage() {
                   seatType: e.target.value as AdminSeatType,
                 }))
               }
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm"
+              className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
             >
               {(Object.keys(SEAT_TYPE_LABEL) as AdminSeatType[]).map((k) => (
                 <option key={k} value={k}>
@@ -438,7 +438,7 @@ export function AdminSeatsPage() {
             </select>
           </div>
           <div>
-            <label htmlFor="edit-base-status" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="edit-base-status" className="mb-1 block text-sm font-medium text-cinema-text">
               기본 상태 *
             </label>
             <select
@@ -450,7 +450,7 @@ export function AdminSeatsPage() {
                   baseStatus: e.target.value as AdminSeatBaseStatus,
                 }))
               }
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm"
+              className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
             >
               {(Object.keys(BASE_STATUS_LABEL) as AdminSeatBaseStatus[]).map((k) => (
                 <option key={k} value={k}>
@@ -463,14 +463,14 @@ export function AdminSeatsPage() {
             <button
               type="button"
               onClick={closeModal}
-              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="rounded-xl border border-cinema-glass-border bg-cinema-glass px-4 py-2 text-sm font-medium text-cinema-text transition hover:bg-cinema-glass-border"
             >
               취소
             </button>
             <button
               type="submit"
               disabled={submitLoading}
-              className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+              className="rounded-xl bg-cinema-neon-blue px-4 py-2 text-sm font-medium text-black transition hover:opacity-90 disabled:opacity-50"
             >
               {submitLoading ? '처리 중...' : '수정'}
             </button>

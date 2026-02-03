@@ -56,7 +56,7 @@ export const Modal = ({ isOpen, onClose, title, children, size = 'md' }: ModalPr
             </button>
           </div>
         )}
-        <div className="p-5 text-cinema-muted sm:p-6">{children}</div>
+        <div className="p-5 text-cinema-text sm:p-6">{children}</div>
       </div>
     </div>
   );

@@ -312,13 +312,13 @@ export function AdminScreeningsPage() {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">영화 *</label>
+            <label className="mb-1 block text-sm font-medium text-cinema-text">영화 *</label>
             <select
               value={form.movieId || ''}
               onChange={(e) =>
                 setForm((f) => ({ ...f, movieId: Number.parseInt(e.target.value, 10) || 0 }))
               }
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
               required
             >
               <option value="">선택</option>
@@ -330,13 +330,13 @@ export function AdminScreeningsPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">상영관 *</label>
+            <label className="mb-1 block text-sm font-medium text-cinema-text">상영관 *</label>
             <select
               value={form.screenId || ''}
               onChange={(e) =>
                 setForm((f) => ({ ...f, screenId: Number.parseInt(e.target.value, 10) || 0 }))
               }
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
               required
             >
               <option value="">선택</option>
@@ -348,15 +348,15 @@ export function AdminScreeningsPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">상영 시작 시간 *</label>
+            <label className="mb-1 block text-sm font-medium text-cinema-text">상영 시작 시간 *</label>
             <input
               type="datetime-local"
               value={form.startTime}
               onChange={(e) => setForm((f) => ({ ...f, startTime: e.target.value }))}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+              className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
               required
             />
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs text-cinema-muted">
               종료 시간은 영화 상영 시간에 따라 자동 계산됩니다.
             </p>
           </div>
@@ -364,14 +364,14 @@ export function AdminScreeningsPage() {
             <button
               type="button"
               onClick={closeModal}
-              className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+              className="rounded-xl border border-cinema-glass-border bg-cinema-glass px-4 py-2 text-sm font-medium text-cinema-text transition hover:bg-cinema-glass-border"
             >
               취소
             </button>
             <button
               type="submit"
               disabled={submitLoading}
-              className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+              className="rounded-xl bg-cinema-neon-blue px-4 py-2 text-sm font-medium text-black transition hover:opacity-90 disabled:opacity-50"
             >
               {submitLoading ? '처리 중...' : editing ? '수정' : '등록'}
             </button>

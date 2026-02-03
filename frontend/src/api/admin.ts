@@ -139,13 +139,24 @@ export const adminScreensApi = {
   },
 };
 
+/** 상영 스케줄 목록 파라미터 (시작일자 내림차순 정렬) */
+export interface AdminScreeningsListParams extends PaginationParams {
+  sort?: string;
+}
+
 /** 상영 스케줄 관리 */
 export const adminScreeningsApi = {
-  getList: async (params?: PaginationParams) => {
+  getList: async (params?: AdminScreeningsListParams) => {
     const { data } = await axiosInstance.get<
       ApiResponseBody<AdminPageData<AdminScreeningResponse>>
     >(`${prefix}/screenings`, {
-      params: params ? { page: params.page, size: params.size } : undefined,
+      params: params
+        ? {
+            page: params.page,
+            size: params.size,
+            sort: params.sort ?? 'startTime,desc',
+          }
+        : undefined,
     });
     return data;
   },
