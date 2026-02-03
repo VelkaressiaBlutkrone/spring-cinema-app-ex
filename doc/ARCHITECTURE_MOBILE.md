@@ -1,68 +1,95 @@
 # 모바일 아키텍처 (Mobile Architecture)
 
+> **관련 문서**: [ARCHITECTURE_ALL.md](./ARCHITECTURE_ALL.md) | [MOBILE_MODULES.md](./MOBILE_MODULES.md)
+
 ## 1. 앱 네비게이션 구조
 
 Flutter 앱의 화면 흐름도입니다.
 
 ```mermaid
 graph TD
-    Splash[스플래시 화면] --> AuthCheck{토큰 확인}
+    AuthGate[AuthGate] --> AuthCheck{인증 상태}
 
-    AuthCheck -- 유효 --> MainTab[메인 탭 화면]
-    AuthCheck -- 만료/없음 --> Login[로그인 화면]
+    AuthCheck -- 로그인됨 --> MainTab[MainTabScreen]
+    AuthCheck -- 미로그인 --> Login[LoginScreen]
 
-    Login --> SignUp[회원가입]
+    Login --> SignUp[SignupScreen]
     Login --> MainTab
+    SignUp --> MainTab
 
     subgraph Main [메인 탭]
-        Home[홈/영화목록]
-        Ticket[예매내역]
-        My[마이페이지]
+        Home[홈 - CinemaHomeScreen]
+        Movies[영화 - MoviesScreen]
+        Reservations[예매내역 - ReservationsScreen]
+        MyPage[마이페이지 - MyPageScreen]
     end
 
-    MainTab --> MovieDetail[영화 상세]
-    MovieDetail --> SeatSelect[좌석 선택]
+    MainTab --> MovieDetail[MovieDetailScreen]
+    MovieDetail --> SeatSelect[SeatSelectScreen]
 
-    SeatSelect --> Payment[결제 화면]
-    Payment --> Result[결제 결과]
-    Result --> Ticket
+    SeatSelect --> Payment[PaymentScreen]
+    Payment --> Result[PaymentCompleteScreen]
+    Result --> MainTab
+
+    Reservations --> ReservationDetail[ReservationDetailScreen]
 ```
 
-## 2. 아키텍처 패턴 (Riverpod + MVVM)
+## 2. 디렉터리 구조
 
-상태 관리와 비즈니스 로직 분리를 위한 구조입니다.
+```
+mobile/lib/
+├── config/       # API 경로 (api_config.dart)
+├── exception/    # AppException, ApiException, ErrorCode
+├── models/       # API 응답 DTO (movie, seat, reservation 등)
+├── provider/     # Riverpod (auth, api, main_tab)
+├── screens/      # 화면 위젯 (auth, home, movies, seat, payment, reservations, mypage)
+├── services/     # API 호출 (ApiClient, AuthApiService, ScreeningApiService 등)
+├── theme/        # CinemaTheme, CinemaColors
+├── utils/        # app_logger, hybrid_encryption, jwt_utils
+└── widgets/      # GlassCard, NeonButton, ErrorDialog, LoadingOverlay
+```
+
+## 3. 아키텍처 패턴 (Riverpod + 서비스 레이어)
 
 ```mermaid
 classDiagram
-    class UI_Widget {
+    class Screen {
         +build()
-        +watch(provider)
+        +ref.watch(provider)
     }
 
-    class ViewModel_Provider {
-        +state
-        +fetchData()
-        +updateState()
+    class Provider {
+        +apiClientProvider
+        +screeningApiServiceProvider
+        +authStateProvider
     }
 
-    class Repository {
-        +getMovies()
-        +holdSeat()
+    class ApiService {
+        +getSeatLayout()
+        +hold()
+        +releaseHold()
     }
 
-    class DataSource {
-        +Dio Client
-        +Secure Storage
+    class ApiClient {
+        +get()
+        +post()
+        +Bearer token 주입
     }
 
-    UI_Widget ..> ViewModel_Provider : Watches
-    ViewModel_Provider ..> Repository : Calls
-    Repository ..> DataSource : Uses
+    Screen ..> Provider : Watches
+    Provider ..> ApiService : Provides
+    ApiService ..> ApiClient : Uses
+    ApiClient ..> Backend : HTTP
 ```
 
-## 3. 주요 기술적 고려사항
+## 4. 주요 기술적 고려사항
 
-- **상태 관리**: `flutter_riverpod`를 사용하여 전역 상태 및 비동기 데이터 관리
-- **네트워크**: `Dio` 패키지 사용, Interceptor를 통한 JWT 토큰 자동 주입 및 갱신
-- **좌석 맵**: `CustomPainter`를 사용하여 고성능 좌석 그리드 렌더링
-- **실시간 통신**: `web_socket_channel` 또는 SSE 클라이언트를 통한 좌석 상태 수신
+| 항목 | 구현 |
+|------|------|
+| **상태 관리** | `flutter_riverpod` — 전역 상태, 비동기 데이터(AsyncValue) |
+| **네트워크** | `http` 패키지, `ApiClient`에 Bearer 토큰 콜백 주입 |
+| **인증** | `flutter_secure_storage`로 Access/Refresh 토큰 저장 |
+| **암호화** | 하이브리드 암호화(RSA-OAEP + AES-GCM) — 로그인/회원가입 비밀번호 |
+| **좌석 맵** | `SeatSelectScreen` — 좌석 그리드 렌더링 |
+| **실시간 통신** | `seat_sse_client.dart` — SSE로 좌석 상태 변경 수신 |
+| **로깅** | `app_logger`, `file_log_service` — 파일 저장(7일), 백엔드 전송 |

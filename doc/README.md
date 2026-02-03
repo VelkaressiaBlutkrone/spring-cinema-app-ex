@@ -98,6 +98,24 @@
 
 ---
 
+#### [ARCHITECTURE_FRONTEND.md](./ARCHITECTURE_FRONTEND.md) - 프론트엔드 아키텍처
+
+React 웹 애플리케이션의 아키텍처를 설명합니다.
+
+**주요 내용:**
+
+- 기술 스택 (React, TypeScript, Vite, Zustand, Axios)
+- 라우팅 구조 (사용자/관리자 영역)
+- 디렉터리 구조, API 레이어
+- 인증 흐름 (JWT, Refresh Token)
+- 공통 컴포넌트, 예매 플로우
+- 실시간 좌석 갱신 (useSeatEvents)
+- 테마, 로깅
+
+**대상 독자:** 프론트엔드 개발자 (React/TypeScript)
+
+---
+
 #### [ARCHITECTURE_MOBILE.md](./ARCHITECTURE_MOBILE.md) - 모바일 아키텍처
 
 Flutter 모바일 앱의 아키텍처를 설명합니다.
@@ -149,7 +167,7 @@ Flutter 모바일 앱의 아키텍처를 설명합니다.
 
 #### [MOBILE_MODULES.md](./MOBILE_MODULES.md) - 모바일 재사용 모듈
 
-모바일 앱에서 재사용 가능한 모듈들을 정리한 문서입니다. (현재 비어있음)
+모바일 앱에서 재사용 가능한 모듈들을 정리한 문서입니다.
 
 **대상 독자:** 모바일 개발자 (Flutter)
 
@@ -240,8 +258,8 @@ MySQL, Redis를 제외한 백엔드/프론트엔드/모바일 애플리케이션
 3. [ARCHITECTURE_ALL.md](./ARCHITECTURE_ALL.md) - 전체 시스템 아키텍처 파악
 4. 역할별 상세 문서:
    - 백엔드: [ARCHITECTURE_BACKEND.md](./ARCHITECTURE_BACKEND.md) → [BACKEND_MODULES.md](./BACKEND_MODULES.md)
-   - 프론트엔드: [FRONTEND_MODULES.md](./FRONTEND_MODULES.md)
-   - 모바일: [ARCHITECTURE_MOBILE.md](./ARCHITECTURE_MOBILE.md)
+   - 프론트엔드: [ARCHITECTURE_FRONTEND.md](./ARCHITECTURE_FRONTEND.md) → [FRONTEND_MODULES.md](./FRONTEND_MODULES.md)
+   - 모바일: [ARCHITECTURE_MOBILE.md](./ARCHITECTURE_MOBILE.md) → [MOBILE_MODULES.md](./MOBILE_MODULES.md)
 5. [DEVELOPMENT_ENVIRONMENT.md](./DEVELOPMENT_ENVIRONMENT.md) - 개발환경 세팅
 6. [SERVER_STARTUP_GUIDE.md](./SERVER_STARTUP_GUIDE.md) - 서버 구동 가이드
 7. [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) - 문제 발생 시 참고
@@ -257,8 +275,9 @@ MySQL, Redis를 제외한 백엔드/프론트엔드/모바일 애플리케이션
 1. [PRD.md](./PRD.md) - 비기능 요구사항 파악
 2. [ARCHITECTURE_ALL.md](./ARCHITECTURE_ALL.md) - 전체 아키텍처 검토
 3. [ARCHITECTURE_BACKEND.md](./ARCHITECTURE_BACKEND.md) - 백엔드 상세 설계
-4. [ARCHITECTURE_MOBILE.md](./ARCHITECTURE_MOBILE.md) - 모바일 상세 설계
-5. [RULE.md](./RULE.md) - 아키텍처 원칙 및 규칙
+4. [ARCHITECTURE_FRONTEND.md](./ARCHITECTURE_FRONTEND.md) - 프론트엔드 상세 설계
+5. [ARCHITECTURE_MOBILE.md](./ARCHITECTURE_MOBILE.md) - 모바일 상세 설계
+6. [RULE.md](./RULE.md) - 아키텍처 원칙 및 규칙
 
 ---
 

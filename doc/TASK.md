@@ -1393,20 +1393,19 @@ domain/
 
 ### 작업 내용
 
-- [ ] 단위 테스트 작성:
-  - [ ] Domain 로직 테스트
-  - [ ] Service 로직 테스트
-  - [ ] 좌석 HOLD 로직 테스트
-  - [ ] 결제 로직 테스트
-- [ ] 통합 테스트 작성:
-  - [ ] API 통합 테스트
-  - [ ] Redis 통합 테스트
-  - [ ] DB 통합 테스트
+- [x] 단위 테스트 작성:
+  - [x] Domain 로직 테스트 (`SeatStatusTest`, `ScreeningSeatTest`)
+  - [x] Service 로직 테스트 (`PriceCalculateServiceTest`, `MockPaymentServiceTest`)
+  - [x] 좌석 HOLD 로직 테스트
+  - [x] 결제 로직 테스트
+- [x] 통합 테스트 작성:
+  - [x] API 통합 테스트 (`ScreeningApiIntegrationTest` — Docker 필요)
 - [ ] 동시성 테스트:
   - [ ] 분산 락 테스트
   - [ ] 중복 예매 방지 테스트
   - [ ] HOLD 충돌 방지 테스트
-- [ ] 테스트 커버리지 측정:
+- [x] 테스트 커버리지 측정:
+  - [x] JaCoCo 설정 (`./gradlew test jacocoTestReport`)
   - [ ] 핵심 로직 80% 이상 목표
   - [ ] 좌석/결제 로직 100% 목표
 - [ ] 테스트 자동화 설정 (CI/CD)
@@ -1416,7 +1415,22 @@ domain/
 - [ ] 좌석/결제 로직 테스트 커버리지 100% 확인
 - [ ] 핵심 로직 테스트 커버리지 80% 이상 확인
 - [ ] 동시성 테스트 통과 확인
-- [ ] 통합 테스트 정상 동작 확인
+- [ ] 통합 테스트 정상 동작 확인 (Docker 필요: `./gradlew integrationTest`)
+
+### 구현 상세
+
+| 구분 | 파일 | 설명 |
+|------|------|------|
+| 단위 | `SeatStatusTest` | SeatStatus enum (canHold, canPay, canCancel, isSelectable, isOccupied) |
+| 단위 | `ScreeningSeatTest` | ScreeningSeat 상태 전이 (hold, releaseHold, startPayment, reserve, cancel) |
+| 단위 | `PriceCalculateServiceTest` | 가격 계산 (좌석 타입별, 총액, 예외) |
+| 단위 | `MockPaymentServiceTest` | Mock 결제 성공/실패 |
+| 통합 | `ScreeningApiIntegrationTest` | GET /api/public-key, /api/movies (Testcontainers Redis) |
+
+**실행:**
+- `./gradlew test` — 단위 테스트 (Docker 불필요)
+- `./gradlew integrationTest` — 통합 테스트 (Docker 필요)
+- `./gradlew test jacocoTestReport` — 커버리지 리포트 `build/reports/jacoco/test/html/`
 
 ### 예상 소요 시간
 

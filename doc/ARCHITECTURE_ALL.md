@@ -1,5 +1,7 @@
 # 전체 시스템 아키텍처 (System Architecture)
 
+> **관련 문서**: [ARCHITECTURE_BACKEND.md](./ARCHITECTURE_BACKEND.md) | [ARCHITECTURE_FRONTEND.md](./ARCHITECTURE_FRONTEND.md) | [ARCHITECTURE_MOBILE.md](./ARCHITECTURE_MOBILE.md)
+
 ## 1. 시스템 컨테이너 다이어그램
 
 영화 예매 시스템의 전체적인 컨테이너 구조와 상호작용을 나타냅니다.
@@ -61,3 +63,12 @@ C4Context
    - HOLD Token을 검증합니다.
    - 결제 성공 시 DB에 예매 정보를 저장하고(Source of Truth), Redis 상태를 정리합니다.
 4. **실시간 갱신**: 좌석 상태 변경 시 WebSocket/SSE를 통해 접속 중인 클라이언트에게 변경된 좌석 ID만 푸시합니다.
+5. **장애 대응 (Step 18)**: Redis 장애 시 읽기는 DB Fallback, 쓰기(예매)는 Fail Fast로 차단. Redis 복구 시 DB→Redis 상태 동기화.
+
+## 4. 아키텍처 문서
+
+| 문서 | 대상 | 설명 |
+|------|------|------|
+| [ARCHITECTURE_BACKEND.md](./ARCHITECTURE_BACKEND.md) | 백엔드 개발자 | 도메인 모델, 좌석 상태 머신, 예매 시퀀스, 패키지 구조 |
+| [ARCHITECTURE_FRONTEND.md](./ARCHITECTURE_FRONTEND.md) | 프론트엔드 개발자 | React 라우팅, 상태 관리, API 레이어, 공통 컴포넌트 |
+| [ARCHITECTURE_MOBILE.md](./ARCHITECTURE_MOBILE.md) | 모바일 개발자 | Flutter 네비게이션, Riverpod, API 서비스 |
