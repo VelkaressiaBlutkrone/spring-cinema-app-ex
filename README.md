@@ -21,7 +21,7 @@
 ## 프로젝트 특징
 
 | 구분 | 내용 |
-|------|------|
+| ------ | ------ |
 | **아키텍처** | DDD, Aggregate Root(Screening), Stateless REST API |
 | **동시성** | Redisson 분산 락, Redis HOLD + TTL, 트랜잭션 일관성 |
 | **실시간** | SSE 기반 좌석 상태 브로드캐스트, 새로고침 없이 좌석 갱신 |
@@ -82,7 +82,7 @@ flowchart TB
 ## 스킬 구성 (기술 스택)
 
 | 영역 | 기술 | 비고 |
-|------|------|------|
+| ------ | ------ | ------ |
 | **Backend** | Spring Boot 4.0.2, Java 21 | Web, JPA, Redis, Security, WebSocket, Actuator |
 | | QueryDSL 5.1 (Jakarta), Gson, Lombok | |
 | | JWT (jjwt 0.12), Redisson 3.40 (분산 락) | |
@@ -108,7 +108,7 @@ flowchart TB
 
 ### 디렉터리 구조
 
-```
+```text
 spring-cinema-app-ex/
 ├── src/                    # 백엔드 (Spring Boot)
 │   ├── main/java/com/cinema/
@@ -171,7 +171,7 @@ MySQL, Redis, 백엔드, 프론트엔드, 모바일 웹을 한 번에 띄우려�
 ## 프로젝트 문서 링크
 
 | 문서 | 설명 |
-|------|------|
+| ------ | ------ |
 | [doc/README.md](doc/README.md) | **문서 목차** (전체 문서 인덱스) |
 | [doc/PRD.md](doc/PRD.md) | 제품 요구사항 (목표, 성능, 보안, 기술 스택) |
 | [doc/RULE.md](doc/RULE.md) | 개발 규칙 (아키텍처, 좌석 상태, Redis, 트랜잭션, 보안) |
