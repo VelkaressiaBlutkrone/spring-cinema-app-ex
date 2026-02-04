@@ -33,32 +33,41 @@
 
 ## 아키텍처 구조
 
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                        Cinema Reservation System                         │
-├─────────────────────────────────────────────────────────────────────────┤
-│  [Web App]          [Mobile App]          [Admin Web]                    │
-│  React + Vite       Flutter               React (동일 앱 내 /admin)      │
-└────────┬────────────────────┬────────────────────┬──────────────────────┘
-         │                    │                    │
-         └────────────────────┼────────────────────┘
-                              │ HTTPS / JSON
-                              ▼
-         ┌─────────────────────────────────────────┐
-         │  Nginx (API Gateway / 정적 리소스)       │
-         └────────────────────┬────────────────────┘
-                              │
-                              ▼
-         ┌─────────────────────────────────────────┐
-         │  Backend API (Spring Boot 4, Java 21)   │
-         │  REST API · SSE · JWT · QueryDSL        │
-         └────────┬───────────────────┬────────────┘
-                  │                   │
-         ┌────────▼────────┐  ┌───────▼───────┐
-         │  MySQL 8.0      │  │  Redis         │
-         │  (Source of     │  │  (캐시·분산락   │
-         │   Truth)        │  │   HOLD·세션)   │
-         └─────────────────┘  └────────────────┘
+```mermaid
+flowchart TB
+    %% =========================
+    %% Cinema Reservation System
+    %% =========================
+    subgraph CRS["Cinema Reservation System"]
+        direction LR
+
+        subgraph FE[""]
+            direction LR
+            WEB["Web App<br/>React + Vite"]
+            MOB["Mobile App<br/>Flutter"]
+            ADMIN["Admin Web<br/>React (동일 앱 내 /admin)"]
+        end
+    end
+
+    %% Communication
+    WEB -->|HTTPS / JSON| NGINX
+    MOB -->|HTTPS / JSON| NGINX
+    ADMIN -->|HTTPS / JSON| NGINX
+
+    %% Nginx
+    NGINX["Nginx<br/>(API Gateway / 정적 리소스)"]
+
+    %% Backend
+    NGINX --> BACKEND
+    BACKEND["Backend API<br/>(Spring Boot 4 · Java 21)<br/>REST API · SSE · JWT · QueryDSL"]
+
+    %% Datastores
+    BACKEND --> MYSQL
+    BACKEND --> REDIS
+
+    MYSQL["MySQL 8.0<br/>(Source of Truth)"]
+    REDIS["Redis<br/>(캐시 · 분산락 · HOLD · 세션)"]
+
 ```
 
 - **백엔드**: Controller → Service → Domain → Infrastructure 레이어, Screening Aggregate Root가 좌석 상태 관리
@@ -128,9 +137,9 @@ spring-cinema-app-ex/
 ./gradlew bootRun --args='--spring.profiles.active=prod'  # MySQL
 ```
 
-- **API**: http://localhost:8080
-- **Swagger UI**: http://localhost:8080/swagger-ui.html
-- **H2 Console (dev)**: http://localhost:8082/h2-console
+- **API**: <http://localhost:8080>
+- **Swagger UI**: <http://localhost:8080/swagger-ui.html>
+- **H2 Console (dev)**: <http://localhost:8082/h2-console>
 
 ### 2. 웹 프론트엔드 (React)
 
@@ -140,7 +149,7 @@ npm install
 npm run dev
 ```
 
-- **접속**: http://localhost:5173 (Vite 기본)
+- **접속**: <http://localhost:5173> (Vite 기본)
 
 ### 3. 모바일 (Flutter, 선택)
 
