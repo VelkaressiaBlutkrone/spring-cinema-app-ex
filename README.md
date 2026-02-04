@@ -34,39 +34,42 @@
 ## 아키텍처 구조
 
 ```mermaid
+
 flowchart TB
     %% =========================
     %% Cinema Reservation System
     %% =========================
+
     subgraph CRS["Cinema Reservation System"]
         direction LR
 
-        subgraph FE[""]
+        subgraph FE["Client Apps"]
             direction LR
             WEB["Web App<br/>React + Vite"]
             MOB["Mobile App<br/>Flutter"]
-            ADMIN["Admin Web<br/>React (동일 앱 내 /admin)"]
+            ADMIN["Admin Web<br/>React (/admin)"]
         end
     end
 
-    %% Communication
+    %% Client → Gateway
     WEB -->|HTTPS / JSON| NGINX
     MOB -->|HTTPS / JSON| NGINX
     ADMIN -->|HTTPS / JSON| NGINX
 
-    %% Nginx
-    NGINX["Nginx<br/>(API Gateway / 정적 리소스)"]
+    %% Gateway
+    NGINX["Nginx<br/>(API Gateway / Static Resources)"]
 
     %% Backend
     NGINX --> BACKEND
-    BACKEND["Backend API<br/>(Spring Boot 4 · Java 21)<br/>REST API · SSE · JWT · QueryDSL"]
+    BACKEND["Backend API<br/>(Spring Boot 4 · Java 21)<br/>REST · SSE · JWT · QueryDSL"]
 
     %% Datastores
     BACKEND --> MYSQL
     BACKEND --> REDIS
 
     MYSQL["MySQL 8.0<br/>(Source of Truth)"]
-    REDIS["Redis<br/>(캐시 · 분산락 · HOLD · 세션)"]
+    REDIS["Redis<br/>(Cache · Distributed Lock · HOLD · Session)"]
+
 
 ```
 
