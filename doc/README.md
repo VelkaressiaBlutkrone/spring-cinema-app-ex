@@ -32,6 +32,7 @@
 | 문서 | 설명 | 대상 독자 |
 |------|------|----------|
 | [SECURITY_AUTH.md](./SECURITY_AUTH.md) | 인증·보안 상세 (HTTPS, Hybrid Encryption RSA+AES-GCM, JWT, Refresh Cookie, OWASP) | 백엔드 개발자, 보안 담당자 |
+| [USER_PROFILE.md](./USER_PROFILE.md) | 사용자 프로필 기능 (회원가입, 인증, 프로필 CRUD, HOLD 조회, API 명세) | 백엔드 개발자, 프론트엔드 개발자, 모바일 개발자 |
 
 **주요 내용:**
 - 로그인/회원가입 암호화 흐름 (RSA + AES-GCM Hybrid)
@@ -214,6 +215,7 @@
 
 | 날짜 | 문서 | 변경 내용 | 작성자 |
 |------|------|----------|--------|
+| 2026-02-05 | USER_PROFILE.md, README.md | 사용자 프로필 기능 문서 초안 작성, 목차에 추가 | Copilot |
 | 2026-02-04 | README.md | 전면 개편 - 누락 문서 추가, 카테고리 재구성, trouble/ 폴더 문서화 | VelkaressiaBlutkrone |
 | 2026-01-28 | trouble/ | 최근 문제점 정리 (10-recent-issues.md) | Team |
 | 2026-01-23 | README.md | 초기 작성 - 문서 목차 및 설명 추가 | Copilot |
@@ -234,4 +236,4 @@
 
 ---
 
-**Last Updated:** 2026-02-04
+**Last Updated:** 2026-02-05
