@@ -1,4 +1,9 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'seat.g.dart';
+
 /// 좌석 배치 조회 응답 (SeatLayoutResponse)
+@JsonSerializable()
 class SeatLayoutModel {
   SeatLayoutModel({
     required this.screeningId,
@@ -8,16 +13,12 @@ class SeatLayoutModel {
   final int screeningId;
   final List<SeatStatusItemModel> seats;
 
-  factory SeatLayoutModel.fromJson(Map<String, dynamic> json) {
-    final list = json['seats'] as List<dynamic>? ?? [];
-    return SeatLayoutModel(
-      screeningId: (json['screeningId'] as num).toInt(),
-      seats: list.map((e) => SeatStatusItemModel.fromJson(e as Map<String, dynamic>)).toList(),
-    );
-  }
+  factory SeatLayoutModel.fromJson(Map<String, dynamic> json) => _$SeatLayoutModelFromJson(json);
+  Map<String, dynamic> toJson() => _$SeatLayoutModelToJson(this);
 }
 
 /// 좌석 상태 항목 (SeatStatusItem)
+@JsonSerializable()
 class SeatStatusItemModel {
   SeatStatusItemModel({
     required this.seatId,
@@ -30,8 +31,11 @@ class SeatStatusItemModel {
   });
 
   final int seatId;
+  @JsonKey(defaultValue: 'AVAILABLE')
   final String status; // AVAILABLE, HOLD, RESERVED, PAYMENT_PENDING, BLOCKED, DISABLED
+  @JsonKey(defaultValue: '')
   final String rowLabel;
+  @JsonKey(defaultValue: 0)
   final int seatNo;
   final String? holdExpireAt;
   /// 현재 사용자 소유 HOLD일 때만 API가 내려줌 (재진입 시 취소용)
@@ -39,17 +43,8 @@ class SeatStatusItemModel {
   /// 현재 사용자 소유 HOLD 여부
   final bool? isHeldByCurrentUser;
 
-  factory SeatStatusItemModel.fromJson(Map<String, dynamic> json) {
-    return SeatStatusItemModel(
-      seatId: (json['seatId'] as num).toInt(),
-      status: json['status'] as String? ?? 'AVAILABLE',
-      rowLabel: json['rowLabel'] as String? ?? '',
-      seatNo: (json['seatNo'] as num?)?.toInt() ?? 0,
-      holdExpireAt: json['holdExpireAt']?.toString(),
-      holdToken: json['holdToken'] as String?,
-      isHeldByCurrentUser: json['isHeldByCurrentUser'] as bool?,
-    );
-  }
+  factory SeatStatusItemModel.fromJson(Map<String, dynamic> json) => _$SeatStatusItemModelFromJson(json);
+  Map<String, dynamic> toJson() => _$SeatStatusItemModelToJson(this);
 
   bool get isAvailable => status == 'AVAILABLE';
   bool get isHold => status == 'HOLD';
@@ -59,6 +54,7 @@ class SeatStatusItemModel {
 }
 
 /// 좌석 HOLD 응답 (SeatHoldResponse)
+@JsonSerializable()
 class SeatHoldModel {
   SeatHoldModel({
     required this.holdToken,
@@ -68,19 +64,13 @@ class SeatHoldModel {
     this.ttlSeconds,
   });
 
+  @JsonKey(defaultValue: '')
   final String holdToken;
   final int screeningId;
   final int seatId;
   final String? holdExpireAt;
   final int? ttlSeconds;
 
-  factory SeatHoldModel.fromJson(Map<String, dynamic> json) {
-    return SeatHoldModel(
-      holdToken: json['holdToken'] as String? ?? '',
-      screeningId: (json['screeningId'] as num).toInt(),
-      seatId: (json['seatId'] as num).toInt(),
-      holdExpireAt: json['holdExpireAt']?.toString(),
-      ttlSeconds: (json['ttlSeconds'] as num?)?.toInt(),
-    );
-  }
+  factory SeatHoldModel.fromJson(Map<String, dynamic> json) => _$SeatHoldModelFromJson(json);
+  Map<String, dynamic> toJson() => _$SeatHoldModelToJson(this);
 }

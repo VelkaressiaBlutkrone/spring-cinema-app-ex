@@ -1,4 +1,9 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'movie.g.dart';
+
 /// 영화 응답 DTO (MovieResponse)
+@JsonSerializable()
 class MovieModel {
   MovieModel({
     required this.id,
@@ -17,6 +22,7 @@ class MovieModel {
   });
 
   final int id;
+  @JsonKey(defaultValue: '')
   final String title;
   final String? description;
   final int? runningTime;
@@ -30,21 +36,6 @@ class MovieModel {
   final String? createdAt;
   final String? updatedAt;
 
-  factory MovieModel.fromJson(Map<String, dynamic> json) {
-    return MovieModel(
-      id: (json['id'] as num).toInt(),
-      title: json['title'] as String? ?? '',
-      description: json['description']?.toString(),
-      runningTime: (json['runningTime'] as num?)?.toInt(),
-      rating: json['rating']?.toString(),
-      genre: json['genre']?.toString(),
-      director: json['director']?.toString(),
-      actors: json['actors']?.toString(),
-      posterUrl: json['posterUrl']?.toString(),
-      releaseDate: json['releaseDate']?.toString(),
-      status: json['status']?.toString(),
-      createdAt: json['createdAt']?.toString(),
-      updatedAt: json['updatedAt']?.toString(),
-    );
-  }
+  factory MovieModel.fromJson(Map<String, dynamic> json) => _$MovieModelFromJson(json);
+  Map<String, dynamic> toJson() => _$MovieModelToJson(this);
 }

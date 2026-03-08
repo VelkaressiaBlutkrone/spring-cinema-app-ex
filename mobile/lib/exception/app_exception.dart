@@ -51,3 +51,20 @@ class AuthException extends AppException {
   AuthException(super.message, {this.statusCode, super.originalException, super.stackTrace});
   final int? statusCode;
 }
+
+/// 유효성 검증 실패 (4xx 클라이언트 에러)
+class ValidationException extends AppException {
+  ValidationException(super.message, {this.statusCode, super.originalException, super.stackTrace});
+  final int? statusCode;
+}
+
+/// 서버 내부 오류 (5xx)
+class ServerException extends AppException {
+  ServerException(super.message, {this.statusCode, super.originalException, super.stackTrace});
+  final int? statusCode;
+}
+
+/// 네트워크 연결 실패 (타임아웃, DNS 실패 등)
+class NetworkException extends AppException {
+  const NetworkException(super.message, {super.originalException, super.stackTrace});
+}

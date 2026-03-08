@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/cinema_theme.dart';
 
 /// 버튼 스타일 열거형 및 확장
 enum CustomButtonStyle { primary, secondary, danger }
@@ -8,11 +9,11 @@ extension CustomButtonStyleExtension on CustomButtonStyle {
   Color get backgroundColor {
     switch (this) {
       case CustomButtonStyle.primary:
-        return Colors.blue;
+        return CinemaColors.neonBlue;
       case CustomButtonStyle.secondary:
         return Colors.grey.shade600;
       case CustomButtonStyle.danger:
-        return Colors.red;
+        return CinemaColors.neonRed;
     }
   }
 

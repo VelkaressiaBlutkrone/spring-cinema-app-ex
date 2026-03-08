@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../exception/app_exception.dart';
@@ -59,10 +60,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
             TextButton(
               onPressed: () {
                 Navigator.of(ctx).pop();
-                Navigator.of(context).pushNamedAndRemoveUntil(
-                  '/login',
-                  (route) => false,
-                );
+                context.go('/login');
               },
               child: const Text('확인'),
             ),

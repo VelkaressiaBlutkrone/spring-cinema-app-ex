@@ -1,4 +1,9 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'member.g.dart';
+
 /// 회원 프로필 조회 응답 (GET /api/members/me)
+@JsonSerializable()
 class MemberProfileModel {
   MemberProfileModel({
     required this.loginId,
@@ -7,22 +12,19 @@ class MemberProfileModel {
     this.phone,
   });
 
+  @JsonKey(defaultValue: '')
   final String loginId;
+  @JsonKey(defaultValue: '')
   final String name;
   final String? email;
   final String? phone;
 
-  factory MemberProfileModel.fromJson(Map<String, dynamic> json) {
-    return MemberProfileModel(
-      loginId: json['loginId'] as String? ?? '',
-      name: json['name'] as String? ?? '',
-      email: json['email'] as String?,
-      phone: json['phone'] as String?,
-    );
-  }
+  factory MemberProfileModel.fromJson(Map<String, dynamic> json) => _$MemberProfileModelFromJson(json);
+  Map<String, dynamic> toJson() => _$MemberProfileModelToJson(this);
 }
 
 /// 마이페이지 HOLD(장바구니) 요약 - 상영별 그룹
+@JsonSerializable()
 class MemberHoldSummaryModel {
   MemberHoldSummaryModel({
     required this.screeningId,
@@ -33,24 +35,20 @@ class MemberHoldSummaryModel {
   });
 
   final int screeningId;
+  @JsonKey(defaultValue: '')
   final String movieTitle;
+  @JsonKey(defaultValue: '')
   final String screenName;
+  @JsonKey(defaultValue: '')
   final String startTime;
   final List<MemberHoldSeatItemModel> seats;
 
-  factory MemberHoldSummaryModel.fromJson(Map<String, dynamic> json) {
-    final list = json['seats'] as List<dynamic>? ?? [];
-    return MemberHoldSummaryModel(
-      screeningId: (json['screeningId'] as num).toInt(),
-      movieTitle: json['movieTitle'] as String? ?? '',
-      screenName: json['screenName'] as String? ?? '',
-      startTime: json['startTime'] as String? ?? '',
-      seats: list.map((e) => MemberHoldSeatItemModel.fromJson(e as Map<String, dynamic>)).toList(),
-    );
-  }
+  factory MemberHoldSummaryModel.fromJson(Map<String, dynamic> json) => _$MemberHoldSummaryModelFromJson(json);
+  Map<String, dynamic> toJson() => _$MemberHoldSummaryModelToJson(this);
 }
 
 /// HOLD 좌석 항목 (holdToken으로 결제/해제)
+@JsonSerializable()
 class MemberHoldSeatItemModel {
   MemberHoldSeatItemModel({
     required this.seatId,
@@ -62,20 +60,17 @@ class MemberHoldSeatItemModel {
   });
 
   final int seatId;
+  @JsonKey(defaultValue: '')
   final String rowLabel;
+  @JsonKey(defaultValue: 0)
   final int seatNo;
+  @JsonKey(defaultValue: '')
   final String displayName;
+  @JsonKey(defaultValue: '')
   final String holdToken;
+  @JsonKey(defaultValue: '')
   final String holdExpireAt;
 
-  factory MemberHoldSeatItemModel.fromJson(Map<String, dynamic> json) {
-    return MemberHoldSeatItemModel(
-      seatId: (json['seatId'] as num).toInt(),
-      rowLabel: json['rowLabel'] as String? ?? '',
-      seatNo: (json['seatNo'] as num?)?.toInt() ?? 0,
-      displayName: json['displayName'] as String? ?? '',
-      holdToken: json['holdToken'] as String? ?? '',
-      holdExpireAt: json['holdExpireAt']?.toString() ?? '',
-    );
-  }
+  factory MemberHoldSeatItemModel.fromJson(Map<String, dynamic> json) => _$MemberHoldSeatItemModelFromJson(json);
+  Map<String, dynamic> toJson() => _$MemberHoldSeatItemModelToJson(this);
 }

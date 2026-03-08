@@ -1,4 +1,9 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'screening.g.dart';
+
 /// 상영 스케줄 응답 DTO (ScreeningResponse)
+@JsonSerializable()
 class ScreeningModel {
   ScreeningModel({
     required this.id,
@@ -16,29 +21,21 @@ class ScreeningModel {
 
   final int id;
   final int movieId;
+  @JsonKey(defaultValue: '')
   final String movieTitle;
   final int screenId;
+  @JsonKey(defaultValue: '')
   final String screenName;
+  @JsonKey(defaultValue: '')
   final String theaterName;
+  @JsonKey(defaultValue: '')
   final String startTime;
+  @JsonKey(defaultValue: '')
   final String endTime;
   final String? status;
   final String? createdAt;
   final String? updatedAt;
 
-  factory ScreeningModel.fromJson(Map<String, dynamic> json) {
-    return ScreeningModel(
-      id: (json['id'] as num).toInt(),
-      movieId: (json['movieId'] as num).toInt(),
-      movieTitle: json['movieTitle'] as String? ?? '',
-      screenId: (json['screenId'] as num).toInt(),
-      screenName: json['screenName'] as String? ?? '',
-      theaterName: json['theaterName'] as String? ?? '',
-      startTime: json['startTime'] as String? ?? '',
-      endTime: json['endTime'] as String? ?? '',
-      status: json['status']?.toString(),
-      createdAt: json['createdAt']?.toString(),
-      updatedAt: json['updatedAt']?.toString(),
-    );
-  }
+  factory ScreeningModel.fromJson(Map<String, dynamic> json) => _$ScreeningModelFromJson(json);
+  Map<String, dynamic> toJson() => _$ScreeningModelToJson(this);
 }

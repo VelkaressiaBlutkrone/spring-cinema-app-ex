@@ -3,38 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-import '../../models/reservation.dart';
-import '../../provider/api_providers.dart';
+import '../../models/reservation.dart' show reservationStatusLabel;
+import '../../provider/reservation_providers.dart';
 import '../../theme/cinema_theme.dart';
 import '../../widgets/glass_card.dart';
 import 'reservation_detail_screen.dart';
 
 /// 예매 내역 화면 (예매내역 탭)
-class ReservationsScreen extends ConsumerStatefulWidget {
+class ReservationsScreen extends ConsumerWidget {
   const ReservationsScreen({super.key});
-
-  @override
-  ConsumerState<ReservationsScreen> createState() => _ReservationsScreenState();
-}
-
-class _ReservationsScreenState extends ConsumerState<ReservationsScreen> {
-  AsyncValue<List<ReservationDetailModel>> _list = const AsyncValue.loading();
-
-  @override
-  void initState() {
-    super.initState();
-    _load();
-  }
-
-  Future<void> _load() async {
-    setState(() => _list = const AsyncValue.loading());
-    try {
-      final list = await ref.read(reservationApiServiceProvider).getMyReservations();
-      if (mounted) setState(() => _list = AsyncValue.data(list));
-    } catch (e, st) {
-      if (mounted) setState(() => _list = AsyncValue.error(e, st));
-    }
-  }
 
   static String _formatTime(String? iso) {
     if (iso == null || iso.isEmpty) return '-';
@@ -46,7 +23,9 @@ class _ReservationsScreenState extends ConsumerState<ReservationsScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final listAsync = ref.watch(myReservationsProvider);
+
     return Scaffold(
       backgroundColor: CinemaColors.background,
       appBar: AppBar(
@@ -61,7 +40,7 @@ class _ReservationsScreenState extends ConsumerState<ReservationsScreen> {
           ),
         ),
       ),
-      body: _list.when(
+      body: listAsync.when(
         data: (list) {
           if (list.isEmpty) {
             return Center(
@@ -83,7 +62,7 @@ class _ReservationsScreenState extends ConsumerState<ReservationsScreen> {
             );
           }
           return RefreshIndicator(
-            onRefresh: _load,
+            onRefresh: () async => ref.invalidate(myReservationsProvider),
             child: ListView.builder(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               itemCount: list.length,
@@ -170,7 +149,10 @@ class _ReservationsScreenState extends ConsumerState<ReservationsScreen> {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
-              TextButton(onPressed: _load, child: const Text('다시 시도')),
+              TextButton(
+                onPressed: () => ref.invalidate(myReservationsProvider),
+                child: const Text('다시 시도'),
+              ),
             ],
           ),
         ),

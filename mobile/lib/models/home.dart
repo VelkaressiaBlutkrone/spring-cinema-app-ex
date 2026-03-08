@@ -1,4 +1,9 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'home.g.dart';
+
 /// 영화관/상영관 현황 요약 (HomeStatsResponse)
+@JsonSerializable()
 class HomeStatsModel {
   HomeStatsModel({
     required this.theaterCount,
@@ -6,20 +11,19 @@ class HomeStatsModel {
     required this.todayScreeningCount,
   });
 
+  @JsonKey(defaultValue: 0)
   final int theaterCount;
+  @JsonKey(defaultValue: 0)
   final int screenCount;
+  @JsonKey(defaultValue: 0)
   final int todayScreeningCount;
 
-  factory HomeStatsModel.fromJson(Map<String, dynamic> json) {
-    return HomeStatsModel(
-      theaterCount: (json['theaterCount'] as num?)?.toInt() ?? 0,
-      screenCount: (json['screenCount'] as num?)?.toInt() ?? 0,
-      todayScreeningCount: (json['todayScreeningCount'] as num?)?.toInt() ?? 0,
-    );
-  }
+  factory HomeStatsModel.fromJson(Map<String, dynamic> json) => _$HomeStatsModelFromJson(json);
+  Map<String, dynamic> toJson() => _$HomeStatsModelToJson(this);
 }
 
 /// 3일 이내 상영 예정 영화 (UpcomingMovieItem)
+@JsonSerializable()
 class UpcomingMovieModel {
   UpcomingMovieModel({
     required this.id,
@@ -28,14 +32,10 @@ class UpcomingMovieModel {
   });
 
   final int id;
+  @JsonKey(defaultValue: '')
   final String title;
   final String? posterUrl;
 
-  factory UpcomingMovieModel.fromJson(Map<String, dynamic> json) {
-    return UpcomingMovieModel(
-      id: (json['id'] as num).toInt(),
-      title: json['title'] as String? ?? '',
-      posterUrl: json['posterUrl']?.toString(),
-    );
-  }
+  factory UpcomingMovieModel.fromJson(Map<String, dynamic> json) => _$UpcomingMovieModelFromJson(json);
+  Map<String, dynamic> toJson() => _$UpcomingMovieModelToJson(this);
 }

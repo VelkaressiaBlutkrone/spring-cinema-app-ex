@@ -14,6 +14,8 @@ import '../../widgets/custom_button.dart';
 import '../../widgets/dialog/error_dialog.dart';
 import '../../widgets/glass_card.dart';
 import '../payment/payment_screen.dart';
+import 'widgets/seat_grid.dart';
+import 'widgets/held_seats_bar.dart';
 
 /// 좌석 선택 화면 (HOLD 후 결제하기)
 class SeatSelectScreen extends ConsumerStatefulWidget {
@@ -38,7 +40,7 @@ class SeatSelectScreen extends ConsumerStatefulWidget {
 
 class _SeatSelectScreenState extends ConsumerState<SeatSelectScreen> {
   AsyncValue<SeatLayoutModel> _layout = const AsyncValue.loading();
-  final Map<int, SeatHoldModel> _heldSeats = {}; // seatId -> holdResponse
+  final Map<int, SeatHoldModel> _heldSeats = {};
   bool _isLoading = false;
   SeatEventSubscription? _seatEventSubscription;
 
@@ -92,7 +94,6 @@ class _SeatSelectScreenState extends ConsumerState<SeatSelectScreen> {
   }
 
   Future<void> _onSeatTap(SeatStatusItemModel seat) async {
-    // 토글: 이미 내가 선택한 좌석이면 해제
     if (_heldSeats.containsKey(seat.seatId)) {
       await _releaseSeat(seat.seatId);
       return;
@@ -175,62 +176,6 @@ class _SeatSelectScreenState extends ConsumerState<SeatSelectScreen> {
     }
   }
 
-  /// 웹 SeatMap과 동일한 좌석 상태 색상
-  Color _seatColor(SeatStatusItemModel s, bool isHeldByMe) {
-    if (isHeldByMe) return CinemaColors.seatMyHold;
-    if (s.isHold) return CinemaColors.seatOtherHold;
-    if (s.isAvailable) return CinemaColors.seatAvailable;
-    if (s.isReserved) return CinemaColors.seatReserved;
-    return CinemaColors.seatBlocked;
-  }
-
-  bool _isSeatClickable(SeatStatusItemModel s, bool isHeldByMe) {
-    if (s.isAvailable) return true;
-    if (s.isHold && isHeldByMe) return true;
-    return false;
-  }
-
-  /// 좌석 상태 범례 (웹과 동일한 5종)
-  Widget _buildSeatStatusLegend() {
-    final items = [
-      (CinemaColors.seatAvailable, '예매 가능'),
-      (CinemaColors.seatMyHold, '내 선택'),
-      (CinemaColors.seatOtherHold, '다른 고객 선택'),
-      (CinemaColors.seatReserved, '예매 완료'),
-      (CinemaColors.seatBlocked, '운영 차단'),
-    ];
-    return Padding(
-      padding: const EdgeInsets.only(top: 16),
-      child: Wrap(
-        spacing: 12,
-        runSpacing: 8,
-        children: items.map((e) {
-          return Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 12,
-                height: 12,
-                decoration: BoxDecoration(
-                  color: e.$1,
-                  borderRadius: BorderRadius.circular(3),
-                ),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                e.$2,
-                style: GoogleFonts.roboto(
-                  fontSize: 11,
-                  color: CinemaColors.textMuted,
-                ),
-              ),
-            ],
-          );
-        }).toList(),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -259,210 +204,44 @@ class _SeatSelectScreenState extends ConsumerState<SeatSelectScreen> {
             child: GlassCard(
               padding: const EdgeInsets.all(12),
               child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.movieTitle,
-                  style: GoogleFonts.bebasNeue(
-                    fontSize: 16,
-                    color: CinemaColors.textPrimary,
-                    letterSpacing: 1,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.movieTitle,
+                    style: GoogleFonts.bebasNeue(
+                      fontSize: 16,
+                      color: CinemaColors.textPrimary,
+                      letterSpacing: 1,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  '${widget.theaterName} ${widget.screenName} · ${_formatTime(widget.startTime)}',
-                  style: GoogleFonts.roboto(
-                    fontSize: 12,
-                    color: CinemaColors.textMuted,
+                  const SizedBox(height: 4),
+                  Text(
+                    '${widget.theaterName} ${widget.screenName} · ${_formatTime(widget.startTime)}',
+                    style: GoogleFonts.roboto(fontSize: 12, color: CinemaColors.textMuted),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
           ),
           Expanded(
             child: _layout.when(
               data: (layout) {
-                final rows = <String, List<SeatStatusItemModel>>{};
-                for (final s in layout.seats) {
-                  rows.putIfAbsent(s.rowLabel, () => []).add(s);
-                }
-                final sortedRows = rows.keys.toList()..sort();
-                for (final k in sortedRows) {
-                  rows[k]!.sort((a, b) => a.seatNo.compareTo(b.seatNo));
-                }
-                const double seatSize = 44;
-                const double seatSpacing = 8;
-                const double rowLabelWidth = 28;
-                int maxCols = 0;
-                for (final r in sortedRows) {
-                  final len = (rows[r] ?? []).length;
-                  if (len > maxCols) maxCols = len;
-                }
-                final gridWidth = maxCols == 0
-                    ? 0.0
-                    : rowLabelWidth + 4 + maxCols * (seatSize + seatSpacing) - seatSpacing;
-
                 return SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
                     children: [
-                      const SizedBox(height: 16),
-                      Text(
-                        '스크린',
-                        style: GoogleFonts.roboto(
-                          fontSize: 12,
-                          color: CinemaColors.textMuted,
-                        ),
+                      SeatGrid(
+                        layout: layout,
+                        heldSeatIds: _heldSeats.keys.toSet(),
+                        isLoading: _isLoading,
+                        onSeatTap: _onSeatTap,
                       ),
-                      const SizedBox(height: 8),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: SizedBox(
-                          width: gridWidth < 1 ? 200.0 : gridWidth,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: sortedRows.map((rowLabel) {
-                              final seatList = rows[rowLabel] ?? [];
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: seatSpacing),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    SizedBox(
-                                      width: rowLabelWidth,
-                                      child: Text(
-                                        rowLabel,
-                                        style: GoogleFonts.roboto(
-                                          fontSize: 13,
-                                          color: CinemaColors.textSecondary,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 4),
-                                    ...seatList.map((s) {
-                                      final isHeldByMe = _heldSeats.containsKey(s.seatId);
-                                      final seatColor = _seatColor(s, isHeldByMe);
-                                      final clickable = _isSeatClickable(s, isHeldByMe);
-                                      return Padding(
-                                        padding: EdgeInsets.only(
-                                          right: seatList.indexOf(s) < seatList.length - 1
-                                              ? seatSpacing
-                                              : 0,
-                                        ),
-                                        child: GestureDetector(
-                                          onTap: _isLoading ? null : () => _onSeatTap(s),
-                                          child: Container(
-                                            width: seatSize,
-                                            height: seatSize,
-                                            decoration: BoxDecoration(
-                                              color: seatColor,
-                                              borderRadius: BorderRadius.circular(8),
-                                              border: Border.all(
-                                                color: clickable
-                                                    ? CinemaColors.seatMyHold
-                                                    : CinemaColors.glassBorder,
-                                                width: clickable ? 2 : 1,
-                                              ),
-                                            ),
-                                            child: Center(
-                                              child: Text(
-                                                '${s.seatNo}',
-                                                style: GoogleFonts.roboto(
-                                                  fontSize: 13,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    }),
-                                  ],
-                                ),
-                              );
-                            }).toList(),
-                          ),
-                        ),
+                      HeldSeatsBar(
+                        heldSeats: _heldSeats,
+                        allSeats: layout.seats,
+                        isLoading: _isLoading,
+                        onRelease: _releaseSeat,
                       ),
-                      _buildSeatStatusLegend(),
-                      if (_heldSeats.isNotEmpty) ...[
-                        const SizedBox(height: 16),
-                        Text(
-                          '선택한 좌석 (${_heldSeats.length}석)',
-                          style: GoogleFonts.roboto(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                            color: CinemaColors.textSecondary,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: _heldSeats.entries.map((e) {
-                            final seatId = e.key;
-                            SeatStatusItemModel? info;
-                            for (final s in layout.seats) {
-                              if (s.seatId == seatId) {
-                                info = s;
-                                break;
-                              }
-                            }
-                            final label = info != null
-                                ? '${info.rowLabel}-${info.seatNo}'
-                                : '좌석 $seatId';
-                            return Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 6,
-                              ),
-                              decoration: BoxDecoration(
-                                color: CinemaColors.seatMyHold.withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: CinemaColors.seatMyHold.withValues(alpha: 0.5),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    label,
-                                    style: GoogleFonts.roboto(
-                                      fontSize: 13,
-                                      color: CinemaColors.textPrimary,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  TextButton(
-                                    onPressed: _isLoading
-                                        ? null
-                                        : () => _releaseSeat(seatId),
-                                    style: TextButton.styleFrom(
-                                      minimumSize: Size.zero,
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 4,
-                                      ),
-                                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                    ),
-                                    child: Text(
-                                      '취소',
-                                      style: GoogleFonts.roboto(
-                                        fontSize: 12,
-                                        color: CinemaColors.textMuted,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ],
                       const SizedBox(height: 24),
                     ],
                   ),
