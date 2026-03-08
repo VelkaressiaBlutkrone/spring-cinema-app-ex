@@ -209,12 +209,3 @@ MIT License.
 
 ---
 
-## 팀원 (Contributors)
-
-| 이름 | GitHub |
-| ---- | ------ |
-| 유지 | [@choyj358-ai](https://github.com/choyj358-ai) |
-| 태오 | [@Tae0072](https://github.com/Tae0072) |
-| 민구 | [@Velkaressia](https://github.com/Velkaressia) |
-| 상민 | [@sangminka](https://github.com/sangminka) |
-
