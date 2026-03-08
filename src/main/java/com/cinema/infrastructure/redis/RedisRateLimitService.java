@@ -2,6 +2,8 @@ package com.cinema.infrastructure.redis;
 
 import java.time.Duration;
 
+import org.springframework.data.redis.RedisConnectionFailureException;
+import org.springframework.data.redis.RedisSystemException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -46,7 +48,7 @@ public class RedisRateLimitService {
                 log.warn("[RateLimit] 초과 - key={}, count={}, limit={}", key, count, limit);
             }
             return allowed;
-        } catch (Exception e) {
+        } catch (RedisConnectionFailureException | RedisSystemException e) {
             log.warn("[RateLimit] Redis 오류로 허용 처리 - key={}, error={}", key, e.getMessage());
             return true;
         }

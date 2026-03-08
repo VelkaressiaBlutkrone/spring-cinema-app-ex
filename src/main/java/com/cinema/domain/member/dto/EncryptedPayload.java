@@ -1,5 +1,6 @@
 package com.cinema.domain.member.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class EncryptedPayload {
 
+    @NotBlank(message = "encryptedKey는 필수입니다")
     private String encryptedKey;
+
+    @NotBlank(message = "iv는 필수입니다")
     private String iv;
+
+    @NotBlank(message = "encryptedData는 필수입니다")
     private String encryptedData;
 }

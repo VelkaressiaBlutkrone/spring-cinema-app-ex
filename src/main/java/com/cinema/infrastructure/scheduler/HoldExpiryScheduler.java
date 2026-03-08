@@ -16,6 +16,9 @@ import com.cinema.domain.screening.service.SeatEventPublisher;
 import com.cinema.domain.screening.service.SeatStatusQueryService;
 import com.cinema.infrastructure.redis.RedisService;
 
+import org.springframework.data.redis.RedisConnectionFailureException;
+import org.springframework.data.redis.RedisSystemException;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -59,7 +62,7 @@ public class HoldExpiryScheduler {
             screeningToSeatIds.computeIfAbsent(screeningId, k -> new ArrayList<>()).add(seatId);
             try {
                 redisService.deleteHold(screeningId, seatId);
-            } catch (Exception e) {
+            } catch (RedisConnectionFailureException | RedisSystemException e) {
                 log.warn("[HoldExpiry] Redis deleteHold 실패 - screeningId={}, seatId={}, cause={}",
                         screeningId, seatId, e.getMessage());
             }

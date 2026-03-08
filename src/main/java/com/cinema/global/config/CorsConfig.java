@@ -33,8 +33,9 @@ public class CorsConfig {
 
         // Origin 설정
         if ("*".equals(allowedOrigins)) {
-            // 개발 환경: 모든 origin 허용
-            config.addAllowedOriginPattern("*");
+            // 개발 환경: localhost만 허용 (와일드카드 + credentials 조합은 CSRF 취약)
+            config.addAllowedOriginPattern("http://localhost:*");
+            config.addAllowedOriginPattern("https://localhost:*");
         } else {
             // 운영 환경: 특정 origin만 허용
             List<String> origins = List.of(allowedOrigins.split(","));

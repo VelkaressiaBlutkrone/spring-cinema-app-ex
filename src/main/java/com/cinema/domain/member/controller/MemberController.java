@@ -2,6 +2,7 @@ package com.cinema.domain.member.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -55,7 +56,7 @@ public class MemberController {
      * 회원 가입 (EncryptedPayload: loginId, password, name, phone?, email)
      */
     @PostMapping("/signup")
-    public ResponseEntity<Long> signup(@RequestBody EncryptedPayload payload, HttpServletResponse response) {
+    public ResponseEntity<Long> signup(@Valid @RequestBody EncryptedPayload payload, HttpServletResponse response) {
         MemberRequest.SignUp req = decryptToSignUp(payload);
         return ResponseEntity.ok(memberService.signup(req));
     }
@@ -67,7 +68,7 @@ public class MemberController {
      */
     @PostMapping("/login")
     public ResponseEntity<AccessTokenResponse> login(
-            @RequestBody EncryptedPayload payload,
+            @Valid @RequestBody EncryptedPayload payload,
             HttpServletResponse response) {
         MemberRequest.Login req = decryptToLogin(payload);
         TokenResponse tokens = memberService.login(req);
@@ -119,7 +120,7 @@ public class MemberController {
     @PatchMapping("/me")
     public ResponseEntity<Void> updateMyProfile(
             Authentication authentication,
-            @RequestBody MemberRequest.UpdateProfile request) {
+            @Valid @RequestBody MemberRequest.UpdateProfile request) {
         String loginId = authentication.getName();
         memberService.updateMyProfile(loginId, request);
         return ResponseEntity.ok().build();

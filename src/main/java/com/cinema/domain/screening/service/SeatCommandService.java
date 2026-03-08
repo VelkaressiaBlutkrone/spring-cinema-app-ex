@@ -117,8 +117,7 @@ public class SeatCommandService {
         LocalDateTime holdExpireAt = LocalDateTime.now().plusMinutes(holdTtlMinutes);
 
         // 7. 좌석 상태 캐시 무효화
-        seatStatusQueryService.invalidateSeatStatusCache(screeningId);
-        seatEventPublisher.publishSeatStatusChanged(screeningId, List.of(seatId));
+        notifySeatChange(screeningId, seatId);
 
         // 8. TTL 값 Redis에서 재조회 (예외적 상황 시 직접 계산)
         Long ttlSeconds = redisService.getHoldTtl(screeningId, seatId);
@@ -184,8 +183,7 @@ public class SeatCommandService {
         redisService.deleteHold(screeningId, seatId);
 
         // 4. 좌석 상태 캐시 무효화
-        seatStatusQueryService.invalidateSeatStatusCache(screeningId);
-        seatEventPublisher.publishSeatStatusChanged(screeningId, List.of(seatId));
+        notifySeatChange(screeningId, seatId);
     }
 
     // ========================================
@@ -283,10 +281,17 @@ public class SeatCommandService {
             ScreeningSeat ss = screeningSeatRepository.findByScreeningIdAndSeatId(screeningId, seatId)
                     .orElseThrow(() -> new BusinessException(ErrorCode.SEAT_NOT_FOUND));
             ss.cancel();
-            seatStatusQueryService.invalidateSeatStatusCache(screeningId);
-            seatEventPublisher.publishSeatStatusChanged(screeningId, List.of(seatId));
+            notifySeatChange(screeningId, seatId);
         } finally {
             lockManager.unlockSeat(screeningId, seatId);
         }
+    }
+
+    /**
+     * 좌석 상태 변경 후 캐시 무효화 + 실시간 이벤트 발행
+     */
+    private void notifySeatChange(Long screeningId, Long seatId) {
+        seatStatusQueryService.invalidateSeatStatusCache(screeningId);
+        seatEventPublisher.publishSeatStatusChanged(screeningId, List.of(seatId));
     }
 }

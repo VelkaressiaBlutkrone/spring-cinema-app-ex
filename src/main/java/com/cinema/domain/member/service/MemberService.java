@@ -131,12 +131,7 @@ public class MemberService {
             throw new BusinessException(ErrorCode.INVALID_REFRESH_TOKEN);
         }
 
-        Member member = memberRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
-
-        if (!member.isActive()) {
-            throw new BusinessException(ErrorCode.MEMBER_DISABLED);
-        }
+        Member member = findActiveMember(loginId);
 
         // 새로운 토큰 발급
         String newAccessToken = jwtTokenProvider.createToken(
@@ -176,11 +171,7 @@ public class MemberService {
      */
     @Transactional(readOnly = true)
     public MemberProfileResponse getMyProfile(String loginId) {
-        Member member = memberRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
-        if (!member.isActive()) {
-            throw new BusinessException(ErrorCode.MEMBER_DISABLED);
-        }
+        Member member = findActiveMember(loginId);
         return MemberProfileResponse.from(member);
     }
 
@@ -193,11 +184,7 @@ public class MemberService {
      */
     @Transactional
     public void updateMyProfile(String loginId, MemberRequest.UpdateProfile request) {
-        Member member = memberRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
-        if (!member.isActive()) {
-            throw new BusinessException(ErrorCode.MEMBER_DISABLED);
-        }
+        Member member = findActiveMember(loginId);
 
         if (request.getPassword() != null && !request.getPassword().isBlank()) {
             member.updatePassword(passwordEncoder.encode(request.getPassword()));
@@ -223,11 +210,7 @@ public class MemberService {
      */
     @Transactional(readOnly = true)
     public List<MemberHoldSummaryResponse> getMyHolds(String loginId) {
-        Member member = memberRepository.findByLoginId(loginId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
-        if (!member.isActive()) {
-            throw new BusinessException(ErrorCode.MEMBER_DISABLED);
-        }
+        Member member = findActiveMember(loginId);
 
         List<ScreeningSeat> holds = screeningSeatRepository.findHoldsByMemberId(member.getId()).stream()
                 .filter(ss -> !ss.isHoldExpired())
@@ -263,5 +246,17 @@ public class MemberService {
                     .build());
         }
         return result;
+    }
+
+    /**
+     * loginId로 회원 조회 + 활성 상태 검증
+     */
+    private Member findActiveMember(String loginId) {
+        Member member = memberRepository.findByLoginId(loginId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+        if (!member.isActive()) {
+            throw new BusinessException(ErrorCode.MEMBER_DISABLED);
+        }
+        return member;
     }
 }

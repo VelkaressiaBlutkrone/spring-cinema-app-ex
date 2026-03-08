@@ -1,7 +1,7 @@
 package com.cinema.global.security;
 
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
 import java.security.Key;
 import java.security.PrivateKey;
 import java.util.Base64;
@@ -59,9 +59,12 @@ public class HybridDecryptionService {
             aes.init(Cipher.DECRYPT_MODE, aesKey, gcmSpec);
             byte[] plain = aes.doFinal(encryptedData);
             return new String(plain, StandardCharsets.UTF_8);
-        } catch (Exception e) {
-            log.warn("Hybrid decryption failed: {}", e.getMessage());
-            throw new BusinessException(ErrorCode.INVALID_INPUT, "잘못된 요청입니다."); // 상세 노출 금지 (OWASP)
+        } catch (GeneralSecurityException e) {
+            log.warn("Hybrid decryption failed (crypto): {}", e.getMessage());
+            throw new BusinessException(ErrorCode.INVALID_INPUT, "잘못된 요청입니다.");
+        } catch (IllegalArgumentException e) {
+            log.warn("Hybrid decryption failed (Base64): {}", e.getMessage());
+            throw new BusinessException(ErrorCode.INVALID_INPUT, "잘못된 요청입니다.");
         }
     }
 }

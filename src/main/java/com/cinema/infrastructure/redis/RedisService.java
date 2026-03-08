@@ -10,9 +10,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import org.springframework.data.redis.RedisConnectionFailureException;
+import org.springframework.data.redis.RedisSystemException;
+
 import com.cinema.global.exception.BusinessException;
 import com.cinema.global.exception.ErrorCode;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -107,7 +111,7 @@ public class RedisService {
                     screeningId, seatId, memberId, ttlMinutes);
 
             return holdToken;
-        } catch (Exception e) {
+        } catch (RedisConnectionFailureException | RedisSystemException e) {
             redisAvailable = false;
             log.error("[Redis] HOLD 저장 실패 - screeningId={}, seatId={}, error={}",
                     screeningId, seatId, e.getMessage());
@@ -147,11 +151,15 @@ public class RedisService {
             }
 
             return Optional.of(gson.fromJson(value, HoldInfo.class));
-        } catch (Exception e) {
+        } catch (RedisConnectionFailureException | RedisSystemException e) {
             redisAvailable = false;
             log.warn("[Redis] HOLD 조회 실패 - screeningId={}, seatId={}, error={}",
                     screeningId, seatId, e.getMessage());
             return getLocalHold(key);
+        } catch (JsonSyntaxException e) {
+            log.warn("[Redis] HOLD 역직렬화 실패 - screeningId={}, seatId={}, error={}",
+                    screeningId, seatId, e.getMessage());
+            return Optional.empty();
         }
     }
 
@@ -177,7 +185,7 @@ public class RedisService {
             if (Boolean.TRUE.equals(deleted)) {
                 log.info("[Redis] HOLD 삭제 - screeningId={}, seatId={}", screeningId, seatId);
             }
-        } catch (Exception e) {
+        } catch (RedisConnectionFailureException | RedisSystemException e) {
             redisAvailable = false;
             log.warn("[Redis] HOLD 삭제 실패 - screeningId={}, seatId={}, error={}",
                     screeningId, seatId, e.getMessage());
@@ -195,7 +203,7 @@ public class RedisService {
             Long ttl = redisTemplate.getExpire(key);
             redisAvailable = true;
             return ttl;
-        } catch (Exception e) {
+        } catch (RedisConnectionFailureException | RedisSystemException e) {
             redisAvailable = false;
             log.warn("[Redis] HOLD TTL 조회 실패 - screeningId={}, seatId={}, error={}",
                     screeningId, seatId, e.getMessage());
@@ -217,7 +225,7 @@ public class RedisService {
             redisTemplate.opsForValue().set(key, refreshToken, Duration.ofMillis(ttlMillis));
             redisAvailable = true;
             log.debug("[Redis] Refresh Token 저장 - memberId={}", memberId);
-        } catch (Exception e) {
+        } catch (RedisConnectionFailureException | RedisSystemException e) {
             redisAvailable = false;
             log.error("[Redis] Refresh Token 저장 실패 - memberId={}, error={}", memberId, e.getMessage());
         }
@@ -233,7 +241,7 @@ public class RedisService {
             String token = redisTemplate.opsForValue().get(key);
             redisAvailable = true;
             return Optional.ofNullable(token);
-        } catch (Exception e) {
+        } catch (RedisConnectionFailureException | RedisSystemException e) {
             redisAvailable = false;
             log.warn("[Redis] Refresh Token 조회 실패 - memberId={}, error={}", memberId, e.getMessage());
             return Optional.empty();
@@ -250,7 +258,7 @@ public class RedisService {
             redisTemplate.delete(key);
             redisAvailable = true;
             log.debug("[Redis] Refresh Token 삭제 - memberId={}", memberId);
-        } catch (Exception e) {
+        } catch (RedisConnectionFailureException | RedisSystemException e) {
             redisAvailable = false;
             log.warn("[Redis] Refresh Token 삭제 실패 - memberId={}, error={}", memberId, e.getMessage());
         }
@@ -271,7 +279,7 @@ public class RedisService {
         try {
             redisTemplate.opsForValue().set(key, value, Duration.ofMinutes(ttlMinutes));
             redisAvailable = true;
-        } catch (Exception e) {
+        } catch (RedisConnectionFailureException | RedisSystemException e) {
             redisAvailable = false;
             log.warn("[Redis] 좌석 상태 캐시 저장 실패 - screeningId={}, error={}", screeningId, e.getMessage());
         }
@@ -292,9 +300,12 @@ public class RedisService {
             }
 
             return Optional.of(gson.fromJson(value, clazz));
-        } catch (Exception e) {
+        } catch (RedisConnectionFailureException | RedisSystemException e) {
             redisAvailable = false;
             log.warn("[Redis] 좌석 상태 캐시 조회 실패 - screeningId={}, error={}", screeningId, e.getMessage());
+            return Optional.empty();
+        } catch (JsonSyntaxException e) {
+            log.warn("[Redis] 좌석 상태 캐시 역직렬화 실패 - screeningId={}, error={}", screeningId, e.getMessage());
             return Optional.empty();
         }
     }
@@ -308,7 +319,7 @@ public class RedisService {
         try {
             redisTemplate.delete(key);
             redisAvailable = true;
-        } catch (Exception e) {
+        } catch (RedisConnectionFailureException | RedisSystemException e) {
             redisAvailable = false;
             log.warn("[Redis] 좌석 상태 캐시 삭제 실패 - screeningId={}, error={}", screeningId, e.getMessage());
         }

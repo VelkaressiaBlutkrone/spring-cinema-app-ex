@@ -6,6 +6,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.redisson.client.RedisException;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Component;
 
@@ -86,8 +87,8 @@ public class DistributedLockManager {
                 Thread.currentThread().interrupt();
                 log.error("[Lock] 락 획득 중 인터럽트: {}", lockKey, e);
                 return false;
-            } catch (Exception e) {
-                log.error("[Lock] 락 획득 중 예외 발생: {}, error={}", lockKey, e.getMessage());
+            } catch (RedisException e) {
+                log.error("[Lock] 락 획득 중 Redis 예외 발생: {}, error={}", lockKey, e.getMessage());
                 // Redis 장애 시 로컬 락 폴백
             }
         }
@@ -146,9 +147,9 @@ public class DistributedLockManager {
                     log.debug("[Lock] 락 해제: {}", lockKey);
                     return;
                 }
-            } catch (Exception e) {
-                log.warn("[Lock] 락 해제 중 예외 발생: {}, error={}", lockKey, e.getMessage());
-                // fallthrough
+            } catch (RedisException e) {
+                log.warn("[Lock] 락 해제 중 Redis 예외 발생: {}, error={}", lockKey, e.getMessage());
+                // fallthrough → 로컬 락 해제 시도
             }
         }
 
@@ -158,8 +159,8 @@ public class DistributedLockManager {
             try {
                 local.unlock();
                 log.debug("[Lock] (LOCAL) 락 해제: {}", lockKey);
-            } catch (Exception e) {
-                log.warn("[Lock] (LOCAL) 락 해제 중 예외 발생: {}, error={}", lockKey, e.getMessage());
+            } catch (IllegalMonitorStateException e) {
+                log.warn("[Lock] (LOCAL) 락 해제 중 예외 발생 (현재 스레드 미보유): {}, error={}", lockKey, e.getMessage());
             }
         }
     }
