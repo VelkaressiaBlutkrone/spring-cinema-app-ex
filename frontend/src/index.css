@@ -16,6 +16,19 @@
   --color-cinema-glass: rgba(255, 255, 255, 0.08);
   --color-cinema-glass-border: rgba(255, 255, 255, 0.2);
 
+  /* Admin theme tokens (관리자 라이트 테마) */
+  --color-cinema-admin-bg: #f9fafb;
+  --color-cinema-admin-surface: #ffffff;
+  --color-cinema-admin-surface-alt: #f9fafb;
+  --color-cinema-admin-text: #111827;
+  --color-cinema-admin-secondary: #4b5563;
+  --color-cinema-admin-muted: #6b7280;
+  --color-cinema-admin-border: #e5e7eb;
+  --color-cinema-admin-primary: #4f46e5;
+  --color-cinema-admin-primary-hover: #4338ca;
+  --color-cinema-admin-danger: #dc2626;
+  --color-cinema-admin-separator: #d1d5db;
+
   --font-display: 'Bebas Neue', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Roboto', ui-sans-serif, system-ui, sans-serif;
 }

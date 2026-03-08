@@ -2,204 +2,35 @@
  * 좌석 선택 페이지: 좌석 맵, HOLD/해제, HOLD 타이머, 실시간 갱신(SSE), 결제하기 연결
  * 경로: /book/:screeningId (영화 목록 모달에서 "예매하기"로 진입, state에 screening 전달 권장)
  */
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
-import { seatsApi } from '@/api/seats';
-import { useSeatEvents } from '@/hooks/useSeatEvents';
+import { useSeatHoldLogic } from '@/hooks/useSeatHoldLogic';
 import { SeatMap, HoldTimer } from '@/components/booking';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
 import { GlassCard } from '@/components/common/GlassCard';
 import { NeonButton } from '@/components/common/NeonButton';
-import { useToast } from '@/hooks';
-import { useAuthStore } from '@/stores';
-import { getErrorMessage } from '@/utils/errorHandler';
 import { formatDate } from '@/utils/dateUtils';
-import { logSeatHold, logSeatRelease } from '@/utils/logger';
-import type { SeatStatusItem } from '@/types/seat.types';
 import type { Screening } from '@/types/movie.types';
 import { SCREENING_STATUS_LABEL } from '@/types/movie.types';
-
-interface HeldSeat {
-  seat: SeatStatusItem;
-  holdToken: string;
-  holdExpireAt: string;
-  ttlSeconds: number;
-}
 
 export function SeatSelectPage() {
   const { screeningId } = useParams<{ screeningId: string }>();
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAuthenticated } = useAuthStore();
-  const { showSuccess, showError } = useToast();
 
   const id = screeningId ? Number(screeningId) : null;
   const [screening, setScreening] = useState<Screening | null>(null);
-  const [seats, setSeats] = useState<SeatStatusItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [holdLoading, setHoldLoading] = useState(false);
-  const [heldSeats, setHeldSeats] = useState<HeldSeat[]>([]);
 
-  // 서버 기준 가장 이른 만료 시각 (HOLD 타이머용)
-  const minHoldExpireAt =
-    heldSeats.length > 0
-      ? heldSeats.reduce<HeldSeat>(
-          (earliest, h) =>
-            new Date(h.holdExpireAt).getTime() < new Date(earliest.holdExpireAt).getTime()
-              ? h
-              : earliest,
-          heldSeats[0]
-        ).holdExpireAt
-      : undefined;
-
-  const myHoldSeatIds = new Set(heldSeats.map((h) => h.seat.seatId));
-
-  /** API 응답에서 "내 HOLD" 목록을 HeldSeat[]으로 변환 (재진입 시 서버 기준 복원) */
-  const heldSeatsFromApi = useCallback((seatsList: SeatStatusItem[]): HeldSeat[] => {
-    return seatsList
-      .filter((s) => s.status === 'HOLD' && s.isHeldByCurrentUser && s.holdToken)
-      .map((s) => ({
-        seat: s,
-        holdToken: s.holdToken!,
-        holdExpireAt: s.holdExpireAt ?? '',
-        ttlSeconds: 0,
-      }));
-  }, []);
-
-  const loadSeats = useCallback(async () => {
-    if (id == null) return;
-    try {
-      const res = await seatsApi.getSeatLayout(id);
-      if (res.data?.seats) {
-        setSeats(res.data.seats);
-        setHeldSeats(heldSeatsFromApi(res.data.seats));
-      }
-    } catch (e) {
-      showError(getErrorMessage(e));
-    } finally {
-      setLoading(false);
-    }
-  }, [id, showError, heldSeatsFromApi]);
-
-  useEffect(() => {
-    if (id == null) {
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
-    loadSeats();
-  }, [id, loadSeats]);
-
-  // SSE: 변경된 seatId 목록 수신 시 해당 좌석만 재조회하여 반영 (Optimistic 보조)
-  useSeatEvents(id, (seatIds) => {
-    if (seatIds.length === 0) return;
-    loadSeats();
-  });
+  const {
+    seats, loading, holdLoading, heldSeats,
+    myHoldSeatIds, minHoldExpireAt,
+    handleSeatClick, handleReleaseFromCart, handleTimerExpire,
+  } = useSeatHoldLogic(id);
 
   useEffect(() => {
     const state = location.state as { screening?: Screening } | undefined;
     if (state?.screening) setScreening(state.screening);
   }, [location.state]);
-
-  const handleSeatClick = async (seat: SeatStatusItem) => {
-    if (id == null || holdLoading) return;
-    if (!isAuthenticated) {
-      showError('로그인 후 좌석을 선택할 수 있습니다.');
-      navigate('/login', { state: { from: `/book/${id}` } });
-      return;
-    }
-
-    if (seat.status === 'AVAILABLE') {
-      setHoldLoading(true);
-      try {
-        const res = await seatsApi.holdSeat(id, seat.seatId);
-        const data = res.data;
-        if (data) {
-          setHeldSeats((prev) => [
-            ...prev,
-            {
-              seat: { ...seat, status: 'HOLD' as const, holdExpireAt: data.holdExpireAt },
-              holdToken: data.holdToken,
-              holdExpireAt: data.holdExpireAt,
-              ttlSeconds: data.ttlSeconds,
-            },
-          ]);
-          setSeats((prev) =>
-            prev.map((s) =>
-              s.seatId === seat.seatId
-                ? { ...s, status: 'HOLD' as const, holdExpireAt: data.holdExpireAt }
-                : s
-            )
-          );
-          showSuccess('좌석이 선택되었습니다.');
-          logSeatHold(id, [seat.seatId], 1);
-        }
-      } catch (e) {
-        showError(getErrorMessage(e));
-      } finally {
-        setHoldLoading(false);
-      }
-      return;
-    }
-
-    if (seat.status === 'HOLD' && myHoldSeatIds.has(seat.seatId)) {
-      const token = seat.holdToken ?? heldSeats.find((h) => h.seat.seatId === seat.seatId)?.holdToken;
-      if (!token) return;
-      setHoldLoading(true);
-      try {
-        await seatsApi.releaseHold({
-          screeningId: id,
-          seatId: seat.seatId,
-          holdToken: token,
-        });
-        setHeldSeats((prev) => prev.filter((h) => h.seat.seatId !== seat.seatId));
-        setSeats((prev) =>
-          prev.map((s) =>
-            s.seatId === seat.seatId
-              ? { ...s, status: 'AVAILABLE' as const, holdExpireAt: undefined, holdToken: undefined, isHeldByCurrentUser: false }
-              : s
-          )
-        );
-        showSuccess('선택이 해제되었습니다.');
-        logSeatRelease(id, [seat.seatId]);
-      } catch (e) {
-        showError(getErrorMessage(e));
-      } finally {
-        setHoldLoading(false);
-      }
-    }
-  };
-
-  const handleReleaseFromCart = async (held: HeldSeat) => {
-    if (id == null || holdLoading) return;
-    setHoldLoading(true);
-    try {
-      await seatsApi.releaseHold({
-        screeningId: id,
-        seatId: held.seat.seatId,
-        holdToken: held.holdToken,
-      });
-      setHeldSeats((prev) => prev.filter((h) => h.seat.seatId !== held.seat.seatId));
-        setSeats((prev) =>
-          prev.map((s) =>
-            s.seatId === held.seat.seatId
-              ? { ...s, status: 'AVAILABLE' as const, holdExpireAt: undefined, holdToken: undefined, isHeldByCurrentUser: false }
-              : s
-          )
-        );
-      showSuccess('선택이 해제되었습니다.');
-      logSeatRelease(id, [held.seat.seatId]);
-    } catch (e) {
-      showError(getErrorMessage(e));
-    } finally {
-      setHoldLoading(false);
-    }
-  };
-
-  const handleTimerExpire = () => {
-    loadSeats();
-    setHeldSeats([]);
-  };
 
   if (id == null) {
     return (

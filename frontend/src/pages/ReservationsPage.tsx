@@ -1,51 +1,35 @@
 /**
  * 예매 내역 — cinema theme
+ * 인증은 ProtectedRoute에서 보장됨
  */
-import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { reservationsApi } from '@/api/reservations';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
 import { EmptyState } from '@/components/common/ui/EmptyState';
 import { GlassCard } from '@/components/common/GlassCard';
 import { NeonButton } from '@/components/common/NeonButton';
 import { useToast } from '@/hooks';
-import { useAuthStore } from '@/stores';
 import { getErrorMessage } from '@/utils/errorHandler';
 import { formatDate } from '@/utils/dateUtils';
 import { formatPrice } from '@/utils/formatters';
 import type { ReservationDetailResponse } from '@/types/reservation.types';
 
 export function ReservationsPage() {
-  const navigate = useNavigate();
-  const { isAuthenticated } = useAuthStore();
   const { showError } = useToast();
-  const [loading, setLoading] = useState(true);
-  const [list, setList] = useState<ReservationDetailResponse[]>([]);
+
+  const { data: list, isLoading: loading, error } = useQuery<ReservationDetailResponse[]>({
+    queryKey: ['my-reservations'],
+    queryFn: async () => {
+      const res = await reservationsApi.getMyReservations();
+      return res.data ?? [];
+    },
+  });
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/login', { state: { from: '/reservations' } });
-      return;
-    }
-    let cancelled = false;
-    const fetchList = async () => {
-      setLoading(true);
-      try {
-        const res = await reservationsApi.getMyReservations();
-        if (!cancelled && res.data) setList(res.data);
-      } catch (e) {
-        if (!cancelled) showError(getErrorMessage(e));
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
-    fetchList();
-    return () => {
-      cancelled = true;
-    };
-  }, [isAuthenticated, navigate, showError]);
-
-  if (!isAuthenticated) return null;
+    if (error) showError(getErrorMessage(error));
+  }, [error, showError]);
 
   if (loading) {
     return (
@@ -55,10 +39,12 @@ export function ReservationsPage() {
     );
   }
 
+  const items = list ?? [];
+
   return (
     <div className="py-6">
       <h1 className="mb-6 font-display text-2xl tracking-widest text-cinema-text">예매 내역</h1>
-      {list.length === 0 ? (
+      {items.length === 0 ? (
         <GlassCard padding={false}>
           <EmptyState
             title="예매 내역이 없습니다"
@@ -69,7 +55,7 @@ export function ReservationsPage() {
         </GlassCard>
       ) : (
         <ul className="space-y-4">
-          {list.map((r) => (
+          {items.map((r) => (
             <li key={r.reservationId}>
               <GlassCard>
                 <div className="flex flex-wrap items-start justify-between gap-2">

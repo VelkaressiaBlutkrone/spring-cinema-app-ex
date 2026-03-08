@@ -113,46 +113,46 @@ export function AdminPaymentsPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">결제 내역 조회</h1>
+        <h1 className="text-2xl font-bold text-cinema-admin-text">결제 내역 조회</h1>
       </div>
 
       {/* 필터 */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4">
+      <div className="rounded-lg border border-cinema-admin-border bg-cinema-admin-surface p-4">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">시작일</label>
+            <label className="block text-sm font-medium text-cinema-admin-secondary">시작일</label>
             <input
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-cinema-admin-border shadow-sm focus:border-cinema-admin-primary focus:ring-cinema-admin-primary sm:text-sm"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">종료일</label>
+            <label className="block text-sm font-medium text-cinema-admin-secondary">종료일</label>
             <input
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-cinema-admin-border shadow-sm focus:border-cinema-admin-primary focus:ring-cinema-admin-primary sm:text-sm"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">회원 ID</label>
+            <label className="block text-sm font-medium text-cinema-admin-secondary">회원 ID</label>
             <input
               type="number"
               value={memberId}
               onChange={(e) => setMemberId(e.target.value)}
               placeholder="전체"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-cinema-admin-border shadow-sm focus:border-cinema-admin-primary focus:ring-cinema-admin-primary sm:text-sm"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">결제 상태</label>
+            <label className="block text-sm font-medium text-cinema-admin-secondary">결제 상태</label>
             <select
               value={payStatus}
               onChange={(e) => setPayStatus(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-cinema-admin-border shadow-sm focus:border-cinema-admin-primary focus:ring-cinema-admin-primary sm:text-sm"
             >
               <option value="">전체</option>
               {Object.entries(STATUS_LABEL).map(([key, label]) => (
@@ -166,7 +166,7 @@ export function AdminPaymentsPage() {
         <div className="mt-4 flex justify-end">
           <button
             onClick={() => fetchList(0)}
-            className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+            className="rounded-md bg-cinema-admin-primary px-4 py-2 text-sm font-medium text-white hover:bg-cinema-admin-primary-hover"
           >
             검색
           </button>
@@ -180,56 +180,56 @@ export function AdminPaymentsPage() {
         <EmptyState message="결제 내역이 없습니다." />
       ) : (
         <>
-          <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+          <div className="overflow-hidden rounded-lg border border-cinema-admin-border bg-cinema-admin-surface shadow">
+            <table className="min-w-full divide-y divide-cinema-admin-border">
+              <thead className="bg-cinema-admin-surface-alt">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-cinema-admin-muted">
                     결제번호
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-cinema-admin-muted">
                     예매번호
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-cinema-admin-muted">
                     회원
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-cinema-admin-muted">
                     영화
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-cinema-admin-muted">
                     결제수단
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-cinema-admin-muted">
                     금액
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-cinema-admin-muted">
                     상태
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-cinema-admin-muted">
                     결제일시
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-cinema-admin-muted">
                     작업
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 bg-white">
+              <tbody className="divide-y divide-cinema-admin-border bg-cinema-admin-surface">
                 {content.map((row) => (
                   <tr key={row.paymentId}>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-cinema-admin-text">
                       {row.paymentNo}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-cinema-admin-text">
                       {row.reservationNo}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-cinema-admin-text">
                       {row.memberLoginId} ({row.memberId})
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">{row.movieTitle}</td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                    <td className="px-6 py-4 text-sm text-cinema-admin-text">{row.movieTitle}</td>
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-cinema-admin-text">
                       {METHOD_LABEL[row.payMethod] || row.payMethod}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-cinema-admin-text">
                       {formatAmount(row.payAmount)}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm">
@@ -247,13 +247,13 @@ export function AdminPaymentsPage() {
                         {STATUS_LABEL[row.payStatus]}
                       </span>
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-cinema-admin-text">
                       {row.paidAt ? formatDate(row.paidAt) : '-'}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm font-medium">
                       <button
                         onClick={() => handleViewDetail(row.paymentId)}
-                        className="text-indigo-600 hover:text-indigo-900"
+                        className="text-cinema-admin-primary hover:text-cinema-admin-primary-hover"
                       >
                         상세
                       </button>

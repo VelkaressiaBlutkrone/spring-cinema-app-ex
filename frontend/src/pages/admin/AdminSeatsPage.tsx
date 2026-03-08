@@ -200,16 +200,16 @@ export function AdminSeatsPage() {
   return (
     <div>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold text-gray-900">좌석 관리</h1>
+        <h1 className="text-2xl font-bold text-cinema-admin-text">좌석 관리</h1>
         <div className="flex flex-wrap items-center gap-3">
-          <label className="text-sm font-medium text-gray-700">상영관</label>
+          <label className="text-sm font-medium text-cinema-admin-secondary">상영관</label>
           <select
             value={selectedScreenId ?? ''}
             onChange={(e) => {
               const v = e.target.value;
               setSelectedScreenId(v === '' ? null : Number.parseInt(v, 10));
             }}
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+            className="rounded-md border border-cinema-admin-border px-3 py-2 text-sm shadow-sm focus:border-cinema-admin-primary focus:ring-1 focus:ring-cinema-admin-primary"
           >
             <option value="">선택</option>
             {screens.map((s) => (
@@ -222,7 +222,7 @@ export function AdminSeatsPage() {
             type="button"
             onClick={openCreate}
             disabled={screens.length === 0}
-            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
+            className="rounded-lg bg-cinema-admin-primary px-4 py-2 text-sm font-medium text-white hover:bg-cinema-admin-primary-hover disabled:opacity-50"
           >
             좌석 등록
           </button>
@@ -230,7 +230,7 @@ export function AdminSeatsPage() {
       </div>
 
       {screens.length === 0 && (
-        <p className="mb-4 text-sm text-amber-600">
+        <p className="mb-4 text-sm text-cinema-admin-danger">
           상영관을 먼저 등록한 뒤 좌석을 관리할 수 있습니다.
         </p>
       )}
@@ -250,55 +250,55 @@ export function AdminSeatsPage() {
           message="좌석 등록 버튼을 눌러 첫 좌석을 등록하세요."
         />
       ) : (
-        <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+        <div className="overflow-hidden rounded-lg border border-cinema-admin-border bg-cinema-admin-surface shadow">
+          <table className="min-w-full divide-y divide-cinema-admin-border">
+            <thead className="bg-cinema-admin-surface-alt">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase text-cinema-admin-muted">
                   행
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase text-cinema-admin-muted">
                   번호
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase text-cinema-admin-muted">
                   표시명
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase text-cinema-admin-muted">
                   타입
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase text-gray-500">
+                <th className="px-4 py-3 text-left text-xs font-medium uppercase text-cinema-admin-muted">
                   상태
                 </th>
-                <th className="px-4 py-3 text-right text-xs font-medium uppercase text-gray-500">
+                <th className="px-4 py-3 text-right text-xs font-medium uppercase text-cinema-admin-muted">
                   액션
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 bg-white">
+            <tbody className="divide-y divide-cinema-admin-border bg-cinema-admin-surface">
               {seats.map((row) => (
-                <tr key={row.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3 text-sm font-medium text-gray-900">{row.rowLabel}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600">{row.seatNo}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600">{row.displayName}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600">
+                <tr key={row.id} className="hover:bg-cinema-admin-surface-alt">
+                  <td className="px-4 py-3 text-sm font-medium text-cinema-admin-text">{row.rowLabel}</td>
+                  <td className="px-4 py-3 text-sm text-cinema-admin-secondary">{row.seatNo}</td>
+                  <td className="px-4 py-3 text-sm text-cinema-admin-secondary">{row.displayName}</td>
+                  <td className="px-4 py-3 text-sm text-cinema-admin-secondary">
                     {row.seatType ? SEAT_TYPE_LABEL[row.seatType] : '-'}
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">
+                  <td className="px-4 py-3 text-sm text-cinema-admin-secondary">
                     {row.baseStatus ? BASE_STATUS_LABEL[row.baseStatus] : '-'}
                   </td>
                   <td className="px-4 py-3 text-right text-sm">
                     <button
                       type="button"
                       onClick={() => openEdit(row)}
-                      className="text-indigo-600 hover:underline"
+                      className="text-cinema-admin-primary hover:underline"
                     >
                       수정
                     </button>
-                    <span className="mx-2 text-gray-300">|</span>
+                    <span className="mx-2 text-cinema-admin-separator">|</span>
                     <button
                       type="button"
                       onClick={() => setDeleteTarget(row)}
-                      className="text-red-600 hover:underline"
+                      className="text-cinema-admin-danger hover:underline"
                     >
                       삭제
                     </button>

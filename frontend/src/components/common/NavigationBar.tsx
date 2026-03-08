@@ -2,6 +2,7 @@
  * 상단 네비게이션 바 (Cinematic)
  * Glassmorphic, neon accent, active underline
  */
+import { useMemo, useCallback } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/stores';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
@@ -18,17 +19,19 @@ export function NavigationBar() {
   const location = useLocation();
   const { isAuthenticated, getAccessToken, clearAuth } = useAuthStore();
   const isAdmin = useIsAdmin();
-  const loginId = isAuthenticated ? getSubFromToken(getAccessToken()) : null;
+  const loginId = useMemo(
+    () => (isAuthenticated ? getSubFromToken(getAccessToken()) : null),
+    [isAuthenticated, getAccessToken]
+  );
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     clearAuth();
     navigate('/');
-  };
+  }, [clearAuth, navigate]);
 
   return (
     <header
-      className="sticky top-0 z-40 border-b border-cinema-glass-border bg-cinema-surface/80 backdrop-blur-xl"
-      style={{ backgroundColor: 'rgba(18, 18, 18, 0.85)' }}
+      className="sticky top-0 z-40 border-b border-cinema-glass-border bg-[rgba(18,18,18,0.85)] backdrop-blur-xl"
     >
       <nav className="container mx-auto flex h-14 items-center justify-between px-4">
         <Link
@@ -52,8 +55,7 @@ export function NavigationBar() {
                 {label}
                 {active && (
                   <span
-                    className="absolute bottom-0 left-2 right-2 h-0.5 bg-cinema-neon-blue sm:left-4 sm:right-4"
-                    style={{ boxShadow: '0 0 8px var(--color-cinema-neon-blue)' }}
+                    className="absolute bottom-0 left-2 right-2 h-0.5 bg-cinema-neon-blue shadow-[0_0_8px_var(--color-cinema-neon-blue)] sm:left-4 sm:right-4"
                   />
                 )}
               </Link>
@@ -88,8 +90,7 @@ export function NavigationBar() {
           {!isAuthenticated && (
             <Link
               to="/login"
-              className="rounded-lg bg-cinema-neon-blue px-3 py-2 text-sm font-medium text-cinema-bg transition hover:opacity-90"
-              style={{ boxShadow: '0 0 16px rgba(0, 212, 255, 0.4)' }}
+              className="rounded-lg bg-cinema-neon-blue px-3 py-2 text-sm font-medium text-cinema-bg shadow-[0_0_16px_rgba(0,212,255,0.4)] transition hover:opacity-90"
             >
               로그인
             </Link>

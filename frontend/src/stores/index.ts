@@ -1,1 +1,1 @@
-export { useAuthStore, syncTokensToStorage } from '@/stores/authStore';
+export { useAuthStore } from '@/stores/authStore';

@@ -1,19 +1,19 @@
 /**
  * 결제 페이지 — cinema theme
  * 경로: /payment/:screeningId — state로 heldSeats, screening 전달
+ * 인증은 ProtectedRoute에서 보장됨
  */
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
+import { useParams, useLocation, Link } from 'react-router-dom';
 import { reservationsApi } from '@/api/reservations';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
 import { GlassCard } from '@/components/common/GlassCard';
 import { NeonButton } from '@/components/common/NeonButton';
+import { PaymentSuccess } from '@/components/payment/PaymentSuccess';
 import { useToast } from '@/hooks';
-import { useAuthStore } from '@/stores';
 import { getErrorMessage } from '@/utils/errorHandler';
 import { formatDate } from '@/utils/dateUtils';
 import { logReservationComplete } from '@/utils/logger';
-import { formatPrice } from '@/utils/formatters';
 import type { Screening } from '@/types/movie.types';
 import type { PaymentMethod, PaymentResponse } from '@/types/reservation.types';
 
@@ -42,9 +42,7 @@ const PAY_METHOD_OPTIONS: PaymentMethod[] = [
 
 export function PaymentPage() {
   const { screeningId } = useParams<{ screeningId: string }>();
-  const navigate = useNavigate();
   const location = useLocation();
-  const { isAuthenticated } = useAuthStore();
   const { showSuccess, showError } = useToast();
 
   const id = screeningId ? Number(screeningId) : null;
@@ -64,12 +62,6 @@ export function PaymentPage() {
     if (state?.screening) setScreening(state.screening);
     if (state?.heldSeats?.length) setHeldSeats(state.heldSeats);
   }, [location.state]);
-
-  useEffect(() => {
-    if (!isAuthenticated && id != null) {
-      navigate('/login', { state: { from: `/payment/${id}` } });
-    }
-  }, [isAuthenticated, id, navigate]);
 
   const handlePay = async () => {
     if (id == null || heldSeats.length === 0) {
@@ -120,36 +112,7 @@ export function PaymentPage() {
   }
 
   if (result) {
-    return (
-      <div className="mx-auto max-w-lg py-12">
-        <GlassCard>
-          <h1 className="mb-6 font-display text-2xl tracking-widest text-cinema-text">예매 완료</h1>
-          <div className="space-y-4">
-            <p className="rounded-xl border border-cinema-neon-blue/30 bg-cinema-neon-blue/10 px-4 py-3 text-cinema-neon-blue">
-              예매가 완료되었습니다. 예매 번호를 확인해 주세요.
-            </p>
-            <dl className="grid gap-2 sm:grid-cols-[auto_1fr]">
-              <dt className="font-medium text-cinema-muted">예매 번호</dt>
-              <dd className="font-mono font-semibold text-cinema-neon-blue">
-                {result.reservationNo}
-              </dd>
-              <dt className="font-medium text-cinema-muted">좌석 수</dt>
-              <dd className="text-cinema-text">{result.totalSeats}석</dd>
-              <dt className="font-medium text-cinema-muted">총 결제 금액</dt>
-              <dd className="font-semibold text-cinema-neon-amber">
-                {formatPrice(result.totalAmount)}
-              </dd>
-            </dl>
-          </div>
-          <div className="mt-8 flex gap-3">
-            <NeonButton to="/reservations">예매 내역</NeonButton>
-            <NeonButton to="/movies" variant="ghost">
-              영화 목록
-            </NeonButton>
-          </div>
-        </GlassCard>
-      </div>
-    );
+    return <PaymentSuccess result={result} />;
   }
 
   return (

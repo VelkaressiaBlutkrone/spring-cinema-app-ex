@@ -1,7 +1,7 @@
 /**
  * 관리자 - 예매 내역 조회
  */
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { adminReservationsApi } from '@/api/admin';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
 import { EmptyState } from '@/components/common/ui/EmptyState';
@@ -35,17 +35,22 @@ export function AdminReservationsPage() {
   );
   const [detailLoading, setDetailLoading] = useState(false);
 
-  // 필터 상태
+  // 필터 상태 (UI 바인딩용)
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
   const [movieId, setMovieId] = useState<string>('');
   const [memberId, setMemberId] = useState<string>('');
   const [status, setStatus] = useState<string>('');
 
+  // ref로 필터값 참조 — fetchList의 deps에서 제거하여 필터 변경 시 자동 호출 방지
+  const filtersRef = useRef({ startDate, endDate, movieId, memberId, status });
+  filtersRef.current = { startDate, endDate, movieId, memberId, status };
+
   const fetchList = useCallback(
     async (pageNum: number = 0) => {
       setLoading(true);
       try {
+        const f = filtersRef.current;
         const params: {
           page: number;
           size: number;
@@ -58,11 +63,11 @@ export function AdminReservationsPage() {
           page: pageNum,
           size: PAGE_SIZE,
         };
-        if (startDate) params.startDate = startDate;
-        if (endDate) params.endDate = endDate;
-        if (movieId) params.movieId = parseInt(movieId, 10);
-        if (memberId) params.memberId = parseInt(memberId, 10);
-        if (status) params.status = status;
+        if (f.startDate) params.startDate = f.startDate;
+        if (f.endDate) params.endDate = f.endDate;
+        if (f.movieId) params.movieId = parseInt(f.movieId, 10);
+        if (f.memberId) params.memberId = parseInt(f.memberId, 10);
+        if (f.status) params.status = f.status;
 
         const res = await adminReservationsApi.getList(params);
         if (res.success && res.data) {
@@ -77,7 +82,7 @@ export function AdminReservationsPage() {
         setLoading(false);
       }
     },
-    [startDate, endDate, movieId, memberId, status, showError]
+    [showError]
   );
 
   useEffect(() => {
@@ -111,56 +116,56 @@ export function AdminReservationsPage() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">예매 내역 조회</h1>
+        <h1 className="text-2xl font-bold text-cinema-admin-text">예매 내역 조회</h1>
       </div>
 
       {/* 필터 */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4">
+      <div className="rounded-lg border border-cinema-admin-border bg-cinema-admin-surface p-4">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700">시작일</label>
+            <label className="block text-sm font-medium text-cinema-admin-secondary">시작일</label>
             <input
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-cinema-admin-border shadow-sm focus:border-cinema-admin-primary focus:ring-cinema-admin-primary sm:text-sm"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">종료일</label>
+            <label className="block text-sm font-medium text-cinema-admin-secondary">종료일</label>
             <input
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-cinema-admin-border shadow-sm focus:border-cinema-admin-primary focus:ring-cinema-admin-primary sm:text-sm"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">영화 ID</label>
+            <label className="block text-sm font-medium text-cinema-admin-secondary">영화 ID</label>
             <input
               type="number"
               value={movieId}
               onChange={(e) => setMovieId(e.target.value)}
               placeholder="전체"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-cinema-admin-border shadow-sm focus:border-cinema-admin-primary focus:ring-cinema-admin-primary sm:text-sm"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">회원 ID</label>
+            <label className="block text-sm font-medium text-cinema-admin-secondary">회원 ID</label>
             <input
               type="number"
               value={memberId}
               onChange={(e) => setMemberId(e.target.value)}
               placeholder="전체"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-cinema-admin-border shadow-sm focus:border-cinema-admin-primary focus:ring-cinema-admin-primary sm:text-sm"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">상태</label>
+            <label className="block text-sm font-medium text-cinema-admin-secondary">상태</label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              className="mt-1 block w-full rounded-md border-cinema-admin-border shadow-sm focus:border-cinema-admin-primary focus:ring-cinema-admin-primary sm:text-sm"
             >
               <option value="">전체</option>
               {Object.entries(STATUS_LABEL).map(([key, label]) => (
@@ -174,7 +179,7 @@ export function AdminReservationsPage() {
         <div className="mt-4 flex justify-end">
           <button
             onClick={() => fetchList(0)}
-            className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
+            className="rounded-md bg-cinema-admin-primary px-4 py-2 text-sm font-medium text-white hover:bg-cinema-admin-primary-hover"
           >
             검색
           </button>
@@ -188,62 +193,62 @@ export function AdminReservationsPage() {
         <EmptyState message="예매 내역이 없습니다." />
       ) : (
         <>
-          <div className="overflow-hidden rounded-lg border border-gray-200 bg-white shadow">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+          <div className="overflow-hidden rounded-lg border border-cinema-admin-border bg-cinema-admin-surface shadow">
+            <table className="min-w-full divide-y divide-cinema-admin-border">
+              <thead className="bg-cinema-admin-surface-alt">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-cinema-admin-muted">
                     예매번호
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-cinema-admin-muted">
                     회원
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-cinema-admin-muted">
                     영화
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-cinema-admin-muted">
                     상영관
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-cinema-admin-muted">
                     상영시간
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-cinema-admin-muted">
                     좌석수
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-cinema-admin-muted">
                     금액
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-cinema-admin-muted">
                     상태
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-cinema-admin-muted">
                     예매일시
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-cinema-admin-muted">
                     작업
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 bg-white">
+              <tbody className="divide-y divide-cinema-admin-border bg-cinema-admin-surface">
                 {content.map((row) => (
                   <tr key={row.reservationId}>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-cinema-admin-text">
                       {row.reservationNo}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-cinema-admin-text">
                       {row.memberLoginId} ({row.memberId})
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">{row.movieTitle}</td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                    <td className="px-6 py-4 text-sm text-cinema-admin-text">{row.movieTitle}</td>
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-cinema-admin-text">
                       {row.screenName}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-cinema-admin-text">
                       {formatDate(row.startTime)}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-cinema-admin-text">
                       {row.totalSeats}석
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-cinema-admin-text">
                       {formatAmount(row.totalAmount)}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm">
@@ -259,13 +264,13 @@ export function AdminReservationsPage() {
                         {STATUS_LABEL[row.status]}
                       </span>
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-cinema-admin-text">
                       {formatDate(row.createdAt)}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm font-medium">
                       <button
                         onClick={() => handleViewDetail(row.reservationId)}
-                        className="text-indigo-600 hover:text-indigo-900"
+                        className="text-cinema-admin-primary hover:text-cinema-admin-primary-hover"
                       >
                         상세
                       </button>

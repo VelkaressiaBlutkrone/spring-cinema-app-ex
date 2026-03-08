@@ -47,9 +47,3 @@ export const useAuthStore = create<AuthState>()(
     }
   )
 );
-
-export const syncTokensToStorage = () => {
-  const { accessToken } = useAuthStore.getState();
-  if (accessToken) localStorage.setItem(ACCESS_KEY, accessToken);
-  else localStorage.removeItem(ACCESS_KEY);
-};

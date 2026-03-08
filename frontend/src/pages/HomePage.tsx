@@ -2,8 +2,9 @@
  * 메인(홈) 페이지 — 2026 Cinematic theme
  * Hero, 영화관 현황, 3일 이내 상영 예정, 나의 최근 예매, 지금 바로 예매하기 CTA
  */
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { homeApi, type HomeStatsResponse, type UpcomingMovieItem } from '@/api/home';
 import { reservationsApi } from '@/api/reservations';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
@@ -29,43 +30,49 @@ function SectionTitle({ children }: SectionTitleProps) {
 export function HomePage() {
   const { isAuthenticated } = useAuthStore();
   const { showError } = useToast();
-  const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState<HomeStatsResponse | null>(null);
-  const [upcoming, setUpcoming] = useState<UpcomingMovieItem[]>([]);
-  const [reservations, setReservations] = useState<ReservationDetailResponse[]>([]);
 
+  const {
+    data: stats,
+    isLoading: statsLoading,
+    error: statsError,
+  } = useQuery<HomeStatsResponse | null>({
+    queryKey: ['home-stats'],
+    queryFn: async () => {
+      const res = await homeApi.getStats();
+      return res.data ?? null;
+    },
+  });
+
+  const {
+    data: upcoming = [],
+    isLoading: upcomingLoading,
+    error: upcomingError,
+  } = useQuery<UpcomingMovieItem[]>({
+    queryKey: ['upcoming-movies', 3],
+    queryFn: async () => {
+      const res = await homeApi.getUpcomingMovies(3);
+      return res.data ?? [];
+    },
+  });
+
+  const {
+    data: reservations = [],
+    error: reservationsError,
+  } = useQuery<ReservationDetailResponse[]>({
+    queryKey: ['my-reservations-recent'],
+    queryFn: async () => {
+      const res = await reservationsApi.getMyReservations();
+      return (res.data ?? []).slice(0, RECENT_RESERVATIONS);
+    },
+    enabled: isAuthenticated,
+  });
+
+  const error = statsError ?? upcomingError ?? reservationsError;
   useEffect(() => {
-    let cancelled = false;
+    if (error) showError(getErrorMessage(error));
+  }, [error, showError]);
 
-    const fetchAll = async () => {
-      setLoading(true);
-      try {
-        const [statsRes, upcomingRes] = await Promise.all([
-          homeApi.getStats(),
-          homeApi.getUpcomingMovies(3),
-        ]);
-        if (cancelled) return;
-        if (statsRes.data) setStats(statsRes.data);
-        if (upcomingRes.data) setUpcoming(upcomingRes.data);
-
-        if (isAuthenticated) {
-          const resRes = await reservationsApi.getMyReservations();
-          if (!cancelled && resRes.data) {
-            setReservations(resRes.data.slice(0, RECENT_RESERVATIONS));
-          }
-        }
-      } catch (e) {
-        if (!cancelled) showError(getErrorMessage(e));
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
-
-    fetchAll();
-    return () => {
-      cancelled = true;
-    };
-  }, [isAuthenticated, showError]);
+  const loading = statsLoading || upcomingLoading;
 
   return (
     <div className="py-8">

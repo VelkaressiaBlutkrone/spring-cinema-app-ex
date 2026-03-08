@@ -3,6 +3,7 @@
  */
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { moviesApi, screeningsApi } from '@/api/movies';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
 import { EmptyState } from '@/components/common/ui/EmptyState';
@@ -15,30 +16,21 @@ import type { SpringPage } from '@/types/api.types';
 
 export function MoviesPage() {
   const { showError } = useToast();
-  const [loading, setLoading] = useState(true);
-  const [movies, setMovies] = useState<SpringPage<Movie> | null>(null);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
   const [schedules, setSchedules] = useState<Screening[]>([]);
   const [schedulesLoading, setSchedulesLoading] = useState(false);
 
+  const { data: movies, isLoading: loading, error } = useQuery<SpringPage<Movie> | null>({
+    queryKey: ['movies', { page: 0, size: 20 }],
+    queryFn: async () => {
+      const res = await moviesApi.getMovies({ page: 0, size: 20 });
+      return res.data as SpringPage<Movie> | null;
+    },
+  });
+
   useEffect(() => {
-    let cancelled = false;
-    const fetch = async () => {
-      setLoading(true);
-      try {
-        const res = await moviesApi.getMovies({ page: 0, size: 20 });
-        if (!cancelled && res.data) setMovies(res.data as SpringPage<Movie>);
-      } catch (err) {
-        if (!cancelled) showError(getErrorMessage(err));
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    };
-    fetch();
-    return () => {
-      cancelled = true;
-    };
-  }, [showError]);
+    if (error) showError(getErrorMessage(error));
+  }, [error, showError]);
 
   const openDetail = async (movie: Movie) => {
     setSelectedMovie(movie);
