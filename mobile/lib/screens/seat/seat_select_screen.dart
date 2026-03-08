@@ -16,6 +16,7 @@ import '../../widgets/dialog/error_dialog.dart';
 import '../../widgets/glass_card.dart';
 import '../payment/payment_screen.dart';
 import 'widgets/seat_grid.dart';
+import 'widgets/seat_preview_3d.dart';
 import 'widgets/held_seats_bar.dart';
 
 /// 좌석 선택 화면 (HOLD 후 결제하기)
@@ -43,6 +44,7 @@ class _SeatSelectScreenState extends ConsumerState<SeatSelectScreen> {
   AsyncValue<SeatLayoutModel> _layout = const AsyncValue.loading();
   final Map<int, SeatHoldModel> _heldSeats = {};
   bool _isLoading = false;
+  bool _show3D = false;
   SeatEventSubscription? _seatEventSubscription;
 
   @override
@@ -231,11 +233,40 @@ class _SeatSelectScreenState extends ConsumerState<SeatSelectScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
                     children: [
-                      SeatGrid(
-                        layout: layout,
-                        heldSeatIds: _heldSeats.keys.toSet(),
-                        isLoading: _isLoading,
-                        onSeatTap: _onSeatTap,
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton.icon(
+                          onPressed: () => setState(() => _show3D = !_show3D),
+                          icon: Icon(
+                            _show3D ? Icons.grid_view : Icons.view_in_ar,
+                            size: 16,
+                            color: CinemaColors.textMuted,
+                          ),
+                          label: Text(
+                            _show3D ? '2D 좌석 맵' : '3D 시야 미리보기',
+                            style: GoogleFonts.roboto(
+                              fontSize: 12,
+                              color: CinemaColors.textMuted,
+                            ),
+                          ),
+                        ),
+                      ),
+                      AnimatedSwitcher(
+                        duration: CinemaAnimations.slow,
+                        switchInCurve: CinemaAnimations.defaultCurve,
+                        child: _show3D
+                            ? SeatPreview3D(
+                                key: const ValueKey('3d'),
+                                layout: layout,
+                                heldSeatIds: _heldSeats.keys.toSet(),
+                              )
+                            : SeatGrid(
+                                key: const ValueKey('2d'),
+                                layout: layout,
+                                heldSeatIds: _heldSeats.keys.toSet(),
+                                isLoading: _isLoading,
+                                onSeatTap: _onSeatTap,
+                              ),
                       ),
                       HeldSeatsBar(
                         heldSeats: _heldSeats,

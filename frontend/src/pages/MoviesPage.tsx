@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { motion } from 'framer-motion';
+import { motion, LayoutGroup } from 'framer-motion';
 import { moviesApi, screeningsApi } from '@/api/movies';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
 import { EmptyState } from '@/components/common/ui/EmptyState';
@@ -70,6 +70,7 @@ export function MoviesPage() {
       {isEmpty ? (
         <EmptyState title="등록된 영화가 없습니다" message="곧 다양한 영화가 상영될 예정입니다." />
       ) : (
+        <LayoutGroup>
         <motion.ul
           className="flex gap-5 overflow-x-auto pb-4 scroll-snap-x list-none"
           aria-label="영화 목록"
@@ -84,7 +85,10 @@ export function MoviesPage() {
                 onClick={() => openDetail(movie)}
                 className="group flex w-[min(180px,40vw)] flex-col overflow-hidden rounded-2xl border border-cinema-glass-border bg-cinema-surface text-left shadow-lg transition-all duration-300 hover:scale-[1.04] hover:border-cinema-neon-blue/50 hover:shadow-[0_0_32px_rgba(0,212,255,0.2)] focus:outline-none focus:ring-2 focus:ring-cinema-neon-blue/50"
               >
-              <div className="relative aspect-[2/3] overflow-hidden bg-cinema-surface-elevated">
+              <motion.div
+                layoutId={`poster-${movie.id}`}
+                className="relative aspect-[2/3] overflow-hidden bg-cinema-surface-elevated"
+              >
                 {movie.posterUrl ? (
                   <img
                     src={movie.posterUrl}
@@ -97,11 +101,14 @@ export function MoviesPage() {
                   </div>
                 )}
                 <div className="poster-overlay" aria-hidden />
-              </div>
+              </motion.div>
               <div className="p-3">
-                <h2 className="line-clamp-2 font-medium text-cinema-text transition group-hover:text-cinema-neon-blue">
+                <motion.h2
+                  layoutId={`title-${movie.id}`}
+                  className="line-clamp-2 font-medium text-cinema-text transition group-hover:text-cinema-neon-blue"
+                >
                   {movie.title}
-                </h2>
+                </motion.h2>
                 {movie.releaseDate && (
                   <p className="mt-1 text-xs text-cinema-muted">
                     {formatDate(movie.releaseDate, 'YYYY-MM-DD')}
@@ -112,11 +119,28 @@ export function MoviesPage() {
             </motion.li>
           ))}
         </motion.ul>
+        </LayoutGroup>
       )}
 
       <Modal isOpen={!!selectedMovie} onClose={closeDetail} title={selectedMovie?.title} size="lg">
         {selectedMovie && (
           <div className="space-y-4 text-cinema-text">
+            <motion.div
+              layoutId={`poster-${selectedMovie.id}`}
+              className="mx-auto aspect-[2/3] w-32 overflow-hidden rounded-xl bg-cinema-surface-elevated"
+            >
+              {selectedMovie.posterUrl ? (
+                <img
+                  src={selectedMovie.posterUrl}
+                  alt={selectedMovie.title}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center text-4xl text-cinema-muted-dark">
+                  🎬
+                </div>
+              )}
+            </motion.div>
             <p className="text-cinema-muted">{selectedMovie.description ?? '-'}</p>
             <div className="grid grid-cols-2 gap-2 text-sm text-cinema-muted">
               {selectedMovie.runningTime && <span>상영시간: {selectedMovie.runningTime}분</span>}

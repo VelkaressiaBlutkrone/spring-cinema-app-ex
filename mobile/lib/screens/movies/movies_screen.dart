@@ -141,23 +141,26 @@ class _MovieListTile extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: 80,
-              height: 112,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    CinemaColors.neonBlue.withValues(alpha: 0.3),
-                    CinemaColors.neonPurple.withValues(alpha: 0.2),
-                  ],
+            Hero(
+              tag: 'movie-poster-${movie.id}',
+              child: Container(
+                width: 80,
+                height: 112,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      CinemaColors.neonBlue.withValues(alpha: 0.3),
+                      CinemaColors.neonPurple.withValues(alpha: 0.2),
+                    ],
+                  ),
                 ),
+                child: movie.posterUrl != null && movie.posterUrl!.isNotEmpty
+                    ? null
+                    : Icon(Icons.movie_outlined, size: 40, color: CinemaColors.textMuted),
               ),
-              child: movie.posterUrl != null && movie.posterUrl!.isNotEmpty
-                  ? null
-                  : Icon(Icons.movie_outlined, size: 40, color: CinemaColors.textMuted),
             ),
             const SizedBox(width: 16),
             Expanded(

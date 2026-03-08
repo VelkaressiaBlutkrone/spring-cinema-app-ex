@@ -153,4 +153,8 @@
   .lightning-dark::before {
     display: none;
   }
+  /* 3D 뷰 perspective 비활성화 */
+  [style*="perspective"] {
+    perspective: none !important;
+  }
 }

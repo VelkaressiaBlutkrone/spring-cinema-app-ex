@@ -39,23 +39,41 @@ class CinemaHomeHero extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ).createShader(bounds),
-              child: Text(
-                '영화관 예매',
-                style: GoogleFonts.bebasNeue(
-                  fontSize: 36,
-                  color: Colors.white,
-                  letterSpacing: 4,
-                  shadows: [
-                    Shadow(
-                      color: CinemaColors.neonBlue.withValues(alpha: 0.5),
-                      blurRadius: 24,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: '영화관 예매'.split('').asMap().entries.map((entry) {
+                  return Text(
+                    entry.value,
+                    style: GoogleFonts.bebasNeue(
+                      fontSize: 36,
+                      color: Colors.white,
+                      letterSpacing: 4,
+                      shadows: [
+                        Shadow(
+                          color: CinemaColors.neonBlue.withValues(alpha: 0.5),
+                          blurRadius: 24,
+                        ),
+                        Shadow(
+                          color: CinemaColors.neonBlue.withValues(alpha: 0.2),
+                          blurRadius: 60,
+                        ),
+                      ],
                     ),
-                    Shadow(
-                      color: CinemaColors.neonBlue.withValues(alpha: 0.2),
-                      blurRadius: 60,
-                    ),
-                  ],
-                ),
+                  )
+                      .animate()
+                      .fadeIn(
+                        duration: CinemaAnimations.slow,
+                        delay: Duration(milliseconds: 300 + entry.key * 80),
+                        curve: CinemaAnimations.defaultCurve,
+                      )
+                      .slideY(
+                        begin: 0.5,
+                        end: 0,
+                        duration: CinemaAnimations.slow,
+                        delay: Duration(milliseconds: 300 + entry.key * 80),
+                        curve: CinemaAnimations.defaultCurve,
+                      );
+                }).toList(),
               ),
             ),
             const SizedBox(height: 8),

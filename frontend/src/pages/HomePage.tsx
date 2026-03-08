@@ -122,7 +122,17 @@ export function HomePage() {
           style={{ opacity: heroOpacity }}
         >
           <h1 className="hero-title mb-2 font-display text-4xl tracking-[0.2em] text-cinema-text sm:text-5xl">
-            영화관 예매
+            {'영화관 예매'.split('').map((char, i) => (
+              <motion.span
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: 0.3 + i * 0.08, ease: [0.25, 0.46, 0.45, 0.94] }}
+                className="inline-block"
+              >
+                {char}
+              </motion.span>
+            ))}
           </h1>
           <p className="text-cinema-muted">상영 중인 영화를 확인하고 편리하게 예매하세요.</p>
         </motion.div>

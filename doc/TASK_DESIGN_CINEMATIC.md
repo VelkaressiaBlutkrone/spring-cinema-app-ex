@@ -395,7 +395,7 @@ mobile/lib/theme/
 
 ---
 
-## Phase 7: 3D 시트 뷰 및 고급 효과 (선택적)
+## Phase 7: 3D 시트 뷰 및 고급 효과 (선택적) ✅
 
 ### 목표
 
@@ -406,59 +406,62 @@ mobile/lib/theme/
 
 #### 작업 내용
 
-- [ ] 구현 방식 결정
-  - **옵션 A**: `@react-three/fiber` + `@react-three/drei` (Three.js 기반 3D)
-  - **옵션 B**: CSS 3D transform 기반 2.5D 시뮬레이션 (경량)
-- [ ] 2.5D 시뮬레이션 (옵션 B 우선 진행)
+- [x] 구현 방식 결정
+  - **옵션 B 채택**: CSS 3D transform 기반 2.5D 시뮬레이션 (경량, 추가 의존성 없음)
+- [x] 2.5D 시뮬레이션 (`SeatPreview3D.tsx`)
   - 좌석 선택 시 해당 위치의 화면 각도·거리 시각화
-  - CSS `perspective` + `rotateX` + `translateZ` 활용
-  - 화면(스크린) 표현: 그라데이션 사각형
-  - 선택 좌석 강조: 네온 글로우 마커
-- [ ] 전환 애니메이션
-  - 좌석 맵 ↔ 3D 뷰 전환: rotate + opacity (500ms)
+  - CSS `perspective` + framer-motion `rotateX`/`rotateY`/`translateZ` 활용
+  - 화면(스크린) 표현: 그라데이션 사각형 (white glow)
+  - 선택 좌석 강조: 네온 블루 글로우 마커 (scale 150%)
+- [x] 전환 애니메이션
+  - 좌석 맵 ↔ 3D 뷰 전환: AnimatePresence opacity (500ms)
+  - 시야각 변경: 600ms easeOutQuad 전환
 
 #### 체크리스트
 
-- [ ] 좌석 선택 시 3D/2.5D 뷰 전환 동작
-- [ ] 뷰 각도가 좌석 위치에 따라 현실적으로 변화
-- [ ] 모바일 웹에서도 동작 (터치 지원)
-- [ ] fallback: 3D 미지원 환경에서 기존 2D 뷰 유지
+- [x] 좌석 선택 시 3D/2.5D 뷰 전환 동작
+- [x] 뷰 각도가 좌석 위치에 따라 현실적으로 변화
+- [x] 모바일 웹에서도 동작 (터치 지원)
+- [x] fallback: `prefers-reduced-motion` 시 perspective 비활성화
 
 ### 7.2 앱(Flutter) — 2.5D 시트 뷰
 
 #### 작업 내용
 
-- [ ] `Transform` 위젯 기반 2.5D 시뮬레이션
-  - `Matrix4.identity()..setEntry(3, 2, 0.001)..rotateX(angle)`
-  - 좌석 위치에 따른 시야 각도 계산
-- [ ] `CustomPainter`로 극장 스크린 표현
-- [ ] 좌석 맵 ↔ 3D 뷰 전환: `AnimatedSwitcher` (500ms)
+- [x] `Transform` 위젯 기반 2.5D 시뮬레이션 (`seat_preview_3d.dart`)
+  - `Matrix4.identity()..setEntry(3, 2, 0.001)..rotateX(angle)..rotateY(angle)`
+  - 좌석 위치에 따른 시야 각도 계산 (rowRatio → rotateX, colRatio → rotateY)
+- [x] 극장 스크린: `Container` + white gradient + glow shadow
+- [x] 좌석 맵 ↔ 3D 뷰 전환: `AnimatedSwitcher` (500ms) + 토글 버튼
 
 ### 7.3 모핑(Morphing) 전환 효과
 
 #### 작업 내용
 
-- [ ] 웹: 예매 플로우 단계 전환 시 버튼→카드 모핑
-  - Framer Motion `layoutId` 활용 (Shared Layout)
-- [ ] 앱: `Hero` 위젯으로 화면 간 공유 요소 전환
-  - 영화 포스터: 목록 → 상세 전환 시 Hero 애니메이션
-  - 좌석 선택 → 결제: 선택 정보 카드 전환
+- [x] 웹: 영화 목록 → 상세 모달 전환 시 포스터 모핑
+  - Framer Motion `layoutId` (`poster-{id}`, `title-{id}`) + `LayoutGroup`
+  - 모달 내 포스터가 목록 포스터에서 확대 전환
+- [x] 앱: `Hero` 위젯으로 화면 간 공유 요소 전환
+  - 영화 포스터: 목록 (`MoviesScreen`) → 상세 (`MovieDetailScreen`) Hero 애니메이션
+  - `movie-poster-{id}` tag으로 매칭
 
-### 7.4 키네틱 타이포그래피 (선택적)
+### 7.4 키네틱 타이포그래피
 
 #### 작업 내용
 
-- [ ] 웹: 영화 제목 스크롤 시 글자 단위 stagger 애니메이션
-  - Framer Motion `splitText` + stagger
-- [ ] 앱: 히어로 제목 진입 시 글자 단위 순차 등장
-  - `flutter_animate` chaining per character
+- [x] 웹: 히어로 제목 글자 단위 stagger 애니메이션
+  - `split('')` + `motion.span` per character (80ms delay 간격)
+  - fadeIn + slideUp (y:20→0, 400ms)
+- [x] 앱: 히어로 제목 진입 시 글자 단위 순차 등장
+  - `split('')` + `flutter_animate` per character (80ms delay 간격)
+  - fadeIn + slideY (0.5→0, 400ms)
 
 #### 체크리스트
 
-- [ ] 3D 뷰가 직관적이고 이해하기 쉬움
-- [ ] 모핑 전환이 자연스러움 (500ms 이내)
-- [ ] 키네틱 타이포가 가독성을 해치지 않음
-- [ ] 모든 고급 효과에 fallback/비활성화 옵션 존재
+- [x] 3D 뷰가 직관적이고 이해하기 쉬움
+- [x] 모핑 전환이 자연스러움 (500ms 이내)
+- [x] 키네틱 타이포가 가독성을 해치지 않음
+- [x] 모든 고급 효과에 fallback/비활성화 옵션 존재
 
 ### 예상 소요 시간
 

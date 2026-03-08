@@ -7,6 +7,7 @@ import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useSeatHoldLogic } from '@/hooks/useSeatHoldLogic';
 import { SeatMap, HoldTimer } from '@/components/booking';
+import { SeatPreview3D } from '@/components/booking/SeatPreview3D';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
 import { GlassCard } from '@/components/common/GlassCard';
 import { NeonButton } from '@/components/common/NeonButton';
@@ -22,6 +23,8 @@ export function SeatSelectPage() {
 
   const id = screeningId ? Number(screeningId) : null;
   const [screening, setScreening] = useState<Screening | null>(null);
+
+  const [show3D, setShow3D] = useState(false);
 
   const {
     seats, loading, holdLoading, heldSeats,
@@ -79,13 +82,27 @@ export function SeatSelectPage() {
         <HoldTimer holdExpireAt={minHoldExpireAt} onExpire={handleTimerExpire} />
       </div>
 
+      <div className="mb-4 flex justify-end">
+        <button
+          type="button"
+          onClick={() => setShow3D((v) => !v)}
+          className="rounded-lg border border-cinema-glass-border bg-cinema-surface px-3 py-1.5 text-xs text-cinema-muted transition-all duration-200 hover:border-cinema-neon-blue/50 hover:text-cinema-neon-blue"
+        >
+          {show3D ? '2D 좌석 맵' : '3D 시야 미리보기'}
+        </button>
+      </div>
+
       <div className="mb-6">
-        <SeatMap
-          seats={seats}
-          myHoldSeatIds={myHoldSeatIds}
-          onSeatClick={handleSeatClick}
-          disabled={holdLoading}
-        />
+        {show3D ? (
+          <SeatPreview3D seats={seats} myHoldSeatIds={myHoldSeatIds} visible={show3D} />
+        ) : (
+          <SeatMap
+            seats={seats}
+            myHoldSeatIds={myHoldSeatIds}
+            onSeatClick={handleSeatClick}
+            disabled={holdLoading}
+          />
+        )}
       </div>
 
       <AnimatePresence>
