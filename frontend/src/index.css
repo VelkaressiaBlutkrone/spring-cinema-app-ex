@@ -80,3 +80,77 @@
 .animate-seat-bounce {
   animation: seat-bounce 0.4s ease-out;
 }
+
+/* 좌석 호버 효과 */
+.seat-hover {
+  transition: filter 200ms ease-out, transform 200ms ease-out;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.seat-hover:hover {
+  filter: brightness(1.25) drop-shadow(0 0 6px rgba(0, 212, 255, 0.5));
+  transform: scale(1.12);
+}
+
+/* 히어로 타이틀 네온 글로우 */
+.hero-title {
+  text-shadow:
+    0 0 20px rgba(0, 212, 255, 0.4),
+    0 0 60px rgba(0, 212, 255, 0.15),
+    0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* 통계 숫자 미세 글로우 */
+.stat-glow {
+  text-shadow: 0 0 8px rgba(0, 212, 255, 0.3);
+}
+
+/* 포스터 하단 다크 그라데이션 오버레이 */
+.poster-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10, 10, 10, 0.7) 0%, transparent 50%);
+  opacity: 0.6;
+  transition: opacity 300ms ease-out;
+  pointer-events: none;
+}
+.group:hover .poster-overlay {
+  opacity: 0.3;
+}
+
+/* Lightning Dark — 커서 추적 미세 글로우 */
+.lightning-dark {
+  --mouse-x: 50%;
+  --mouse-y: 50%;
+  position: relative;
+}
+.lightning-dark::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(
+    600px circle at var(--mouse-x) var(--mouse-y),
+    rgba(0, 212, 255, 0.03),
+    transparent 40%
+  );
+  will-change: background;
+}
+
+/* prefers-reduced-motion: 모든 애니메이션 비활성화 */
+@media (prefers-reduced-motion: reduce) {
+  .animate-seat-bounce {
+    animation: none;
+  }
+  .seat-hover:hover {
+    transform: none;
+    filter: brightness(1.15);
+  }
+  .hero-title {
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  }
+  .lightning-dark::before {
+    display: none;
+  }
+}

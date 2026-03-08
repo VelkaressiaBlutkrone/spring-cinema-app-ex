@@ -6,6 +6,7 @@ import '../provider/auth_provider.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/signup_screen.dart';
 import '../screens/main_tab_screen.dart';
+import '../theme/cinema_animations.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
@@ -27,15 +28,33 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(
         path: '/',
-        builder: (context, state) => const MainTabScreen(),
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const MainTabScreen(),
+          transitionsBuilder: CinemaAnimations.pageTransitionBuilder,
+          transitionDuration: CinemaAnimations.normal,
+          reverseTransitionDuration: const Duration(milliseconds: 200),
+        ),
       ),
       GoRoute(
         path: '/login',
-        builder: (context, state) => const LoginScreen(),
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const LoginScreen(),
+          transitionsBuilder: CinemaAnimations.modalTransitionBuilder,
+          transitionDuration: CinemaAnimations.slow,
+          reverseTransitionDuration: CinemaAnimations.normal,
+        ),
       ),
       GoRoute(
         path: '/signup',
-        builder: (context, state) => const SignupScreen(),
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const SignupScreen(),
+          transitionsBuilder: CinemaAnimations.modalTransitionBuilder,
+          transitionDuration: CinemaAnimations.slow,
+          reverseTransitionDuration: CinemaAnimations.normal,
+        ),
       ),
     ],
     errorBuilder: (context, state) => Scaffold(

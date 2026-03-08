@@ -5,6 +5,7 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
 import { reservationsApi } from '@/api/reservations';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
 import { EmptyState } from '@/components/common/ui/EmptyState';
@@ -14,6 +15,7 @@ import { useToast } from '@/hooks';
 import { getErrorMessage } from '@/utils/errorHandler';
 import { formatDate } from '@/utils/dateUtils';
 import { formatPrice } from '@/utils/formatters';
+import { slideUp, staggerContainer } from '@/lib/animations';
 import type { ReservationDetailResponse } from '@/types/reservation.types';
 
 export function ReservationsPage() {
@@ -54,9 +56,14 @@ export function ReservationsPage() {
           />
         </GlassCard>
       ) : (
-        <ul className="space-y-4">
+        <motion.ul
+          className="space-y-4"
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+        >
           {items.map((r) => (
-            <li key={r.reservationId}>
+            <motion.li key={r.reservationId} variants={slideUp}>
               <GlassCard>
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div>
@@ -79,9 +86,9 @@ export function ReservationsPage() {
                   </Link>
                 </div>
               </GlassCard>
-            </li>
+            </motion.li>
           ))}
-        </ul>
+        </motion.ul>
       )}
     </div>
   );

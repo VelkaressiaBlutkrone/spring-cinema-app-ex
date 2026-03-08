@@ -5,9 +5,11 @@
  */
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import { ProfileTab } from '@/components/mypage/ProfileTab';
 import { HoldsTab } from '@/components/mypage/HoldsTab';
 import { ReservationsTab } from '@/components/mypage/ReservationsTab';
+import { fadeIn } from '@/lib/animations';
 
 type TabId = 'profile' | 'holds' | 'reservations';
 
@@ -49,9 +51,13 @@ export function MyPage() {
         ))}
       </div>
 
-      {tab === 'profile' && <ProfileTab />}
-      {tab === 'holds' && <HoldsTab />}
-      {tab === 'reservations' && <ReservationsTab />}
+      <AnimatePresence mode="wait">
+        <motion.div key={tab} initial="hidden" animate="visible" exit="hidden" variants={fadeIn}>
+          {tab === 'profile' && <ProfileTab />}
+          {tab === 'holds' && <HoldsTab />}
+          {tab === 'reservations' && <ReservationsTab />}
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }

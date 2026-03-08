@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import '../theme/cinema_theme.dart';
 
 /// Glassmorphism 2.0 card with blur backdrop, border glow, liquid glass feeling
-class GlassCard extends StatelessWidget {
+/// [onTap] 제공 시 press 피드백(border 밝아짐) 적용
+class GlassCard extends StatefulWidget {
   const GlassCard({
     super.key,
     required this.child,
@@ -11,6 +12,7 @@ class GlassCard extends StatelessWidget {
     this.borderRadius = 20,
     this.blur = 20,
     this.borderWidth = 1,
+    this.onTap,
   });
 
   final Widget child;
@@ -18,33 +20,62 @@ class GlassCard extends StatelessWidget {
   final double borderRadius;
   final double blur;
   final double borderWidth;
+  final VoidCallback? onTap;
+
+  @override
+  State<GlassCard> createState() => _GlassCardState();
+}
+
+class _GlassCardState extends State<GlassCard> {
+  bool _isPressed = false;
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(borderRadius),
+    final borderColor = _isPressed
+        ? CinemaColors.neonBlue.withValues(alpha: 0.4)
+        : CinemaColors.glassBorder;
+    final shadowColor = _isPressed
+        ? CinemaColors.neonBlue.withValues(alpha: 0.15)
+        : CinemaColors.glassHighlight;
+
+    Widget card = ClipRRect(
+      borderRadius: BorderRadius.circular(widget.borderRadius),
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-        child: Container(
-          padding: padding,
+        filter: ImageFilter.blur(sigmaX: widget.blur, sigmaY: widget.blur),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
+          padding: widget.padding,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(borderRadius),
+            borderRadius: BorderRadius.circular(widget.borderRadius),
             color: CinemaColors.glassWhite,
             border: Border.all(
-              color: CinemaColors.glassBorder,
-              width: borderWidth,
+              color: borderColor,
+              width: widget.borderWidth,
             ),
             boxShadow: [
               BoxShadow(
-                color: CinemaColors.glassHighlight,
-                blurRadius: 8,
+                color: shadowColor,
+                blurRadius: _isPressed ? 16 : 8,
                 spreadRadius: 0,
               ),
             ],
           ),
-          child: child,
+          child: widget.child,
         ),
       ),
     );
+
+    if (widget.onTap != null) {
+      return GestureDetector(
+        onTap: widget.onTap,
+        onTapDown: (_) => setState(() => _isPressed = true),
+        onTapUp: (_) => setState(() => _isPressed = false),
+        onTapCancel: () => setState(() => _isPressed = false),
+        child: card,
+      );
+    }
+
+    return card;
   }
 }

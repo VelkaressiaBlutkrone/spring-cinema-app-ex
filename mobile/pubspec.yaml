@@ -73,6 +73,9 @@ dependencies:
   # JSON 직렬화 어노테이션 (Phase 3.5)
   json_annotation: ^4.9.0
 
+  # 선언적 애니메이션 (Cinematic Design Phase 1)
+  flutter_animate: ^4.5.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

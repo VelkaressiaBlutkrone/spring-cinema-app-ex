@@ -2,7 +2,7 @@
  * 상단 네비게이션 바 (Cinematic)
  * Glassmorphic, neon accent, active underline
  */
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '@/stores';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
@@ -29,9 +29,20 @@ export function NavigationBar() {
     navigate('/');
   }, [clearAuth, navigate]);
 
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   return (
     <header
-      className="sticky top-0 z-40 border-b border-cinema-glass-border bg-[rgba(18,18,18,0.85)] backdrop-blur-xl"
+      className={`sticky top-0 z-40 border-b transition-all duration-300 ${
+        scrolled
+          ? 'border-cinema-glass-border bg-[rgba(10,10,10,0.95)] backdrop-blur-2xl shadow-[0_4px_24px_rgba(0,0,0,0.4)]'
+          : 'border-transparent bg-[rgba(18,18,18,0.6)] backdrop-blur-xl'
+      }`}
     >
       <nav className="container mx-auto flex h-14 items-center justify-between px-4">
         <Link

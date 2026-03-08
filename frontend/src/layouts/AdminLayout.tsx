@@ -3,9 +3,11 @@
  * /admin/login 은 비인증 허용, 그 외 /admin/* 는 ADMIN Role 필요
  */
 import { Outlet, Link, useNavigate, useLocation, Navigate } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import { NavigationLogger } from '@/components/common/NavigationLogger';
 import { useAuthStore } from '@/stores';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
+import { fadeIn } from '@/lib/animations';
 
 const SIDEBAR_LINKS = [
   { to: '/admin', label: '대시보드' },
@@ -90,7 +92,16 @@ export function AdminLayout() {
           </div>
         </header>
         <main className="flex-1 overflow-auto p-6">
-          <Outlet />
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={location.pathname}
+              initial="hidden"
+              animate="visible"
+              variants={fadeIn}
+            >
+              <Outlet />
+            </motion.div>
+          </AnimatePresence>
         </main>
       </div>
     </div>

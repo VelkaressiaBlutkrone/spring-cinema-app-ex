@@ -10,6 +10,7 @@ import '../../models/seat.dart';
 import '../../provider/api_providers.dart';
 import '../../services/seat_sse_client.dart';
 import '../../theme/cinema_theme.dart';
+import '../../theme/cinema_animations.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/dialog/error_dialog.dart';
 import '../../widgets/glass_card.dart';
@@ -266,13 +267,28 @@ class _SeatSelectScreenState extends ConsumerState<SeatSelectScreen> {
           ),
           Padding(
             padding: const EdgeInsets.all(20),
-            child: CustomButton(
-              text: _heldSeats.isEmpty
-                  ? '좌석을 선택하세요'
-                  : '결제하기 (${_heldSeats.length}석)',
-              onPressed: _heldSeats.isEmpty ? null : _goToPayment,
-              isFullWidth: true,
-              size: ButtonSize.large,
+            child: AnimatedSwitcher(
+              duration: CinemaAnimations.normal,
+              switchInCurve: CinemaAnimations.defaultCurve,
+              transitionBuilder: (child, animation) => FadeTransition(
+                opacity: animation,
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0, 0.2),
+                    end: Offset.zero,
+                  ).animate(animation),
+                  child: child,
+                ),
+              ),
+              child: CustomButton(
+                key: ValueKey(_heldSeats.length),
+                text: _heldSeats.isEmpty
+                    ? '좌석을 선택하세요'
+                    : '결제하기 (${_heldSeats.length}석)',
+                onPressed: _heldSeats.isEmpty ? null : _goToPayment,
+                isFullWidth: true,
+                size: ButtonSize.large,
+              ),
             ),
           ),
         ],

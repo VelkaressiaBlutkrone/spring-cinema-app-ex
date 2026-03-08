@@ -4,12 +4,14 @@
  */
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useSeatHoldLogic } from '@/hooks/useSeatHoldLogic';
 import { SeatMap, HoldTimer } from '@/components/booking';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
 import { GlassCard } from '@/components/common/GlassCard';
 import { NeonButton } from '@/components/common/NeonButton';
 import { formatDate } from '@/utils/dateUtils';
+import { slideUp } from '@/lib/animations';
 import type { Screening } from '@/types/movie.types';
 import { SCREENING_STATUS_LABEL } from '@/types/movie.types';
 
@@ -86,7 +88,9 @@ export function SeatSelectPage() {
         />
       </div>
 
+      <AnimatePresence>
       {heldSeats.length > 0 && (
+        <motion.div initial="hidden" animate="visible" exit="hidden" variants={slideUp}>
         <GlassCard>
           <h2 className="mb-2 font-medium text-cinema-text">선택한 좌석 ({heldSeats.length}석)</h2>
           <ul className="mb-4 flex flex-wrap gap-2">
@@ -139,7 +143,9 @@ export function SeatSelectPage() {
             </NeonButton>
           </div>
         </GlassCard>
+        </motion.div>
       )}
+      </AnimatePresence>
 
       {heldSeats.length === 0 && (
         <div className="mt-4">

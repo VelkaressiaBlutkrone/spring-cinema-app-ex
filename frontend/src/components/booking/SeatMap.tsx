@@ -128,7 +128,7 @@ export function SeatMap({
                   fill={fill}
                   stroke={clickable ? '#1e40af' : '#e5e7eb'}
                   strokeWidth={clickable ? 2 : 1}
-                  className={clickable ? 'cursor-pointer hover:opacity-90' : 'cursor-not-allowed'}
+                  className={clickable ? 'cursor-pointer seat-hover' : 'cursor-not-allowed opacity-70'}
                   onClick={getClickHandler(seat)}
                   aria-label={`${rowLabel}-${seat.seatNo} ${seat.status}`}
                 />

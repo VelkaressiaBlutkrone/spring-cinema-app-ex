@@ -4,6 +4,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
 import { moviesApi, screeningsApi } from '@/api/movies';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
 import { EmptyState } from '@/components/common/ui/EmptyState';
@@ -11,6 +12,7 @@ import { Modal } from '@/components/common/ui/Modal';
 import { useToast } from '@/hooks';
 import { getErrorMessage } from '@/utils/errorHandler';
 import { formatDate, getScreeningDisplayStatus, SCREENING_DISPLAY_LABEL } from '@/utils/dateUtils';
+import { scaleIn, staggerContainer } from '@/lib/animations';
 import type { Movie, Screening } from '@/types/movie.types';
 import type { SpringPage } from '@/types/api.types';
 
@@ -68,18 +70,21 @@ export function MoviesPage() {
       {isEmpty ? (
         <EmptyState title="등록된 영화가 없습니다" message="곧 다양한 영화가 상영될 예정입니다." />
       ) : (
-        <ul
+        <motion.ul
           className="flex gap-5 overflow-x-auto pb-4 scroll-snap-x list-none"
           aria-label="영화 목록"
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
         >
           {list.map((movie) => (
-            <li key={movie.id} className="scroll-snap-item shrink-0">
+            <motion.li key={movie.id} className="scroll-snap-item shrink-0" variants={scaleIn}>
               <button
                 type="button"
                 onClick={() => openDetail(movie)}
                 className="group flex w-[min(180px,40vw)] flex-col overflow-hidden rounded-2xl border border-cinema-glass-border bg-cinema-surface text-left shadow-lg transition-all duration-300 hover:scale-[1.04] hover:border-cinema-neon-blue/50 hover:shadow-[0_0_32px_rgba(0,212,255,0.2)] focus:outline-none focus:ring-2 focus:ring-cinema-neon-blue/50"
               >
-              <div className="aspect-[2/3] overflow-hidden bg-cinema-surface-elevated">
+              <div className="relative aspect-[2/3] overflow-hidden bg-cinema-surface-elevated">
                 {movie.posterUrl ? (
                   <img
                     src={movie.posterUrl}
@@ -91,6 +96,7 @@ export function MoviesPage() {
                     🎬
                   </div>
                 )}
+                <div className="poster-overlay" aria-hidden />
               </div>
               <div className="p-3">
                 <h2 className="line-clamp-2 font-medium text-cinema-text transition group-hover:text-cinema-neon-blue">
@@ -103,9 +109,9 @@ export function MoviesPage() {
                 )}
               </div>
               </button>
-            </li>
+            </motion.li>
           ))}
-        </ul>
+        </motion.ul>
       )}
 
       <Modal isOpen={!!selectedMovie} onClose={closeDetail} title={selectedMovie?.title} size="lg">

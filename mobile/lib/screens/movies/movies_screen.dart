@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -6,6 +7,7 @@ import '../../models/api_response.dart';
 import '../../models/movie.dart';
 import '../../provider/api_providers.dart';
 import '../../theme/cinema_theme.dart';
+import '../../theme/cinema_animations.dart';
 import '../../widgets/glass_card.dart';
 import 'movie_detail_screen.dart';
 
@@ -79,7 +81,20 @@ class _MoviesScreenState extends ConsumerState<MoviesScreen> {
                       ),
                     ),
                   ),
-                );
+                )
+                    .animate()
+                    .fadeIn(
+                      duration: CinemaAnimations.normal,
+                      delay: CinemaAnimations.staggerDelayFor(index),
+                      curve: CinemaAnimations.defaultCurve,
+                    )
+                    .slideY(
+                      begin: 0.1,
+                      end: 0,
+                      duration: CinemaAnimations.normal,
+                      delay: CinemaAnimations.staggerDelayFor(index),
+                      curve: CinemaAnimations.defaultCurve,
+                    );
               },
             ),
           );
@@ -119,6 +134,7 @@ class _MovieListTile extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       borderRadius: 16,
       blur: 16,
+      onTap: onTap,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),

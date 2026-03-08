@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../models/seat.dart';
 import '../../../theme/cinema_theme.dart';
@@ -96,29 +97,13 @@ class SeatGrid extends StatelessWidget {
                                 ? seatSpacing
                                 : 0,
                           ),
-                          child: GestureDetector(
-                            onTap: isLoading ? null : () => onSeatTap(s),
-                            child: Container(
-                              width: seatSize,
-                              height: seatSize,
-                              decoration: BoxDecoration(
-                                color: seatColor,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: clickable
-                                      ? CinemaColors.seatMyHold
-                                      : CinemaColors.glassBorder,
-                                  width: clickable ? 2 : 1,
-                                ),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  '${s.seatNo}',
-                                  style: GoogleFonts.roboto(
-                                      fontSize: 13, color: Colors.white),
-                                ),
-                              ),
-                            ),
+                          child: _SeatTile(
+                            seat: s,
+                            color: seatColor,
+                            clickable: clickable,
+                            size: seatSize,
+                            isLoading: isLoading,
+                            onTap: onSeatTap,
                           ),
                         );
                       }),
@@ -167,6 +152,83 @@ class SeatGrid extends StatelessWidget {
             ],
           );
         }).toList(),
+      ),
+    );
+  }
+}
+
+class _SeatTile extends StatefulWidget {
+  const _SeatTile({
+    required this.seat,
+    required this.color,
+    required this.clickable,
+    required this.size,
+    required this.isLoading,
+    required this.onTap,
+  });
+
+  final SeatStatusItemModel seat;
+  final Color color;
+  final bool clickable;
+  final double size;
+  final bool isLoading;
+  final void Function(SeatStatusItemModel seat) onTap;
+
+  @override
+  State<_SeatTile> createState() => _SeatTileState();
+}
+
+class _SeatTileState extends State<_SeatTile> {
+  bool _isPressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final canTap = widget.clickable && !widget.isLoading;
+
+    return GestureDetector(
+      onTap: canTap
+          ? () {
+              HapticFeedback.selectionClick();
+              widget.onTap(widget.seat);
+            }
+          : null,
+      onTapDown: canTap ? (_) => setState(() => _isPressed = true) : null,
+      onTapUp: canTap ? (_) => setState(() => _isPressed = false) : null,
+      onTapCancel: canTap ? () => setState(() => _isPressed = false) : null,
+      child: AnimatedScale(
+        scale: _isPressed ? 1.15 : 1.0,
+        duration: const Duration(milliseconds: 150),
+        curve: Curves.easeOut,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          width: widget.size,
+          height: widget.size,
+          decoration: BoxDecoration(
+            color: widget.color,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: widget.clickable
+                  ? CinemaColors.seatMyHold
+                  : CinemaColors.glassBorder,
+              width: widget.clickable ? 2 : 1,
+            ),
+            boxShadow: _isPressed
+                ? [
+                    BoxShadow(
+                      color: CinemaColors.neonBlue.withValues(alpha: 0.5),
+                      blurRadius: 8,
+                      spreadRadius: 0,
+                    ),
+                  ]
+                : [],
+          ),
+          child: Center(
+            child: Text(
+              '${widget.seat.seatNo}',
+              style: GoogleFonts.roboto(fontSize: 13, color: Colors.white),
+            ),
+          ),
+        ),
       ),
     );
   }

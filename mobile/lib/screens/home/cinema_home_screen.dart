@@ -41,8 +41,21 @@ class CinemaHomeScreen extends ConsumerWidget {
           _buildBackground(),
           SafeArea(
             child: CustomScrollView(
+              physics: const BouncingScrollPhysics(),
               slivers: [
-                const SliverToBoxAdapter(child: CinemaHomeHero()),
+                // SliverAppBar — 스크롤 시 히어로 축소 + 배경 blur
+                SliverAppBar(
+                  expandedHeight: 200,
+                  floating: false,
+                  pinned: true,
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  flexibleSpace: const FlexibleSpaceBar(
+                    background: CinemaHomeHero(),
+                  ),
+                  // 축소 시 glass 헤더
+                  title: null,
+                ),
                 const SliverToBoxAdapter(child: SizedBox(height: 24)),
                 ...homeAsync.when(
                   data: (data) => [

@@ -1,8 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../models/home.dart';
 import '../../../theme/cinema_theme.dart';
+import '../../../theme/cinema_animations.dart';
 import '../../../widgets/glass_card.dart';
 import '../../movies/movie_detail_screen.dart';
 
@@ -54,7 +56,15 @@ class CinemaHomeUpcoming extends StatelessWidget {
                 ),
               ),
       ),
-    );
+    )
+        .animate()
+        .fadeIn(duration: CinemaAnimations.normal, curve: CinemaAnimations.defaultCurve)
+        .slideX(
+          begin: -0.1,
+          end: 0,
+          duration: CinemaAnimations.slow,
+          curve: CinemaAnimations.defaultCurve,
+        );
   }
 }
 
@@ -76,14 +86,35 @@ class _UpcomingMovieTile extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             child: AspectRatio(
               aspectRatio: 2 / 3,
-              child: movie.posterUrl != null && movie.posterUrl!.isNotEmpty
-                  ? CachedNetworkImage(
-                      imageUrl: movie.posterUrl!,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => _posterPlaceholder(),
-                      errorWidget: (context, url, error) => _posterPlaceholder(),
-                    )
-                  : _posterPlaceholder(),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  movie.posterUrl != null && movie.posterUrl!.isNotEmpty
+                      ? CachedNetworkImage(
+                          imageUrl: movie.posterUrl!,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => _posterPlaceholder(),
+                          errorWidget: (context, url, error) => _posterPlaceholder(),
+                        )
+                      : _posterPlaceholder(),
+                  // 하단 다크 그라데이션 오버레이
+                  Positioned.fill(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.transparent,
+                            Colors.black.withValues(alpha: 0.6),
+                          ],
+                          stops: const [0.5, 1.0],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 8),

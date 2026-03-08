@@ -2,9 +2,10 @@
  * 메인(홈) 페이지 — 2026 Cinematic theme
  * Hero, 영화관 현황, 3일 이내 상영 예정, 나의 최근 예매, 지금 바로 예매하기 CTA
  */
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { homeApi, type HomeStatsResponse, type UpcomingMovieItem } from '@/api/home';
 import { reservationsApi } from '@/api/reservations';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
@@ -15,6 +16,7 @@ import { useAuthStore } from '@/stores';
 import { getErrorMessage } from '@/utils/errorHandler';
 import { formatDate } from '@/utils/dateUtils';
 import { formatPrice } from '@/utils/formatters';
+import { fadeIn, slideUp, slideInLeft, staggerContainer } from '@/lib/animations';
 import type { ReservationDetailResponse } from '@/types/reservation.types';
 
 const RECENT_RESERVATIONS = 5;
@@ -30,6 +32,13 @@ function SectionTitle({ children }: SectionTitleProps) {
 export function HomePage() {
   const { isAuthenticated } = useAuthStore();
   const { showError } = useToast();
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ['start start', 'end start'],
+  });
+  const heroY = useTransform(scrollYProgress, [0, 1], ['0%', '30%']);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   const {
     data: stats,
@@ -76,53 +85,83 @@ export function HomePage() {
 
   return (
     <div className="py-8">
-      {/* Hero */}
-      <section className="relative mb-10 overflow-hidden rounded-2xl">
-        <div
+      {/* Hero — parallax */}
+      <motion.section
+        ref={heroRef}
+        className="relative mb-10 overflow-hidden rounded-2xl"
+        initial="hidden"
+        animate="visible"
+        variants={fadeIn}
+      >
+        {/* 배경 영상 (없으면 그라데이션 fallback) — parallax */}
+        <motion.div className="absolute inset-0" style={{ y: heroY }}>
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="h-[130%] w-full object-cover opacity-40"
+            aria-hidden
+            poster=""
+          >
+            <source src="/hero-bg.mp4" type="video/mp4" />
+          </video>
+        </motion.div>
+        <motion.div
           className="absolute inset-0 bg-gradient-to-br from-cinema-neon-red/20 via-cinema-neon-blue/10 to-cinema-surface"
           aria-hidden
+          style={{ y: heroY }}
         />
         <div
-          className="absolute inset-0 bg-gradient-to-t from-cinema-bg/80 to-transparent"
+          className="absolute inset-0 bg-gradient-to-t from-cinema-bg/90 to-transparent"
           aria-hidden
         />
-        <div className="relative flex min-h-[200px] flex-col justify-end px-6 py-8 sm:min-h-[240px] sm:px-10">
-          <h1 className="mb-2 font-display text-4xl tracking-[0.2em] text-cinema-text drop-shadow-[0_0_20px_rgba(0,212,255,0.3)] sm:text-5xl">
+        <motion.div
+          className="relative flex min-h-[200px] flex-col justify-end px-6 py-8 sm:min-h-[240px] sm:px-10"
+          variants={slideUp}
+          style={{ opacity: heroOpacity }}
+        >
+          <h1 className="hero-title mb-2 font-display text-4xl tracking-[0.2em] text-cinema-text sm:text-5xl">
             영화관 예매
           </h1>
           <p className="text-cinema-muted">상영 중인 영화를 확인하고 편리하게 예매하세요.</p>
-        </div>
-      </section>
+        </motion.div>
+      </motion.section>
 
       {loading ? (
         <div className="flex min-h-[200px] items-center justify-center">
           <LoadingSpinner size="lg" message="메인 화면을 불러오는 중..." />
         </div>
       ) : (
-        <div className="space-y-10">
+        <motion.div
+          className="space-y-10"
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+        >
           {/* 영화관 현황 */}
           {stats && (
-            <section>
+            <motion.section variants={slideUp}>
               <SectionTitle>영화관 현황</SectionTitle>
               <GlassCard>
                 <div className="flex flex-wrap gap-6 text-cinema-muted">
                   <span>
-                    영화관 <strong className="text-cinema-text">{stats.theaterCount}</strong>개
+                    영화관 <strong className="stat-glow text-cinema-text">{stats.theaterCount}</strong>개
                   </span>
                   <span>
-                    상영관 <strong className="text-cinema-text">{stats.screenCount}</strong>개
+                    상영관 <strong className="stat-glow text-cinema-text">{stats.screenCount}</strong>개
                   </span>
                   <span>
                     오늘 상영{' '}
-                    <strong className="text-cinema-text">{stats.todayScreeningCount}</strong>편
+                    <strong className="stat-glow text-cinema-text">{stats.todayScreeningCount}</strong>편
                   </span>
                 </div>
               </GlassCard>
-            </section>
+            </motion.section>
           )}
 
           {/* 3일 이내 상영 예정 — 수평 스크롤 (앨범 넘기기) */}
-          <section>
+          <motion.section variants={slideInLeft}>
             <SectionTitle>3일 이내 상영 예정 영화</SectionTitle>
             <GlassCard padding={false} className="overflow-hidden">
               {upcoming.length === 0 ? (
@@ -138,7 +177,7 @@ export function HomePage() {
                       to="/movies"
                       className="group flex flex-col overflow-hidden rounded-xl border border-cinema-glass-border bg-cinema-surface transition-all duration-300 hover:scale-[1.03] hover:border-cinema-neon-blue/50 hover:shadow-[0_0_32px_rgba(0,212,255,0.2)] focus:outline-none focus:ring-2 focus:ring-cinema-neon-blue/50 block w-[min(160px,28vw)]"
                     >
-                      <div className="aspect-[2/3] overflow-hidden bg-cinema-surface-elevated">
+                      <div className="relative aspect-[2/3] overflow-hidden bg-cinema-surface-elevated">
                         {m.posterUrl ? (
                           <img
                             src={m.posterUrl}
@@ -150,6 +189,7 @@ export function HomePage() {
                             🎬
                           </div>
                         )}
+                        <div className="poster-overlay" aria-hidden />
                       </div>
                       <div className="p-2">
                         <p className="line-clamp-2 text-xs font-medium text-cinema-text transition group-hover:text-cinema-neon-blue">
@@ -162,10 +202,10 @@ export function HomePage() {
                 </ul>
               )}
             </GlassCard>
-          </section>
+          </motion.section>
 
           {/* 빠른 예매 / 나의 최근 예매 통합 */}
-          <section>
+          <motion.section variants={slideUp}>
             <SectionTitle>
               {isAuthenticated && reservations.length > 0 ? '나의 최근 예매' : '빠른 예매'}
             </SectionTitle>
@@ -210,8 +250,8 @@ export function HomePage() {
                 </div>
               )}
             </GlassCard>
-          </section>
-        </div>
+          </motion.section>
+        </motion.div>
       )}
     </div>
   );

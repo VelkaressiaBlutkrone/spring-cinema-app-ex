@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../models/reservation.dart';
 import '../../../utils/date_time_formatter.dart';
 import '../../../provider/main_tab_provider.dart';
 import '../../../theme/cinema_theme.dart';
+import '../../../theme/cinema_animations.dart';
 import '../../../widgets/glass_card.dart';
 import '../../../widgets/neon_button.dart';
 
@@ -31,7 +33,15 @@ class CinemaHomeRecent extends ConsumerWidget {
             ? _buildRecentList(ref)
             : _buildQuickBookingEmpty(ref),
       ),
-    );
+    )
+        .animate()
+        .fadeIn(duration: CinemaAnimations.normal, curve: CinemaAnimations.defaultCurve)
+        .slideY(
+          begin: 0.1,
+          end: 0,
+          duration: CinemaAnimations.normal,
+          curve: CinemaAnimations.defaultCurve,
+        );
   }
 
   Widget _buildRecentList(WidgetRef ref) {

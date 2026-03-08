@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -6,6 +7,7 @@ import 'package:intl/intl.dart';
 import '../../models/reservation.dart' show reservationStatusLabel;
 import '../../provider/reservation_providers.dart';
 import '../../theme/cinema_theme.dart';
+import '../../theme/cinema_animations.dart';
 import '../../widgets/glass_card.dart';
 import 'reservation_detail_screen.dart';
 
@@ -133,7 +135,20 @@ class ReservationsScreen extends ConsumerWidget {
                       ),
                     ),
                   ),
-                );
+                )
+                    .animate()
+                    .fadeIn(
+                      duration: CinemaAnimations.normal,
+                      delay: CinemaAnimations.staggerDelayFor(index),
+                      curve: CinemaAnimations.defaultCurve,
+                    )
+                    .slideY(
+                      begin: 0.1,
+                      end: 0,
+                      duration: CinemaAnimations.normal,
+                      delay: CinemaAnimations.staggerDelayFor(index),
+                      curve: CinemaAnimations.defaultCurve,
+                    );
               },
             ),
           );

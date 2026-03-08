@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../theme/cinema_theme.dart';
+import '../../theme/cinema_animations.dart';
 import 'widgets/profile_tab.dart';
 import 'widgets/holds_tab.dart';
 import 'widgets/reservations_tab.dart';
@@ -46,11 +47,15 @@ class _MyPageScreenState extends ConsumerState<MyPageScreen> {
         children: [
           _buildTabBar(),
           Expanded(
-            child: switch (_tab) {
-              MyPageTab.profile => const ProfileTab(),
-              MyPageTab.holds => const HoldsTab(),
-              MyPageTab.reservations => const ReservationsTab(),
-            },
+            child: AnimatedSwitcher(
+              duration: CinemaAnimations.normal,
+              switchInCurve: CinemaAnimations.defaultCurve,
+              child: switch (_tab) {
+                MyPageTab.profile => const ProfileTab(key: ValueKey('profile')),
+                MyPageTab.holds => const HoldsTab(key: ValueKey('holds')),
+                MyPageTab.reservations => const ReservationsTab(key: ValueKey('reservations')),
+              },
+            ),
           ),
         ],
       ),

@@ -17,11 +17,12 @@ interface NeonButtonProps {
 }
 
 const base =
-  'inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-medium transition disabled:opacity-50';
+  'inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-medium transition-all duration-200 ease-out disabled:opacity-50 active:scale-[0.97] motion-reduce:transition-none motion-reduce:active:scale-100';
 const styles = {
-  primary: 'bg-cinema-neon-blue text-cinema-bg hover:opacity-90',
+  primary:
+    'bg-cinema-neon-blue text-cinema-bg hover:-translate-y-0.5 hover:shadow-[0_0_28px_rgba(0,212,255,0.6)]',
   ghost:
-    'bg-cinema-glass border border-cinema-glass-border text-cinema-text hover:bg-cinema-glass-border',
+    'bg-cinema-glass border border-cinema-glass-border text-cinema-text hover:bg-cinema-glass-border hover:border-cinema-neon-blue/30',
 };
 
 export function NeonButton({
