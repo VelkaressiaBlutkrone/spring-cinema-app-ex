@@ -1,5 +1,5 @@
 /**
- * 마이페이지 — cinema theme
+ * 마이페이지 — Noir Luxe theme
  * 탭: 내 정보 / 장바구니 / 결제·예매 내역
  * 각 탭은 독립 컴포넌트로 분리하여 관심사 분리 및 코드 크기 축소
  */
@@ -28,23 +28,23 @@ export function MyPage() {
 
   return (
     <div className="py-6">
-      <h1 className="mb-6 font-display text-2xl tracking-widest text-cinema-text">마이페이지</h1>
+      <h1 className="mb-6 font-display text-2xl tracking-widest text-noir-text">마이페이지</h1>
 
-      <div className="mb-6 flex gap-1 border-b border-cinema-glass-border">
+      <div className="mb-6 flex gap-1 border-b border-noir-border">
         {TABS.map(({ id, label }) => (
           <button
             key={id}
             type="button"
             onClick={() => setTab(id)}
             className={`relative px-4 py-3 text-sm font-medium transition ${
-              tab === id ? 'text-cinema-neon-blue' : 'text-cinema-muted hover:text-cinema-text'
+              tab === id ? 'text-amber' : 'text-noir-text-muted hover:text-noir-text'
             }`}
           >
             {label}
             {tab === id && (
               <span
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-cinema-neon-blue"
-                style={{ boxShadow: '0 0 8px var(--color-cinema-neon-blue)' }}
+                className="absolute bottom-0 left-0 right-0 h-0.5 bg-amber"
+                style={{ boxShadow: '0 0 8px rgba(232,168,73,0.4)' }}
               />
             )}
           </button>

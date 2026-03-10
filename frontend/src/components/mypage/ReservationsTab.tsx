@@ -56,16 +56,16 @@ export function ReservationsTab() {
           <NoirCard>
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div>
-                <p className="font-medium text-cinema-text">{r.movieTitle}</p>
-                <p className="text-sm text-cinema-muted">
+                <p className="font-medium text-noir-text">{r.movieTitle}</p>
+                <p className="text-sm text-noir-text-muted">
                   {r.screenName} · {formatDate(r.startTime, 'YYYY-MM-DD HH:mm')}
                 </p>
-                <p className="mt-1 font-mono text-sm text-cinema-neon-blue">{r.reservationNo}</p>
-                <p className="mt-1 text-sm text-cinema-neon-amber">
+                <p className="mt-1 font-mono text-sm text-amber">{r.reservationNo}</p>
+                <p className="mt-1 text-sm text-amber">
                   {r.totalSeats}석 · {formatPrice(r.totalAmount)}
                 </p>
                 {r.payment && (
-                  <p className="mt-1 text-xs text-cinema-muted">
+                  <p className="mt-1 text-xs text-noir-text-muted">
                     결제 {r.payment.payStatus} · {formatPrice(r.payment.payAmount)}
                     {r.payment.paidAt && ` · ${formatDate(r.payment.paidAt, 'YYYY-MM-DD HH:mm')}`}
                   </p>
@@ -73,7 +73,7 @@ export function ReservationsTab() {
               </div>
               <Link
                 to={`/reservations/${r.reservationId}`}
-                className="rounded-lg border border-cinema-glass-border bg-cinema-glass px-3 py-1.5 text-sm font-medium text-cinema-muted transition hover:bg-cinema-glass-border hover:text-cinema-text"
+                className="rounded-sm border border-noir-border bg-amber-subtle px-3 py-1.5 text-sm font-medium text-noir-text-muted transition hover:bg-noir-border hover:text-noir-text"
               >
                 상세
               </Link>

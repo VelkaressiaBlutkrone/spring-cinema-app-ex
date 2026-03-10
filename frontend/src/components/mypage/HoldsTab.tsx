@@ -78,11 +78,11 @@ export function HoldsTab() {
           <NoirCard>
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div>
-                <p className="font-medium text-cinema-text">{h.movieTitle}</p>
-                <p className="text-sm text-cinema-muted">
+                <p className="font-medium text-noir-text">{h.movieTitle}</p>
+                <p className="text-sm text-noir-text-muted">
                   {h.screenName} · {formatDate(h.startTime, 'YYYY-MM-DD HH:mm')}
                 </p>
-                <p className="mt-1 text-sm text-cinema-neon-amber">
+                <p className="mt-1 text-sm text-amber">
                   {h.seats.length}석 · {h.seats.map((s) => s.displayName).join(', ')}
                 </p>
               </div>
@@ -90,17 +90,17 @@ export function HoldsTab() {
                 <NoirButton to={`/book/${h.screeningId}`}>결제하기</NoirButton>
               </div>
             </div>
-            <ul className="mt-3 space-y-1 border-t border-cinema-glass-border pt-3">
+            <ul className="mt-3 space-y-1 border-t border-noir-border pt-3">
               {h.seats.map((s) => (
                 <li key={s.seatId} className="flex items-center justify-between text-sm">
-                  <span className="text-cinema-muted">
+                  <span className="text-noir-text-muted">
                     {s.displayName} (만료: {formatDate(s.holdExpireAt, 'HH:mm')})
                   </span>
                   <button
                     type="button"
                     disabled={releasing?.key === `${h.screeningId}-${s.seatId}`}
                     onClick={() => handleReleaseHold(h.screeningId, s.seatId, s.holdToken)}
-                    className="rounded-lg border border-cinema-glass-border px-2 py-1 text-cinema-muted transition hover:bg-cinema-glass-border hover:text-cinema-text disabled:opacity-50"
+                    className="rounded-sm border border-noir-border px-2 py-1 text-noir-text-muted transition hover:bg-noir-border hover:text-noir-text disabled:opacity-50"
                   >
                     {releasing?.key === `${h.screeningId}-${s.seatId}` ? '해제 중...' : '해제'}
                   </button>
