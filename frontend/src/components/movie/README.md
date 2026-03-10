@@ -92,7 +92,7 @@ function MovieDetailPage() {
     { id: 1, startTime: '2026-01-29T10:00:00Z', ... },
     { id: 2, startTime: '2026-01-29T13:00:00Z', ... },
   ];
-  
+
   return (
     <TimeTable
       screenings={screenings}
@@ -196,21 +196,21 @@ const screenings = await screeningsApi.getScreeningsByMovie(movieId);
 const screening = await screeningsApi.getScreening(screeningId);
 ```
 
-## Cinema Theme 스타일링
+## Noir Luxe Theme 스타일링
 
-영화 컴포넌트는 프로젝트의 Cinema/Neon 테마를 따릅니다:
+영화 컴포넌트는 프로젝트의 Noir Luxe 디자인 시스템을 따릅니다:
 
-- **GlassCard**: 반투명 유리 효과 카드
-- **NeonButton**: 네온 글로우 효과 버튼
-- **Cinema 색상**: 
-  - Primary: `#00d4ff` (neon blue)
-  - Background: `#121212` (dark)
-  - Surface: `#1a1a1a`
-  - Muted: `#9ca3af`
+- **NoirCard**: 어두운 표면 카드
+- **NoirButton**: Amber accent 버튼
+- **Noir Luxe 색상**:
+  - Amber: `#d4a574` (amber gold)
+  - Background: `#0a0a0a` (deep black)
+  - Surface: `#141414`
+  - Muted: `#737373`
 
 ## 관련 파일
 
 - `@/types/movie.types`: 영화 및 상영 타입 정의
 - `@/api/movies`: 영화/상영 API 호출
-- `@/components/common/GlassCard`: Glassmorphism 카드
-- `@/components/common/NeonButton`: Neon 효과 버튼
+- `@/components/common/NoirCard`: Noir Luxe 카드
+- `@/components/common/NoirButton`: Amber accent 버튼
