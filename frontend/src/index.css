@@ -1,22 +1,33 @@
 @import 'tailwindcss';
 
 @theme {
-  /* Cinema design tokens (2026 premium cinematic — Cinematic & Immersive) */
-  --color-cinema-bg: #0a0a0a;
-  --color-cinema-surface: #121212;
-  --color-cinema-surface-elevated: #1a1a1a;
-  --color-cinema-neon-red: #e63946;
-  --color-cinema-neon-blue: #00d4ff;
-  --color-cinema-neon-amber: #ffc857;
-  --color-cinema-neon-purple: #9d4edd;
-  --color-cinema-coral: #e07a5f;
-  --color-cinema-text: #ffffff;
-  --color-cinema-muted: #b0b0b0;
-  --color-cinema-muted-dark: #707070;
-  --color-cinema-glass: rgba(255, 255, 255, 0.08);
-  --color-cinema-glass-border: rgba(255, 255, 255, 0.2);
+  /* Noir Luxe design tokens */
+  --color-noir-bg: #06060a;
+  --color-noir-surface: #0d0d0d;
+  --color-noir-elevated: #161616;
+  --color-noir-hover: #1e1e1e;
 
-  /* Admin theme tokens (관리자 라이트 테마) */
+  --color-amber: #e8a849;
+  --color-amber-hover: #d4963e;
+  --color-amber-ghost: rgba(232, 168, 73, 0.15);
+  --color-amber-subtle: rgba(232, 168, 73, 0.06);
+
+  --color-noir-danger: #c44040;
+  --color-noir-success: #4a9e6e;
+  --color-noir-info: #5b7db8;
+  --color-noir-warning: #d49248;
+  --color-noir-blocked: #3a3a3a;
+  --color-noir-cancelled: #6b6b6b;
+
+  --color-noir-text: #f5f0e8;
+  --color-noir-text-secondary: rgba(245, 240, 232, 0.6);
+  --color-noir-text-muted: rgba(245, 240, 232, 0.35);
+
+  --color-noir-border: rgba(232, 168, 73, 0.08);
+  --color-noir-border-hover: rgba(232, 168, 73, 0.2);
+  --color-noir-divider: rgba(232, 168, 73, 0.1);
+
+  /* Admin theme tokens (unchanged) */
   --color-cinema-admin-bg: #f9fafb;
   --color-cinema-admin-surface: #ffffff;
   --color-cinema-admin-surface-alt: #f9fafb;
@@ -29,19 +40,19 @@
   --color-cinema-admin-danger: #dc2626;
   --color-cinema-admin-separator: #d1d5db;
 
-  --font-display: 'Bebas Neue', ui-sans-serif, system-ui, sans-serif;
-  --font-sans: 'Roboto', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Cormorant Garamond', 'Georgia', serif;
+  --font-sans: 'Sora', ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {
   html {
-    background-color: var(--color-cinema-bg);
+    background-color: var(--color-noir-bg);
   }
   body {
     @apply antialiased;
     font-family: var(--font-sans);
-    background-color: var(--color-cinema-bg);
-    color: var(--color-cinema-text);
+    background-color: var(--color-noir-bg);
+    color: var(--color-noir-text);
   }
 }
 
@@ -49,16 +60,15 @@
   .font-display {
     font-family: var(--font-display);
   }
-  /* CTA / 강조용 그라데이션 */
-  .gradient-cinema-cta {
-    background: linear-gradient(135deg, #00d4ff 0%, #9d4edd 100%);
+  .gradient-noir-cta {
+    background: linear-gradient(135deg, #e8a849 0%, #d4963e 100%);
   }
-  .gradient-cinema-hero {
-    background: linear-gradient(135deg, rgba(230, 57, 70, 0.2) 0%, rgba(0, 212, 255, 0.1) 50%, var(--color-cinema-surface) 100%);
+  .gradient-noir-hero {
+    background: linear-gradient(135deg, rgba(232, 168, 73, 0.08) 0%, rgba(6, 6, 10, 0.4) 50%, var(--color-noir-surface) 100%);
   }
 }
 
-/* 수평 스크롤 섹션 — 스냅 스크롤 (앨범 넘기기) */
+/* Scroll snap (unchanged behavior) */
 @layer components {
   .scroll-snap-x {
     scroll-snap-type: x mandatory;
@@ -70,7 +80,21 @@
   }
 }
 
-/* 좌석 선택 bouncy 애니메이션 */
+/* Grain texture overlay — reusable pseudo-element */
+.grain-overlay {
+  position: relative;
+}
+.grain-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 1;
+  background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/%3E%3C/svg%3E');
+}
+
+/* Seat selection bounce animation */
 @keyframes seat-bounce {
   0% { transform: scale(1); }
   40% { transform: scale(1.2); }
@@ -78,38 +102,37 @@
   100% { transform: scale(1); }
 }
 .animate-seat-bounce {
-  animation: seat-bounce 0.4s ease-out;
+  animation: seat-bounce 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* 좌석 호버 효과 */
+/* Seat hover effect */
 .seat-hover {
   transition: filter 200ms ease-out, transform 200ms ease-out;
   transform-box: fill-box;
   transform-origin: center;
 }
 .seat-hover:hover {
-  filter: brightness(1.25) drop-shadow(0 0 6px rgba(0, 212, 255, 0.5));
+  filter: brightness(1.25) drop-shadow(0 0 6px rgba(232, 168, 73, 0.4));
   transform: scale(1.12);
 }
 
-/* 히어로 타이틀 네온 글로우 */
+/* Hero title amber glow */
 .hero-title {
   text-shadow:
-    0 0 20px rgba(0, 212, 255, 0.4),
-    0 0 60px rgba(0, 212, 255, 0.15),
+    0 0 20px rgba(232, 168, 73, 0.15),
     0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
-/* 통계 숫자 미세 글로우 */
+/* Stat number glow */
 .stat-glow {
-  text-shadow: 0 0 8px rgba(0, 212, 255, 0.3);
+  text-shadow: 0 0 16px rgba(232, 168, 73, 0.2);
 }
 
-/* 포스터 하단 다크 그라데이션 오버레이 */
+/* Poster dark gradient overlay */
 .poster-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(10, 10, 10, 0.7) 0%, transparent 50%);
+  background: linear-gradient(to top, rgba(6, 6, 10, 0.7) 0%, transparent 50%);
   opacity: 0.6;
   transition: opacity 300ms ease-out;
   pointer-events: none;
@@ -118,27 +141,22 @@
   opacity: 0.3;
 }
 
-/* Lightning Dark — 커서 추적 미세 글로우 */
-.lightning-dark {
-  --mouse-x: 50%;
-  --mouse-y: 50%;
+/* Projector Ambience — replaces lightning-dark */
+.projector-ambience {
   position: relative;
 }
-.lightning-dark::before {
+.projector-ambience::before {
   content: '';
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  background: radial-gradient(
-    600px circle at var(--mouse-x) var(--mouse-y),
-    rgba(0, 212, 255, 0.03),
-    transparent 40%
-  );
-  will-change: background;
+  background:
+    radial-gradient(ellipse 400px 160px at 50% 0%, rgba(232, 168, 73, 0.05), transparent 70%),
+    radial-gradient(ellipse at center, transparent 50%, rgba(6, 6, 10, 0.4) 100%);
 }
 
-/* prefers-reduced-motion: 모든 애니메이션 비활성화 */
+/* prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   .animate-seat-bounce {
     animation: none;
@@ -150,10 +168,9 @@
   .hero-title {
     text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   }
-  .lightning-dark::before {
+  .projector-ambience::before {
     display: none;
   }
-  /* 3D 뷰 perspective 비활성화 */
   [style*="perspective"] {
     perspective: none !important;
   }
