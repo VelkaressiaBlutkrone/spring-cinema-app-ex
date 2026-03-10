@@ -1,5 +1,5 @@
 /**
- * 예매 내역 — cinema theme
+ * 예매 내역 — Noir Luxe theme
  * 인증은 ProtectedRoute에서 보장됨
  */
 import { useEffect } from 'react';
@@ -45,7 +45,7 @@ export function ReservationsPage() {
 
   return (
     <div className="py-6">
-      <h1 className="mb-6 font-display text-2xl tracking-widest text-cinema-text">예매 내역</h1>
+      <h1 className="mb-6 font-display text-2xl tracking-widest text-noir-text">예매 내역</h1>
       {items.length === 0 ? (
         <NoirCard padding={false}>
           <EmptyState
@@ -67,20 +67,20 @@ export function ReservationsPage() {
               <NoirCard>
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div>
-                    <p className="font-medium text-cinema-text">{r.movieTitle}</p>
-                    <p className="text-sm text-cinema-muted">
+                    <p className="font-medium text-noir-text">{r.movieTitle}</p>
+                    <p className="text-sm text-noir-text-muted">
                       {r.screenName} · {formatDate(r.startTime, 'YYYY-MM-DD HH:mm')}
                     </p>
-                    <p className="mt-1 font-mono text-sm text-cinema-neon-blue">
+                    <p className="mt-1 font-mono text-sm text-amber">
                       {r.reservationNo}
                     </p>
-                    <p className="mt-1 text-sm text-cinema-neon-amber">
+                    <p className="mt-1 text-sm text-amber">
                       {r.totalSeats}석 · {formatPrice(r.totalAmount)}
                     </p>
                   </div>
                   <Link
                     to={`/reservations/${r.reservationId}`}
-                    className="rounded-lg border border-cinema-glass-border bg-cinema-glass px-3 py-1.5 text-sm font-medium text-cinema-muted transition hover:bg-cinema-glass-border hover:text-cinema-text"
+                    className="rounded-sm border border-noir-border bg-amber-subtle px-3 py-1.5 text-sm font-medium text-noir-text-muted transition hover:bg-noir-border hover:text-noir-text"
                   >
                     상세
                   </Link>

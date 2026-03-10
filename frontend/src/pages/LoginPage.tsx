@@ -1,5 +1,5 @@
 /**
- * 로그인 — cinema theme
+ * 로그인 — Noir Luxe theme
  */
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
@@ -37,15 +37,15 @@ export function LoginPage() {
   };
 
   const inputClass =
-    'w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-3 text-cinema-text placeholder:text-cinema-muted-dark focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue';
+    'w-full rounded-none border border-noir-border bg-noir-elevated px-4 py-3 text-noir-text placeholder:text-noir-text-muted focus:border-amber/30 focus:outline-none focus:ring-1 focus:ring-amber/30';
 
   return (
     <div className="mx-auto max-w-md py-12">
       <NoirCard className="p-8">
-        <h1 className="mb-6 font-display text-2xl tracking-widest text-cinema-text">로그인</h1>
+        <h1 className="mb-6 font-display text-2xl tracking-widest text-noir-text">로그인</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="loginId" className="mb-1 block text-sm font-medium text-cinema-muted">
+            <label htmlFor="loginId" className="mb-1 block text-sm font-medium text-noir-text-muted">
               아이디
             </label>
             <input
@@ -58,7 +58,7 @@ export function LoginPage() {
             />
           </div>
           <div>
-            <label htmlFor="password" className="mb-1 block text-sm font-medium text-cinema-muted">
+            <label htmlFor="password" className="mb-1 block text-sm font-medium text-noir-text-muted">
               비밀번호
             </label>
             <input
@@ -74,9 +74,9 @@ export function LoginPage() {
             {loading ? '로그인 중...' : '로그인'}
           </NoirButton>
         </form>
-        <p className="mt-4 text-center text-sm text-cinema-muted">
+        <p className="mt-4 text-center text-sm text-noir-text-muted">
           계정이 없으신가요?{' '}
-          <Link to="/signup" className="font-medium text-cinema-neon-blue hover:underline">
+          <Link to="/signup" className="font-medium text-amber hover:underline">
             회원가입
           </Link>
         </p>

@@ -14,20 +14,20 @@ export function PaymentSuccess({ result }: PaymentSuccessProps) {
   return (
     <div className="mx-auto max-w-lg py-12">
       <NoirCard>
-        <h1 className="mb-6 font-display text-2xl tracking-widest text-cinema-text">예매 완료</h1>
+        <h1 className="mb-6 font-display text-2xl tracking-widest text-noir-text">예매 완료</h1>
         <div className="space-y-4">
-          <p className="rounded-xl border border-cinema-neon-blue/30 bg-cinema-neon-blue/10 px-4 py-3 text-cinema-neon-blue">
+          <p className="rounded-sm border border-noir-success/30 bg-noir-success/10 px-4 py-3 text-noir-success">
             예매가 완료되었습니다. 예매 번호를 확인해 주세요.
           </p>
           <dl className="grid gap-2 sm:grid-cols-[auto_1fr]">
-            <dt className="font-medium text-cinema-muted">예매 번호</dt>
-            <dd className="font-mono font-semibold text-cinema-neon-blue">
+            <dt className="font-medium text-noir-text-muted">예매 번호</dt>
+            <dd className="font-mono font-semibold text-amber">
               {result.reservationNo}
             </dd>
-            <dt className="font-medium text-cinema-muted">좌석 수</dt>
-            <dd className="text-cinema-text">{result.totalSeats}석</dd>
-            <dt className="font-medium text-cinema-muted">총 결제 금액</dt>
-            <dd className="font-semibold text-cinema-neon-amber">
+            <dt className="font-medium text-noir-text-muted">좌석 수</dt>
+            <dd className="text-noir-text">{result.totalSeats}석</dd>
+            <dt className="font-medium text-noir-text-muted">총 결제 금액</dt>
+            <dd className="font-semibold text-amber">
               {formatPrice(result.totalAmount)}
             </dd>
           </dl>

@@ -1,5 +1,5 @@
 /**
- * 예매 상세 — cinema theme
+ * 예매 상세 — Noir Luxe theme
  */
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
@@ -61,11 +61,11 @@ export function ReservationDetailPage() {
   if (!isAuthenticated) return null;
   if (id == null) {
     return (
-      <div className="py-12 text-center text-cinema-muted">
+      <div className="py-12 text-center text-noir-text-muted">
         <p>예매 정보가 없습니다.</p>
         <Link
           to="/reservations"
-          className="mt-4 inline-block text-cinema-neon-blue hover:underline"
+          className="mt-4 inline-block text-amber hover:underline"
         >
           예매 내역
         </Link>
@@ -81,11 +81,11 @@ export function ReservationDetailPage() {
   }
   if (!detail) {
     return (
-      <div className="py-12 text-center text-cinema-muted">
+      <div className="py-12 text-center text-noir-text-muted">
         <p>예매 정보를 찾을 수 없습니다.</p>
         <Link
           to="/reservations"
-          className="mt-4 inline-block text-cinema-neon-blue hover:underline"
+          className="mt-4 inline-block text-amber hover:underline"
         >
           예매 내역
         </Link>
@@ -95,36 +95,36 @@ export function ReservationDetailPage() {
 
   return (
     <div className="mx-auto max-w-xl py-8">
-      <h1 className="mb-6 font-display text-2xl tracking-widest text-cinema-text">예매 상세</h1>
+      <h1 className="mb-6 font-display text-2xl tracking-widest text-noir-text">예매 상세</h1>
       <NoirCard>
-        <dl className="space-y-4 text-cinema-text">
+        <dl className="space-y-4 text-noir-text">
           <div>
-            <dt className="text-sm font-medium text-cinema-muted">예매 번호</dt>
-            <dd className="mt-1 font-mono font-semibold text-cinema-neon-blue">
+            <dt className="text-sm font-medium text-noir-text-muted">예매 번호</dt>
+            <dd className="mt-1 font-mono font-semibold text-amber">
               {detail.reservationNo}
             </dd>
           </div>
           <div>
-            <dt className="text-sm font-medium text-cinema-muted">영화</dt>
+            <dt className="text-sm font-medium text-noir-text-muted">영화</dt>
             <dd className="mt-1">{detail.movieTitle}</dd>
           </div>
           <div>
-            <dt className="text-sm font-medium text-cinema-muted">상영관 / 상영 시간</dt>
+            <dt className="text-sm font-medium text-noir-text-muted">상영관 / 상영 시간</dt>
             <dd className="mt-1">
               {detail.screenName} · {formatDate(detail.startTime, 'YYYY-MM-DD HH:mm')}
             </dd>
           </div>
           <div>
-            <dt className="text-sm font-medium text-cinema-muted">좌석</dt>
+            <dt className="text-sm font-medium text-noir-text-muted">좌석</dt>
             <dd className="mt-1">
               {detail.seats?.map((s) => s.displayName ?? `${s.rowLabel}-${s.seatNo}`).join(', ') ??
                 '-'}
             </dd>
           </div>
           <div>
-            <dt className="text-sm font-medium text-cinema-muted">좌석별 금액</dt>
+            <dt className="text-sm font-medium text-noir-text-muted">좌석별 금액</dt>
             <dd className="mt-1">
-              <ul className="space-y-1 text-cinema-muted">
+              <ul className="space-y-1 text-noir-text-muted">
                 {detail.seats?.map((s) => (
                   <li key={s.seatId}>
                     {s.displayName ?? `${s.rowLabel}-${s.seatNo}`}: {formatPrice(s.price)}
@@ -134,13 +134,13 @@ export function ReservationDetailPage() {
             </dd>
           </div>
           <div>
-            <dt className="text-sm font-medium text-cinema-muted">총 결제 금액</dt>
-            <dd className="mt-1 font-semibold text-cinema-neon-amber">
+            <dt className="text-sm font-medium text-noir-text-muted">총 결제 금액</dt>
+            <dd className="mt-1 font-semibold text-amber">
               {formatPrice(detail.totalAmount)}
             </dd>
           </div>
           <div>
-            <dt className="text-sm font-medium text-cinema-muted">예매 상태</dt>
+            <dt className="text-sm font-medium text-noir-text-muted">예매 상태</dt>
             <dd className="mt-1">
               {RESERVATION_STATUS_LABEL[detail.status] ?? detail.status}
             </dd>
