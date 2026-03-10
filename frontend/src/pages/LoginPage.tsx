@@ -8,7 +8,7 @@ import { useAuthStore } from '@/stores';
 import { useToast } from '@/hooks';
 import { getErrorMessage } from '@/utils/errorHandler';
 import { GlassCard } from '@/components/common/GlassCard';
-import { NeonButton } from '@/components/common/NeonButton';
+import { NoirButton } from '@/components/common/NoirButton';
 import type { LoginRequest } from '@/types/auth.types';
 
 export function LoginPage() {
@@ -70,9 +70,9 @@ export function LoginPage() {
               required
             />
           </div>
-          <NeonButton type="submit" disabled={loading}>
+          <NoirButton type="submit" disabled={loading}>
             {loading ? '로그인 중...' : '로그인'}
-          </NeonButton>
+          </NoirButton>
         </form>
         <p className="mt-4 text-center text-sm text-cinema-muted">
           계정이 없으신가요?{' '}

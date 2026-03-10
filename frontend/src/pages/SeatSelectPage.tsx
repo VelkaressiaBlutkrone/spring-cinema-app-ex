@@ -10,7 +10,7 @@ import { SeatMap, HoldTimer } from '@/components/booking';
 import { SeatPreview3D } from '@/components/booking/SeatPreview3D';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
 import { GlassCard } from '@/components/common/GlassCard';
-import { NeonButton } from '@/components/common/NeonButton';
+import { NoirButton } from '@/components/common/NoirButton';
 import { formatDate } from '@/utils/dateUtils';
 import { slideUp } from '@/lib/animations';
 import type { Screening } from '@/types/movie.types';
@@ -131,7 +131,7 @@ export function SeatSelectPage() {
             ))}
           </ul>
           <div className="flex flex-wrap gap-3">
-            <NeonButton
+            <NoirButton
               to={`/payment/${id}`}
               state={{
                 screening,
@@ -144,8 +144,8 @@ export function SeatSelectPage() {
               }}
             >
               결제하기
-            </NeonButton>
-            <NeonButton
+            </NoirButton>
+            <NoirButton
               type="button"
               variant="ghost"
               onClick={() => {
@@ -154,10 +154,10 @@ export function SeatSelectPage() {
               }}
             >
               장바구니 등록
-            </NeonButton>
-            <NeonButton to="/movies">
+            </NoirButton>
+            <NoirButton to="/movies">
               영화 목록으로 돌아가기
-            </NeonButton>
+            </NoirButton>
           </div>
         </GlassCard>
         </motion.div>
@@ -166,9 +166,9 @@ export function SeatSelectPage() {
 
       {heldSeats.length === 0 && (
         <div className="mt-4">
-          <NeonButton to="/movies">
+          <NoirButton to="/movies">
             영화 목록으로 돌아가기
-          </NeonButton>
+          </NoirButton>
         </div>
       )}
     </div>

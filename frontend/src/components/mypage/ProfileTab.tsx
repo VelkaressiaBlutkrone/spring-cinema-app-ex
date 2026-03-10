@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { membersApi } from '@/api/members';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
 import { GlassCard } from '@/components/common/GlassCard';
-import { NeonButton } from '@/components/common/NeonButton';
+import { NoirButton } from '@/components/common/NoirButton';
 import { useToast } from '@/hooks';
 import { getErrorMessage } from '@/utils/errorHandler';
 import type { MemberProfileResponse, MemberUpdateRequest } from '@/types/member.types';
@@ -129,9 +129,9 @@ export function ProfileTab() {
             className={inputClass}
           />
         </div>
-        <NeonButton type="submit" disabled={saving}>
+        <NoirButton type="submit" disabled={saving}>
           {saving ? '저장 중...' : '저장'}
-        </NeonButton>
+        </NoirButton>
       </form>
     </GlassCard>
   );

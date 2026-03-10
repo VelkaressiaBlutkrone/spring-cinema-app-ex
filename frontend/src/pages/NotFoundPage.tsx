@@ -3,7 +3,7 @@
  */
 import { Link } from 'react-router-dom';
 import { GlassCard } from '@/components/common/GlassCard';
-import { NeonButton } from '@/components/common/NeonButton';
+import { NoirButton } from '@/components/common/NoirButton';
 
 export function NotFoundPage() {
   return (
@@ -16,7 +16,7 @@ export function NotFoundPage() {
         <p className="mb-6 text-cinema-muted">
           요청하신 페이지가 존재하지 않거나 이동되었습니다.
         </p>
-        <NeonButton to="/">홈으로 돌아가기</NeonButton>
+        <NoirButton to="/">홈으로 돌아가기</NoirButton>
       </GlassCard>
     </div>
   );

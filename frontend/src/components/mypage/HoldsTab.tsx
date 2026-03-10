@@ -7,7 +7,7 @@ import { seatsApi } from '@/api/seats';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
 import { EmptyState } from '@/components/common/ui/EmptyState';
 import { GlassCard } from '@/components/common/GlassCard';
-import { NeonButton } from '@/components/common/NeonButton';
+import { NoirButton } from '@/components/common/NoirButton';
 import { useToast } from '@/hooks';
 import { getErrorMessage } from '@/utils/errorHandler';
 import { formatDate } from '@/utils/dateUtils';
@@ -65,7 +65,7 @@ export function HoldsTab() {
           title="장바구니가 비어 있습니다"
           message="영화 목록에서 좌석을 선택하면 여기에 표시됩니다."
           icon={<span>🪑</span>}
-          action={<NeonButton to="/movies">영화 목록</NeonButton>}
+          action={<NoirButton to="/movies">영화 목록</NoirButton>}
         />
       </GlassCard>
     );
@@ -87,7 +87,7 @@ export function HoldsTab() {
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
-                <NeonButton to={`/book/${h.screeningId}`}>결제하기</NeonButton>
+                <NoirButton to={`/book/${h.screeningId}`}>결제하기</NoirButton>
               </div>
             </div>
             <ul className="mt-3 space-y-1 border-t border-cinema-glass-border pt-3">

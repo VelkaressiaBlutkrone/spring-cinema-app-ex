@@ -7,7 +7,7 @@ import { authApi } from '@/api/auth';
 import { useToast } from '@/hooks';
 import { getErrorMessage } from '@/utils/errorHandler';
 import { GlassCard } from '@/components/common/GlassCard';
-import { NeonButton } from '@/components/common/NeonButton';
+import { NoirButton } from '@/components/common/NoirButton';
 import type { SignUpRequest } from '@/types/auth.types';
 
 export function SignupPage() {
@@ -113,9 +113,9 @@ export function SignupPage() {
               autoComplete="tel"
             />
           </div>
-          <NeonButton type="submit" disabled={loading}>
+          <NoirButton type="submit" disabled={loading}>
             {loading ? '가입 중...' : '회원가입'}
-          </NeonButton>
+          </NoirButton>
         </form>
         <p className="mt-4 text-center text-sm text-cinema-muted">
           이미 계정이 있으신가요?{' '}

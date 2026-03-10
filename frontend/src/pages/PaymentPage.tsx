@@ -8,7 +8,7 @@ import { useParams, useLocation, Link } from 'react-router-dom';
 import { reservationsApi } from '@/api/reservations';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
 import { GlassCard } from '@/components/common/GlassCard';
-import { NeonButton } from '@/components/common/NeonButton';
+import { NoirButton } from '@/components/common/NoirButton';
 import { PaymentSuccess } from '@/components/payment/PaymentSuccess';
 import { useToast } from '@/hooks';
 import { getErrorMessage } from '@/utils/errorHandler';
@@ -104,9 +104,9 @@ export function PaymentPage() {
     return (
       <div className="py-12 text-center text-cinema-muted">
         <p>선택한 좌석 정보가 없습니다. 좌석 선택 후 결제해 주세요.</p>
-        <NeonButton to={`/book/${id}`} className="mt-4">
+        <NoirButton to={`/book/${id}`} className="mt-4">
           좌석 선택으로
-        </NeonButton>
+        </NoirButton>
       </div>
     );
   }
@@ -161,12 +161,12 @@ export function PaymentPage() {
       </GlassCard>
 
       <div className="flex flex-wrap items-center gap-4">
-        <NeonButton onClick={handlePay} disabled={loading}>
+        <NoirButton onClick={handlePay} disabled={loading}>
           {loading ? '결제 처리 중...' : '결제하기'}
-        </NeonButton>
-        <NeonButton to={`/book/${id}`} variant="ghost">
+        </NoirButton>
+        <NoirButton to={`/book/${id}`} variant="ghost">
           좌석 다시 고르기
-        </NeonButton>
+        </NoirButton>
       </div>
 
       {loading && (

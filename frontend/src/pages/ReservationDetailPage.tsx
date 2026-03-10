@@ -6,7 +6,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { reservationsApi } from '@/api/reservations';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
 import { GlassCard } from '@/components/common/GlassCard';
-import { NeonButton } from '@/components/common/NeonButton';
+import { NoirButton } from '@/components/common/NoirButton';
 import { useToast } from '@/hooks';
 import { useAuthStore } from '@/stores';
 import { getErrorMessage } from '@/utils/errorHandler';
@@ -147,10 +147,10 @@ export function ReservationDetailPage() {
           </div>
         </dl>
         <div className="mt-6 flex gap-3">
-          <NeonButton to="/reservations">예매 내역</NeonButton>
-          <NeonButton to="/movies" variant="ghost">
+          <NoirButton to="/reservations">예매 내역</NoirButton>
+          <NoirButton to="/movies" variant="ghost">
             영화 목록
-          </NeonButton>
+          </NoirButton>
         </div>
       </GlassCard>
     </div>

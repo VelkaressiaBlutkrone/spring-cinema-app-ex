@@ -10,7 +10,7 @@ import { homeApi, type HomeStatsResponse, type UpcomingMovieItem } from '@/api/h
 import { reservationsApi } from '@/api/reservations';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
 import { GlassCard } from '@/components/common/GlassCard';
-import { NeonButton } from '@/components/common/NeonButton';
+import { NoirButton } from '@/components/common/NoirButton';
 import { useToast } from '@/hooks';
 import { useAuthStore } from '@/stores';
 import { getErrorMessage } from '@/utils/errorHandler';
@@ -256,7 +256,7 @@ export function HomePage() {
                   <p className="text-sm text-cinema-muted-dark">
                     영화 목록에서 상영을 선택해 예매해 보세요.
                   </p>
-                  <NeonButton to="/movies">지금 바로 예매하기</NeonButton>
+                  <NoirButton to="/movies">지금 바로 예매하기</NoirButton>
                 </div>
               )}
             </GlassCard>

@@ -7,7 +7,7 @@ import { reservationsApi } from '@/api/reservations';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
 import { EmptyState } from '@/components/common/ui/EmptyState';
 import { GlassCard } from '@/components/common/GlassCard';
-import { NeonButton } from '@/components/common/NeonButton';
+import { NoirButton } from '@/components/common/NoirButton';
 import { useToast } from '@/hooks';
 import { getErrorMessage } from '@/utils/errorHandler';
 import { formatDate } from '@/utils/dateUtils';
@@ -43,7 +43,7 @@ export function ReservationsTab() {
           title="예매 내역이 없습니다"
           message="영화 목록에서 상영을 선택해 예매해 보세요."
           icon={<span>🎬</span>}
-          action={<NeonButton to="/movies">영화 목록</NeonButton>}
+          action={<NoirButton to="/movies">영화 목록</NoirButton>}
         />
       </GlassCard>
     );

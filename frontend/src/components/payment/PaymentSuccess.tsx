@@ -2,7 +2,7 @@
  * 결제 완료 화면 — PaymentPage에서 분리
  */
 import { GlassCard } from '@/components/common/GlassCard';
-import { NeonButton } from '@/components/common/NeonButton';
+import { NoirButton } from '@/components/common/NoirButton';
 import { formatPrice } from '@/utils/formatters';
 import type { PaymentResponse } from '@/types/reservation.types';
 
@@ -33,10 +33,10 @@ export function PaymentSuccess({ result }: PaymentSuccessProps) {
           </dl>
         </div>
         <div className="mt-8 flex gap-3">
-          <NeonButton to="/reservations">예매 내역</NeonButton>
-          <NeonButton to="/movies" variant="ghost">
+          <NoirButton to="/reservations">예매 내역</NoirButton>
+          <NoirButton to="/movies" variant="ghost">
             영화 목록
-          </NeonButton>
+          </NoirButton>
         </div>
       </GlassCard>
     </div>
