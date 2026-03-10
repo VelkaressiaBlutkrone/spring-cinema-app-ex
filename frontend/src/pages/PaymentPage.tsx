@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useLocation, Link } from 'react-router-dom';
 import { reservationsApi } from '@/api/reservations';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
-import { GlassCard } from '@/components/common/GlassCard';
+import { NoirCard } from '@/components/common/NoirCard';
 import { NoirButton } from '@/components/common/NoirButton';
 import { PaymentSuccess } from '@/components/payment/PaymentSuccess';
 import { useToast } from '@/hooks';
@@ -119,7 +119,7 @@ export function PaymentPage() {
     <div className="mx-auto max-w-xl py-8">
       <h1 className="mb-6 font-display text-2xl tracking-widest text-cinema-text">결제</h1>
 
-      <GlassCard className="mb-6">
+      <NoirCard className="mb-6">
         <h2 className="mb-3 font-medium text-cinema-text">예매 정보</h2>
         {screening && (
           <div className="mb-3 space-y-1 text-sm text-cinema-muted">
@@ -138,9 +138,9 @@ export function PaymentPage() {
         <p className="mt-3 text-xs text-cinema-muted-dark">
           총 결제 금액은 결제 완료 시 확정된 금액으로 표시됩니다.
         </p>
-      </GlassCard>
+      </NoirCard>
 
-      <GlassCard className="mb-6">
+      <NoirCard className="mb-6">
         <h2 className="mb-3 font-medium text-cinema-text">결제 수단</h2>
         <div className="flex flex-wrap gap-2">
           {PAY_METHOD_OPTIONS.map((method) => (
@@ -158,7 +158,7 @@ export function PaymentPage() {
             </button>
           ))}
         </div>
-      </GlassCard>
+      </NoirCard>
 
       <div className="flex flex-wrap items-center gap-4">
         <NoirButton onClick={handlePay} disabled={loading}>

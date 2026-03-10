@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { reservationsApi } from '@/api/reservations';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
 import { EmptyState } from '@/components/common/ui/EmptyState';
-import { GlassCard } from '@/components/common/GlassCard';
+import { NoirCard } from '@/components/common/NoirCard';
 import { NoirButton } from '@/components/common/NoirButton';
 import { useToast } from '@/hooks';
 import { getErrorMessage } from '@/utils/errorHandler';
@@ -38,14 +38,14 @@ export function ReservationsTab() {
 
   if (reservations.length === 0) {
     return (
-      <GlassCard padding={false}>
+      <NoirCard padding={false}>
         <EmptyState
           title="예매 내역이 없습니다"
           message="영화 목록에서 상영을 선택해 예매해 보세요."
           icon={<span>🎬</span>}
           action={<NoirButton to="/movies">영화 목록</NoirButton>}
         />
-      </GlassCard>
+      </NoirCard>
     );
   }
 
@@ -53,7 +53,7 @@ export function ReservationsTab() {
     <ul className="space-y-4">
       {reservations.map((r) => (
         <li key={r.reservationId}>
-          <GlassCard>
+          <NoirCard>
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div>
                 <p className="font-medium text-cinema-text">{r.movieTitle}</p>
@@ -78,7 +78,7 @@ export function ReservationsTab() {
                 상세
               </Link>
             </div>
-          </GlassCard>
+          </NoirCard>
         </li>
       ))}
     </ul>

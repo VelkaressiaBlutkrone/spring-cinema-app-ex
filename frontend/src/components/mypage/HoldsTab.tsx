@@ -6,7 +6,7 @@ import { membersApi } from '@/api/members';
 import { seatsApi } from '@/api/seats';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
 import { EmptyState } from '@/components/common/ui/EmptyState';
-import { GlassCard } from '@/components/common/GlassCard';
+import { NoirCard } from '@/components/common/NoirCard';
 import { NoirButton } from '@/components/common/NoirButton';
 import { useToast } from '@/hooks';
 import { getErrorMessage } from '@/utils/errorHandler';
@@ -60,14 +60,14 @@ export function HoldsTab() {
 
   if (holds.length === 0) {
     return (
-      <GlassCard padding={false}>
+      <NoirCard padding={false}>
         <EmptyState
           title="장바구니가 비어 있습니다"
           message="영화 목록에서 좌석을 선택하면 여기에 표시됩니다."
           icon={<span>🪑</span>}
           action={<NoirButton to="/movies">영화 목록</NoirButton>}
         />
-      </GlassCard>
+      </NoirCard>
     );
   }
 
@@ -75,7 +75,7 @@ export function HoldsTab() {
     <ul className="space-y-4">
       {holds.map((h) => (
         <li key={h.screeningId}>
-          <GlassCard>
+          <NoirCard>
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div>
                 <p className="font-medium text-cinema-text">{h.movieTitle}</p>
@@ -107,7 +107,7 @@ export function HoldsTab() {
                 </li>
               ))}
             </ul>
-          </GlassCard>
+          </NoirCard>
         </li>
       ))}
     </ul>

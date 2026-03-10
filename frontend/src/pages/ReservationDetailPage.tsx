@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { reservationsApi } from '@/api/reservations';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
-import { GlassCard } from '@/components/common/GlassCard';
+import { NoirCard } from '@/components/common/NoirCard';
 import { NoirButton } from '@/components/common/NoirButton';
 import { useToast } from '@/hooks';
 import { useAuthStore } from '@/stores';
@@ -96,7 +96,7 @@ export function ReservationDetailPage() {
   return (
     <div className="mx-auto max-w-xl py-8">
       <h1 className="mb-6 font-display text-2xl tracking-widest text-cinema-text">예매 상세</h1>
-      <GlassCard>
+      <NoirCard>
         <dl className="space-y-4 text-cinema-text">
           <div>
             <dt className="text-sm font-medium text-cinema-muted">예매 번호</dt>
@@ -152,7 +152,7 @@ export function ReservationDetailPage() {
             영화 목록
           </NoirButton>
         </div>
-      </GlassCard>
+      </NoirCard>
     </div>
   );
 }

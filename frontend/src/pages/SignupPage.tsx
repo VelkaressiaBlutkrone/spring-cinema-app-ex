@@ -6,7 +6,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { authApi } from '@/api/auth';
 import { useToast } from '@/hooks';
 import { getErrorMessage } from '@/utils/errorHandler';
-import { GlassCard } from '@/components/common/GlassCard';
+import { NoirCard } from '@/components/common/NoirCard';
 import { NoirButton } from '@/components/common/NoirButton';
 import type { SignUpRequest } from '@/types/auth.types';
 
@@ -41,7 +41,7 @@ export function SignupPage() {
 
   return (
     <div className="mx-auto max-w-md py-12">
-      <GlassCard className="p-8">
+      <NoirCard className="p-8">
         <h1 className="mb-6 font-display text-2xl tracking-widest text-cinema-text">회원가입</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -123,7 +123,7 @@ export function SignupPage() {
             로그인
           </Link>
         </p>
-      </GlassCard>
+      </NoirCard>
     </div>
   );
 }

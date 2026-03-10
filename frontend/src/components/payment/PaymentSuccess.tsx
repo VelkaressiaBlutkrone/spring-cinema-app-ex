@@ -1,7 +1,7 @@
 /**
  * 결제 완료 화면 — PaymentPage에서 분리
  */
-import { GlassCard } from '@/components/common/GlassCard';
+import { NoirCard } from '@/components/common/NoirCard';
 import { NoirButton } from '@/components/common/NoirButton';
 import { formatPrice } from '@/utils/formatters';
 import type { PaymentResponse } from '@/types/reservation.types';
@@ -13,7 +13,7 @@ interface PaymentSuccessProps {
 export function PaymentSuccess({ result }: PaymentSuccessProps) {
   return (
     <div className="mx-auto max-w-lg py-12">
-      <GlassCard>
+      <NoirCard>
         <h1 className="mb-6 font-display text-2xl tracking-widest text-cinema-text">예매 완료</h1>
         <div className="space-y-4">
           <p className="rounded-xl border border-cinema-neon-blue/30 bg-cinema-neon-blue/10 px-4 py-3 text-cinema-neon-blue">
@@ -38,7 +38,7 @@ export function PaymentSuccess({ result }: PaymentSuccessProps) {
             영화 목록
           </NoirButton>
         </div>
-      </GlassCard>
+      </NoirCard>
     </div>
   );
 }

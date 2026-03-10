@@ -9,7 +9,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { homeApi, type HomeStatsResponse, type UpcomingMovieItem } from '@/api/home';
 import { reservationsApi } from '@/api/reservations';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
-import { GlassCard } from '@/components/common/GlassCard';
+import { NoirCard } from '@/components/common/NoirCard';
 import { NoirButton } from '@/components/common/NoirButton';
 import { useToast } from '@/hooks';
 import { useAuthStore } from '@/stores';
@@ -153,7 +153,7 @@ export function HomePage() {
           {stats && (
             <motion.section variants={slideUp}>
               <SectionTitle>영화관 현황</SectionTitle>
-              <GlassCard>
+              <NoirCard>
                 <div className="flex flex-wrap gap-6 text-cinema-muted">
                   <span>
                     영화관 <strong className="stat-glow text-cinema-text">{stats.theaterCount}</strong>개
@@ -166,14 +166,14 @@ export function HomePage() {
                     <strong className="stat-glow text-cinema-text">{stats.todayScreeningCount}</strong>편
                   </span>
                 </div>
-              </GlassCard>
+              </NoirCard>
             </motion.section>
           )}
 
           {/* 3일 이내 상영 예정 — 수평 스크롤 (앨범 넘기기) */}
           <motion.section variants={slideInLeft}>
             <SectionTitle>3일 이내 상영 예정 영화</SectionTitle>
-            <GlassCard padding={false} className="overflow-hidden">
+            <NoirCard padding={false} className="overflow-hidden">
               {upcoming.length === 0 ? (
                 <p className="p-6 text-cinema-muted">상영 예정 영화가 없습니다.</p>
               ) : (
@@ -211,7 +211,7 @@ export function HomePage() {
                   ))}
                 </ul>
               )}
-            </GlassCard>
+            </NoirCard>
           </motion.section>
 
           {/* 빠른 예매 / 나의 최근 예매 통합 */}
@@ -219,7 +219,7 @@ export function HomePage() {
             <SectionTitle>
               {isAuthenticated && reservations.length > 0 ? '나의 최근 예매' : '빠른 예매'}
             </SectionTitle>
-            <GlassCard>
+            <NoirCard>
               {isAuthenticated && reservations.length > 0 ? (
                 <>
                   <ul className="mb-4 space-y-3">
@@ -259,7 +259,7 @@ export function HomePage() {
                   <NoirButton to="/movies">지금 바로 예매하기</NoirButton>
                 </div>
               )}
-            </GlassCard>
+            </NoirCard>
           </motion.section>
         </motion.div>
       )}

@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import { membersApi } from '@/api/members';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
-import { GlassCard } from '@/components/common/GlassCard';
+import { NoirCard } from '@/components/common/NoirCard';
 import { NoirButton } from '@/components/common/NoirButton';
 import { useToast } from '@/hooks';
 import { getErrorMessage } from '@/utils/errorHandler';
@@ -63,7 +63,7 @@ export function ProfileTab() {
   if (!profile) return null;
 
   return (
-    <GlassCard className="max-w-xl">
+    <NoirCard className="max-w-xl">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="profile-loginId" className="mb-1 block text-sm font-medium text-cinema-muted">
@@ -133,6 +133,6 @@ export function ProfileTab() {
           {saving ? '저장 중...' : '저장'}
         </NoirButton>
       </form>
-    </GlassCard>
+    </NoirCard>
   );
 }

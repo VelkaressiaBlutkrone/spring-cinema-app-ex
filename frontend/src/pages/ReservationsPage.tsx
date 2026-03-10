@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 import { reservationsApi } from '@/api/reservations';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
 import { EmptyState } from '@/components/common/ui/EmptyState';
-import { GlassCard } from '@/components/common/GlassCard';
+import { NoirCard } from '@/components/common/NoirCard';
 import { NoirButton } from '@/components/common/NoirButton';
 import { useToast } from '@/hooks';
 import { getErrorMessage } from '@/utils/errorHandler';
@@ -47,14 +47,14 @@ export function ReservationsPage() {
     <div className="py-6">
       <h1 className="mb-6 font-display text-2xl tracking-widest text-cinema-text">예매 내역</h1>
       {items.length === 0 ? (
-        <GlassCard padding={false}>
+        <NoirCard padding={false}>
           <EmptyState
             title="예매 내역이 없습니다"
             message="영화 목록에서 상영을 선택해 예매해 보세요."
             icon={<span>🎬</span>}
             action={<NoirButton to="/movies">영화 목록</NoirButton>}
           />
-        </GlassCard>
+        </NoirCard>
       ) : (
         <motion.ul
           className="space-y-4"
@@ -64,7 +64,7 @@ export function ReservationsPage() {
         >
           {items.map((r) => (
             <motion.li key={r.reservationId} variants={slideUp}>
-              <GlassCard>
+              <NoirCard>
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div>
                     <p className="font-medium text-cinema-text">{r.movieTitle}</p>
@@ -85,7 +85,7 @@ export function ReservationsPage() {
                     상세
                   </Link>
                 </div>
-              </GlassCard>
+              </NoirCard>
             </motion.li>
           ))}
         </motion.ul>
