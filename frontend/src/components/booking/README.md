@@ -42,7 +42,7 @@ import type { SeatStatusItem } from '@/types/seat.types';
 function BookingPage() {
   const [seats, setSeats] = useState<SeatStatusItem[]>([]);
   const [myHolds, setMyHolds] = useState<Set<number>>(new Set());
-  
+
   const handleSeatClick = (seat: SeatStatusItem) => {
     if (seat.status === 'AVAILABLE') {
       // 좌석 HOLD 로직
@@ -52,7 +52,7 @@ function BookingPage() {
       releaseSeat(seat.seatId);
     }
   };
-  
+
   return (
     <SeatMap
       seats={seats}
@@ -69,7 +69,7 @@ function BookingPage() {
 - 행(rowLabel) 기준으로 자동 그룹핑 및 정렬
 - 좌석 번호(seatNo) 표시
 - 클릭 가능한 좌석에 hover 효과 적용
-- Cinema theme 스타일링 (glassmorphism)
+- Noir Luxe 스타일링 (어두운 표면, Amber accent)
 
 ---
 
@@ -97,12 +97,12 @@ import { HoldTimer } from '@/components/booking';
 
 function BookingPage() {
   const holdExpireAt = '2026-01-29T08:30:00Z'; // 서버에서 받은 만료 시각
-  
+
   const handleExpire = () => {
     // HOLD 만료 시 처리 로직 (예: 좌석 해제, 알림 표시)
     alert('좌석 선택 시간이 만료되었습니다.');
   };
-  
+
   return (
     <HoldTimer
       holdExpireAt={holdExpireAt}
@@ -116,9 +116,9 @@ function BookingPage() {
 #### 특징
 
 - 실시간 카운트다운 (MM:SS 형식)
-- 남은 시간이 60초 이하일 때 경고 스타일 (빨간색 네온 효과)
+- 남은 시간이 60초 이하일 때 경고 스타일 (빨간색 글로우 효과)
 - 만료 시 자동으로 `onExpire` 콜백 호출
-- Cinema theme 스타일링 (glassmorphism, neon glow)
+- Noir Luxe 스타일링 (Amber accent, Projector Ambience)
 - holdExpireAt이 없거나 이미 만료된 경우 렌더링하지 않음
 
 ---
@@ -132,12 +132,12 @@ import { useSeatEvents } from '@/hooks/useSeatEvents';
 
 function BookingPage() {
   const screeningId = 123;
-  
+
   useSeatEvents(screeningId, (changedSeatIds) => {
     // 변경된 좌석 ID 목록을 받아서 상태 업데이트
     refetchSeats(changedSeatIds);
   });
-  
+
   // ...
 }
 ```

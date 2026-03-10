@@ -1,5 +1,5 @@
 /**
- * 확인 다이얼로그 컴포넌트
+ * 확인 다이얼로그 — Noir Luxe design system
  */
 import { Modal } from '@/components/common/ui/Modal';
 
@@ -31,20 +31,23 @@ export const ConfirmDialog = ({
 
   const confirmButtonClass =
     variant === 'danger'
-      ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700'
-      : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700';
+      ? 'bg-transparent text-noir-danger border border-noir-danger/30 hover:border-noir-danger/60 hover:shadow-[0_0_16px_rgba(196,64,64,0.1)]'
+      : 'bg-amber text-noir-bg hover:bg-amber-hover hover:shadow-[0_0_24px_rgba(232,168,73,0.3)]';
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title} size="sm">
       <div className="space-y-5">
-        <p className="text-gray-700">{message}</p>
+        <p className="text-noir-text-secondary">{message}</p>
         <div className="flex justify-end gap-3">
-          <button onClick={onClose} className="btn-secondary-imweb min-h-[44px] touch-manipulation">
+          <button
+            onClick={onClose}
+            className="min-h-[44px] touch-manipulation bg-noir-text/[0.04] px-6 py-3 font-sans text-[11px] font-semibold uppercase tracking-[3px] text-noir-text-secondary transition-all duration-200 hover:bg-noir-text/[0.08]"
+          >
             {cancelText}
           </button>
           <button
             onClick={handleConfirm}
-            className={`min-h-[44px] px-6 py-3 rounded-xl font-medium text-white shadow-md hover:shadow-lg transition-all duration-300 active:scale-95 touch-manipulation ${confirmButtonClass}`}
+            className={`min-h-[44px] touch-manipulation px-6 py-3 font-sans text-[11px] font-semibold uppercase tracking-[3px] transition-all duration-200 active:scale-95 ${confirmButtonClass}`}
           >
             {confirmText}
           </button>

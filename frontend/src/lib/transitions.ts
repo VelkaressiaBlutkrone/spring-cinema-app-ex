@@ -1,56 +1,56 @@
-/**
- * 페이지·모달 전환 Framer Motion variants
- */
 import type { Variants } from 'framer-motion';
+import { filmEnter, filmExit } from './animations';
 
-/** 일반 페이지 전환: fade + slideUp */
 export const pageTransition: Variants = {
   initial: { opacity: 0, y: 12 },
   animate: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] },
+    transition: { duration: 0.5, ease: filmEnter },
   },
   exit: {
     opacity: 0,
-    y: -8,
-    transition: { duration: 0.2, ease: 'easeIn' },
+    y: -12,
+    transition: { duration: 0.25, ease: filmExit },
   },
 };
 
-/** 모달 전환: scale + backdrop */
 export const modalTransition: Variants = {
-  initial: { opacity: 0, scale: 0.96 },
+  initial: { opacity: 0, scale: 0.97 },
   animate: {
     opacity: 1,
     scale: 1,
-    transition: { duration: 0.25, ease: [0.25, 0.46, 0.45, 0.94] },
+    transition: { duration: 0.35, ease: filmEnter },
   },
   exit: {
     opacity: 0,
-    scale: 0.96,
-    transition: { duration: 0.15, ease: 'easeIn' },
+    scale: 0.98,
+    transition: { duration: 0.2, ease: filmExit },
   },
 };
 
-/** 모달 백드롭(오버레이) */
 export const backdropTransition: Variants = {
   initial: { opacity: 0 },
-  animate: { opacity: 1, transition: { duration: 0.2 } },
-  exit: { opacity: 0, transition: { duration: 0.15 } },
+  animate: {
+    opacity: 1,
+    transition: { duration: 0.3 },
+  },
+  exit: {
+    opacity: 0,
+    transition: { duration: 0.2 },
+  },
 };
 
-/** 슬라이드 업 (바텀 시트 등) */
 export const slideUpTransition: Variants = {
-  initial: { opacity: 0, y: '100%' },
+  initial: { opacity: 0, y: 24 },
   animate: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] },
+    transition: { duration: 0.4, ease: filmEnter },
   },
   exit: {
     opacity: 0,
-    y: '100%',
-    transition: { duration: 0.25, ease: 'easeIn' },
+    y: 16,
+    transition: { duration: 0.2, ease: filmExit },
   },
 };

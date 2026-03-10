@@ -1,5 +1,6 @@
 /**
- * 토스트 메시지 컴포넌트
+ * 토스트 메시지 — Noir Luxe design system
+ * Dark surface, left color bar, semantic border
  */
 import { useEffect } from 'react';
 import { clsx } from 'clsx';
@@ -11,8 +12,29 @@ interface ToastProps {
   type: ToastType;
   isVisible: boolean;
   onClose: () => void;
-  duration?: number; // 자동 닫기 시간 (ms), 0이면 자동 닫지 않음
+  duration?: number;
 }
+
+const borderStyles: Record<ToastType, string> = {
+  success: 'border-noir-success/30',
+  error: 'border-noir-danger/30',
+  info: 'border-noir-info/30',
+  warning: 'border-noir-warning/30',
+};
+
+const barStyles: Record<ToastType, string> = {
+  success: 'bg-noir-success',
+  error: 'bg-noir-danger',
+  info: 'bg-noir-info',
+  warning: 'bg-noir-warning',
+};
+
+const textStyles: Record<ToastType, string> = {
+  success: 'text-noir-success',
+  error: 'text-noir-danger',
+  info: 'text-noir-info',
+  warning: 'text-noir-warning',
+};
 
 export const Toast = ({ message, type, isVisible, onClose, duration = 3000 }: ToastProps) => {
   useEffect(() => {
@@ -27,41 +49,31 @@ export const Toast = ({ message, type, isVisible, onClose, duration = 3000 }: To
 
   if (!isVisible) return null;
 
-  const typeStyles = {
-    success: 'bg-gradient-to-r from-green-500 to-green-600 text-white',
-    error: 'bg-gradient-to-r from-red-500 to-red-600 text-white',
-    info: 'bg-gradient-to-r from-blue-500 to-blue-600 text-white',
-    warning: 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-white',
-  };
-
-  const icons = {
-    success: '✓',
-    error: '✕',
-    info: 'ℹ',
-    warning: '⚠',
-  };
-
   return (
     <div
       className={clsx(
-        'fixed top-20 right-4 z-50 min-w-[300px] max-w-md px-5 py-4 rounded-xl shadow-2xl',
+        'fixed top-20 right-4 z-50 min-w-[300px] max-w-md overflow-hidden rounded-sm',
+        'bg-noir-surface border',
+        borderStyles[type],
+        'shadow-[0_8px_32px_rgba(0,0,0,0.4)]',
         'transform transition-all duration-300 ease-in-out',
         isVisible ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0',
-        typeStyles[type],
-        'flex items-center gap-3',
-        'backdrop-blur-sm'
+        'flex'
       )}
       role="alert"
     >
-      <span className="text-xl font-bold flex-shrink-0">{icons[type]}</span>
-      <p className="flex-1 text-sm font-medium">{message}</p>
-      <button
-        onClick={onClose}
-        className="flex-shrink-0 text-white/80 hover:text-white transition-colors text-xl leading-none"
-        aria-label="닫기"
-      >
-        ×
-      </button>
+      {/* Left color bar */}
+      <div className={clsx('w-[3px] shrink-0', barStyles[type])} />
+      <div className="flex flex-1 items-center gap-3 px-5 py-4">
+        <p className={clsx('flex-1 text-[13px] font-sans font-normal', textStyles[type])}>{message}</p>
+        <button
+          onClick={onClose}
+          className="shrink-0 text-noir-text-muted hover:text-noir-text transition-colors text-xl leading-none"
+          aria-label="닫기"
+        >
+          ×
+        </button>
+      </div>
     </div>
   );
 };

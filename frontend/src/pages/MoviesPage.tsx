@@ -1,5 +1,5 @@
 /**
- * 영화 목록 — cinema theme
+ * 영화 목록 — Noir Luxe theme
  */
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
@@ -66,7 +66,7 @@ export function MoviesPage() {
 
   return (
     <div className="py-4">
-      <h1 className="mb-6 font-display text-2xl tracking-widest text-cinema-text">영화 목록</h1>
+      <h1 className="mb-6 font-display text-2xl tracking-widest text-noir-text">영화 목록</h1>
       {isEmpty ? (
         <EmptyState title="등록된 영화가 없습니다" message="곧 다양한 영화가 상영될 예정입니다." />
       ) : (
@@ -83,20 +83,20 @@ export function MoviesPage() {
               <button
                 type="button"
                 onClick={() => openDetail(movie)}
-                className="group flex w-[min(180px,40vw)] flex-col overflow-hidden rounded-2xl border border-cinema-glass-border bg-cinema-surface text-left shadow-lg transition-all duration-300 hover:scale-[1.04] hover:border-cinema-neon-blue/50 hover:shadow-[0_0_32px_rgba(0,212,255,0.2)] focus:outline-none focus:ring-2 focus:ring-cinema-neon-blue/50"
+                className="group flex w-[min(180px,40vw)] flex-col overflow-hidden rounded-sm border border-noir-border bg-noir-surface text-left shadow-lg transition-all duration-300 hover:border-amber/50 hover:shadow-[0_0_24px_rgba(232,168,73,0.2)] focus:outline-none focus:ring-2 focus:ring-amber/50"
               >
               <motion.div
                 layoutId={`poster-${movie.id}`}
-                className="relative aspect-[2/3] overflow-hidden bg-cinema-surface-elevated"
+                className="relative aspect-[2/3] overflow-hidden bg-noir-elevated"
               >
                 {movie.posterUrl ? (
                   <img
                     src={movie.posterUrl}
                     alt={movie.title}
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    className="h-full w-full object-cover transition-transform duration-300"
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center text-4xl text-cinema-muted-dark">
+                  <div className="flex h-full w-full items-center justify-center text-4xl text-noir-text-muted">
                     🎬
                   </div>
                 )}
@@ -105,12 +105,12 @@ export function MoviesPage() {
               <div className="p-3">
                 <motion.h2
                   layoutId={`title-${movie.id}`}
-                  className="line-clamp-2 font-medium text-cinema-text transition group-hover:text-cinema-neon-blue"
+                  className="line-clamp-2 font-medium text-noir-text transition group-hover:text-amber"
                 >
                   {movie.title}
                 </motion.h2>
                 {movie.releaseDate && (
-                  <p className="mt-1 text-xs text-cinema-muted">
+                  <p className="mt-1 text-xs text-noir-text-muted">
                     {formatDate(movie.releaseDate, 'YYYY-MM-DD')}
                   </p>
                 )}
@@ -124,10 +124,10 @@ export function MoviesPage() {
 
       <Modal isOpen={!!selectedMovie} onClose={closeDetail} title={selectedMovie?.title} size="lg">
         {selectedMovie && (
-          <div className="space-y-4 text-cinema-text">
+          <div className="space-y-4 text-noir-text">
             <motion.div
               layoutId={`poster-${selectedMovie.id}`}
-              className="mx-auto aspect-[2/3] w-32 overflow-hidden rounded-xl bg-cinema-surface-elevated"
+              className="mx-auto aspect-[2/3] w-32 overflow-hidden rounded-sm bg-noir-elevated"
             >
               {selectedMovie.posterUrl ? (
                 <img
@@ -136,43 +136,43 @@ export function MoviesPage() {
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center text-4xl text-cinema-muted-dark">
+                <div className="flex h-full w-full items-center justify-center text-4xl text-noir-text-muted">
                   🎬
                 </div>
               )}
             </motion.div>
-            <p className="text-cinema-muted">{selectedMovie.description ?? '-'}</p>
-            <div className="grid grid-cols-2 gap-2 text-sm text-cinema-muted">
+            <p className="text-noir-text-muted">{selectedMovie.description ?? '-'}</p>
+            <div className="grid grid-cols-2 gap-2 text-sm text-noir-text-muted">
               {selectedMovie.runningTime && <span>상영시간: {selectedMovie.runningTime}분</span>}
               {selectedMovie.rating && <span>등급: {selectedMovie.rating}</span>}
               {selectedMovie.genre && <span>장르: {selectedMovie.genre}</span>}
               {selectedMovie.director && <span>감독: {selectedMovie.director}</span>}
             </div>
             <div>
-              <h3 className="mb-2 font-display text-base tracking-widest text-cinema-text">
+              <h3 className="mb-2 font-display text-base tracking-widest text-noir-text">
                 상영 시간표
               </h3>
               {schedulesLoading ? (
                 <LoadingSpinner size="sm" message="상영 일정 조회 중..." />
               ) : schedules.length === 0 ? (
-                <p className="text-sm text-cinema-muted">상영 예정인 일정이 없습니다.</p>
+                <p className="text-sm text-noir-text-muted">상영 예정인 일정이 없습니다.</p>
               ) : (
-                <ul className="max-h-48 space-y-2 overflow-y-auto rounded-xl border border-cinema-glass-border bg-cinema-bg p-3">
+                <ul className="max-h-48 space-y-2 overflow-y-auto rounded-sm border border-noir-border bg-noir-bg p-3">
                   {schedules.map((s) => {
                     const displayStatus = getScreeningDisplayStatus(s.startTime, s.endTime);
                     const canBook = displayStatus === 'BOOKABLE';
                     return (
                       <li
                         key={s.id}
-                        className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-cinema-surface px-3 py-2 text-sm"
+                        className="flex flex-wrap items-center justify-between gap-2 rounded-sm bg-noir-surface px-3 py-2 text-sm"
                       >
-                        <span className="text-cinema-muted">
+                        <span className="text-noir-text-muted">
                           {[s.theaterName, s.screenName]
                             .filter(Boolean)
                             .join(' - ')}{' '}
                           · {SCREENING_DISPLAY_LABEL[displayStatus]}
                         </span>
-                        <span className="text-cinema-muted-dark">
+                        <span className="text-noir-text-muted">
                           {formatDate(s.startTime, 'YYYY-MM-DD HH:mm')} ~{' '}
                           {formatDate(s.endTime, 'HH:mm')}
                         </span>
@@ -180,12 +180,12 @@ export function MoviesPage() {
                           <Link
                             to={`/book/${s.id}`}
                             state={{ screening: s }}
-                            className="shrink-0 rounded-lg bg-cinema-neon-blue px-3 py-1.5 text-xs font-medium text-cinema-bg transition hover:opacity-90"
+                            className="shrink-0 rounded-sm bg-amber px-3 py-1.5 text-xs font-medium text-noir-bg transition hover:opacity-90"
                           >
                             예매하기
                           </Link>
                         ) : (
-                          <span className="shrink-0 rounded-lg border border-cinema-glass-border bg-cinema-surface px-3 py-1.5 text-xs font-medium text-cinema-muted cursor-not-allowed">
+                          <span className="shrink-0 rounded-sm border border-noir-border bg-noir-surface px-3 py-1.5 text-xs font-medium text-noir-text-muted cursor-not-allowed">
                             {SCREENING_DISPLAY_LABEL[displayStatus]}
                           </span>
                         )}

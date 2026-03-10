@@ -4,7 +4,7 @@
 
 ## 개요
 
-현재 결제 관련 컴포넌트는 페이지 레벨에서 직접 구현되어 있으며, 향후 재사용 가능한 컴포넌트로 분리할 예정입니다.  
+현재 결제 관련 컴포넌트는 페이지 레벨에서 직접 구현되어 있으며, 향후 재사용 가능한 컴포넌트로 분리할 예정입니다.
 결제 처리는 `@/api/reservations` API를 통해 이루어집니다.
 
 ## 예정 컴포넌트
@@ -72,7 +72,7 @@ import type { PaymentMethod } from '@/types/reservation.types';
 
 function PaymentPage() {
   const [method, setMethod] = useState<PaymentMethod>('CARD');
-  
+
   return (
     <PaymentMethodSelector
       selectedMethod={method}
@@ -102,7 +102,7 @@ interface PaymentCompleteProps {
 
 ```typescript
 // @/types/reservation.types
-type PaymentMethod = 
+type PaymentMethod =
   | 'CARD'           // 신용카드
   | 'KAKAO_PAY'      // 카카오페이
   | 'NAVER_PAY'      // 네이버페이
@@ -150,7 +150,7 @@ interface ReservationSeatItem {
   price: number;
 }
 
-type ReservationStatus = 
+type ReservationStatus =
   | 'PENDING'    // 결제 대기
   | 'CONFIRMED'  // 예매 완료
   | 'CANCELLED'; // 취소됨
@@ -171,17 +171,17 @@ async function processPayment() {
     { seatId: 2, holdToken: 'token2' },
     { seatId: 3, holdToken: 'token3' },
   ];
-  
+
   const paymentData: PaymentRequest = {
     screeningId: 123,
     seatHoldItems: seatHoldItems,
     payMethod: 'CARD',
   };
-  
+
   try {
     // 결제 요청
     const reservation = await reservationsApi.createReservation(paymentData);
-    
+
     // 결제 완료 처리
     console.log('예매 완료:', reservation);
     navigate('/reservations');
@@ -220,17 +220,17 @@ const myReservations = await reservationsApi.getMyReservations();
 await reservationsApi.cancelReservation(reservationId);
 ```
 
-## Cinema Theme 스타일링
+## Noir Luxe Theme 스타일링
 
-결제 컴포넌트는 프로젝트의 Cinema/Neon 테마를 따릅니다:
+결제 컴포넌트는 프로젝트의 Noir Luxe 디자인 시스템을 따릅니다:
 
-- **GlassCard**: 결제 정보를 담는 반투명 카드
-- **NeonButton**: 결제하기 버튼 (Primary 색상, 네온 글로우 효과)
+- **NoirCard**: 결제 정보를 담는 어두운 표면 카드
+- **NoirButton**: 결제하기 버튼 (Amber accent, 우아한 글로우 효과)
 - **보안 표시**: 자물쇠 아이콘, SSL 보안 텍스트 등
 
 ## 관련 파일
 
 - `@/types/reservation.types`: 예매 및 결제 타입 정의
 - `@/api/reservations`: 예매/결제 API 호출
-- `@/components/common/GlassCard`: Glassmorphism 카드
-- `@/components/common/NeonButton`: Neon 효과 버튼
+- `@/components/common/NoirCard`: Noir Luxe 카드
+- `@/components/common/NoirButton`: Amber accent 버튼

@@ -5,5 +5,5 @@
  */
 export * from '@/components/common/ui';
 export { NavigationBar } from '@/components/common/NavigationBar';
-export { GlassCard } from '@/components/common/GlassCard';
-export { NeonButton } from '@/components/common/NeonButton';
+export { NoirCard } from '@/components/common/NoirCard';
+export { NoirButton } from '@/components/common/NoirButton';

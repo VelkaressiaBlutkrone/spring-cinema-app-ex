@@ -4,14 +4,14 @@
 import { useState, useEffect } from 'react';
 import { membersApi } from '@/api/members';
 import { LoadingSpinner } from '@/components/common/ui/LoadingSpinner';
-import { GlassCard } from '@/components/common/GlassCard';
-import { NeonButton } from '@/components/common/NeonButton';
+import { NoirCard } from '@/components/common/NoirCard';
+import { NoirButton } from '@/components/common/NoirButton';
 import { useToast } from '@/hooks';
 import { getErrorMessage } from '@/utils/errorHandler';
 import type { MemberProfileResponse, MemberUpdateRequest } from '@/types/member.types';
 
 const inputClass =
-  'w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-3 text-cinema-text placeholder:text-cinema-muted-dark focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue';
+  'w-full rounded-none border border-noir-border bg-noir-elevated px-4 py-3 text-noir-text placeholder:text-noir-text-muted focus:border-amber/30 focus:outline-none focus:ring-1 focus:ring-amber/30';
 
 export function ProfileTab() {
   const { showSuccess, showError } = useToast();
@@ -63,10 +63,10 @@ export function ProfileTab() {
   if (!profile) return null;
 
   return (
-    <GlassCard className="max-w-xl">
+    <NoirCard className="max-w-xl">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label htmlFor="profile-loginId" className="mb-1 block text-sm font-medium text-cinema-muted">
+          <label htmlFor="profile-loginId" className="mb-1 block text-sm font-medium text-noir-text-muted">
             아이디
           </label>
           <input
@@ -79,7 +79,7 @@ export function ProfileTab() {
           />
         </div>
         <div>
-          <label htmlFor="profile-name" className="mb-1 block text-sm font-medium text-cinema-muted">
+          <label htmlFor="profile-name" className="mb-1 block text-sm font-medium text-noir-text-muted">
             이름
           </label>
           <input
@@ -92,7 +92,7 @@ export function ProfileTab() {
           />
         </div>
         <div>
-          <label htmlFor="profile-password" className="mb-1 block text-sm font-medium text-cinema-muted">
+          <label htmlFor="profile-password" className="mb-1 block text-sm font-medium text-noir-text-muted">
             새 비밀번호 (변경 시에만 입력)
           </label>
           <input
@@ -106,7 +106,7 @@ export function ProfileTab() {
           />
         </div>
         <div>
-          <label htmlFor="profile-email" className="mb-1 block text-sm font-medium text-cinema-muted">
+          <label htmlFor="profile-email" className="mb-1 block text-sm font-medium text-noir-text-muted">
             이메일
           </label>
           <input
@@ -118,7 +118,7 @@ export function ProfileTab() {
           />
         </div>
         <div>
-          <label htmlFor="profile-phone" className="mb-1 block text-sm font-medium text-cinema-muted">
+          <label htmlFor="profile-phone" className="mb-1 block text-sm font-medium text-noir-text-muted">
             연락처
           </label>
           <input
@@ -129,10 +129,10 @@ export function ProfileTab() {
             className={inputClass}
           />
         </div>
-        <NeonButton type="submit" disabled={saving}>
+        <NoirButton type="submit" disabled={saving}>
           {saving ? '저장 중...' : '저장'}
-        </NeonButton>
+        </NoirButton>
       </form>
-    </GlassCard>
+    </NoirCard>
   );
 }
