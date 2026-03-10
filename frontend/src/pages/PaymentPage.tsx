@@ -1,5 +1,5 @@
 /**
- * 결제 페이지 — cinema theme
+ * 결제 페이지 — Noir Luxe theme
  * 경로: /payment/:screeningId — state로 heldSeats, screening 전달
  * 인증은 ProtectedRoute에서 보장됨
  */
@@ -91,9 +91,9 @@ export function PaymentPage() {
 
   if (id == null) {
     return (
-      <div className="py-12 text-center text-cinema-muted">
+      <div className="py-12 text-center text-noir-text-muted">
         <p>상영 정보가 없습니다.</p>
-        <Link to="/movies" className="mt-4 inline-block text-cinema-neon-blue hover:underline">
+        <Link to="/movies" className="mt-4 inline-block text-amber hover:underline">
           영화 목록으로
         </Link>
       </div>
@@ -102,7 +102,7 @@ export function PaymentPage() {
 
   if (heldSeats.length === 0 && !result) {
     return (
-      <div className="py-12 text-center text-cinema-muted">
+      <div className="py-12 text-center text-noir-text-muted">
         <p>선택한 좌석 정보가 없습니다. 좌석 선택 후 결제해 주세요.</p>
         <NoirButton to={`/book/${id}`} className="mt-4">
           좌석 선택으로
@@ -117,41 +117,41 @@ export function PaymentPage() {
 
   return (
     <div className="mx-auto max-w-xl py-8">
-      <h1 className="mb-6 font-display text-2xl tracking-widest text-cinema-text">결제</h1>
+      <h1 className="mb-6 font-display text-2xl tracking-widest text-noir-text">결제</h1>
 
       <NoirCard className="mb-6">
-        <h2 className="mb-3 font-medium text-cinema-text">예매 정보</h2>
+        <h2 className="mb-3 font-medium text-noir-text">예매 정보</h2>
         {screening && (
-          <div className="mb-3 space-y-1 text-sm text-cinema-muted">
-            <p className="font-medium text-cinema-text">{screening.movieTitle}</p>
+          <div className="mb-3 space-y-1 text-sm text-noir-text-muted">
+            <p className="font-medium text-noir-text">{screening.movieTitle}</p>
             <p>
               {screening.screenName} · {formatDate(screening.startTime, 'YYYY-MM-DD HH:mm')}
             </p>
           </div>
         )}
         <div>
-          <p className="mb-1 text-sm font-medium text-cinema-muted">좌석 ({heldSeats.length}석)</p>
-          <p className="text-cinema-text">
+          <p className="mb-1 text-sm font-medium text-noir-text-muted">좌석 ({heldSeats.length}석)</p>
+          <p className="text-noir-text">
             {heldSeats.map((s) => `${s.rowLabel}-${s.seatNo}`).join(', ')}
           </p>
         </div>
-        <p className="mt-3 text-xs text-cinema-muted-dark">
+        <p className="mt-3 text-xs text-noir-text-muted">
           총 결제 금액은 결제 완료 시 확정된 금액으로 표시됩니다.
         </p>
       </NoirCard>
 
       <NoirCard className="mb-6">
-        <h2 className="mb-3 font-medium text-cinema-text">결제 수단</h2>
+        <h2 className="mb-3 font-medium text-noir-text">결제 수단</h2>
         <div className="flex flex-wrap gap-2">
           {PAY_METHOD_OPTIONS.map((method) => (
             <button
               key={method}
               type="button"
               onClick={() => setPayMethod(method)}
-              className={`rounded-xl border px-4 py-2 text-sm font-medium transition ${
+              className={`rounded-sm border px-4 py-2 text-sm font-medium transition ${
                 payMethod === method
-                  ? 'border-cinema-neon-blue bg-cinema-neon-blue text-cinema-bg'
-                  : 'border-cinema-glass-border bg-cinema-surface text-cinema-muted hover:bg-cinema-glass hover:text-cinema-text'
+                  ? 'border-amber bg-amber text-noir-bg'
+                  : 'border-noir-border bg-noir-surface text-noir-text-muted hover:bg-amber-subtle hover:text-noir-text'
               }`}
             >
               {PAY_METHOD_LABELS[method]}
