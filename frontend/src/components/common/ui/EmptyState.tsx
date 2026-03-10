@@ -1,5 +1,5 @@
 /**
- * 빈 상태 — cinema theme
+ * 빈 상태 — Noir Luxe design system
  */
 interface EmptyStateProps {
   title?: string;
@@ -16,11 +16,11 @@ export const EmptyState = ({
 }: EmptyStateProps) => {
   return (
     <div className="flex flex-col items-center justify-center px-4 py-12">
-      {icon && <div className="mb-4 text-5xl text-cinema-muted-dark/60">{icon}</div>}
-      <h3 className="mb-2 text-center font-display text-lg tracking-widest text-cinema-text">
+      {icon && <div className="mb-4 text-5xl text-noir-text-muted/60">{icon}</div>}
+      <h3 className="mb-2 text-center font-display text-lg tracking-widest text-noir-text">
         {title}
       </h3>
-      <p className="mb-6 max-w-md text-center text-sm leading-relaxed text-cinema-muted">
+      <p className="mb-6 max-w-md text-center text-sm leading-relaxed text-noir-text-secondary">
         {message}
       </p>
       {action && <div>{action}</div>}
