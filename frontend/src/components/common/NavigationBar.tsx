@@ -1,6 +1,6 @@
 /**
- * 상단 네비게이션 바 (Cinematic)
- * Glassmorphic, neon accent, active underline
+ * 상단 네비게이션 바 — Noir Luxe design system
+ * Sticky, amber accent, serif logo, uppercase nav links
  */
 import { useMemo, useCallback, useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
@@ -40,14 +40,14 @@ export function NavigationBar() {
     <header
       className={`sticky top-0 z-40 border-b transition-all duration-300 ${
         scrolled
-          ? 'border-cinema-glass-border bg-[rgba(10,10,10,0.95)] backdrop-blur-2xl shadow-[0_4px_24px_rgba(0,0,0,0.4)]'
-          : 'border-transparent bg-[rgba(18,18,18,0.6)] backdrop-blur-xl'
+          ? 'border-noir-border bg-noir-bg/95 backdrop-blur-2xl shadow-[0_4px_24px_rgba(0,0,0,0.4)]'
+          : 'border-noir-border bg-noir-bg/85 backdrop-blur-xl'
       }`}
     >
       <nav className="container mx-auto flex h-14 items-center justify-between px-4">
         <Link
           to="/"
-          className="font-display text-xl tracking-widest text-cinema-text transition hover:text-cinema-neon-blue"
+          className="font-display text-xl tracking-widest text-noir-text transition hover:text-amber"
         >
           영화관 예매
         </Link>
@@ -59,14 +59,14 @@ export function NavigationBar() {
               <Link
                 key={to}
                 to={to}
-                className={`relative px-3 py-2 text-sm font-medium transition sm:px-4 ${
-                  active ? 'text-cinema-neon-blue' : 'text-cinema-muted hover:text-cinema-text'
+                className={`relative px-3 py-2 font-sans text-[10px] font-medium uppercase tracking-[2px] transition sm:px-4 ${
+                  active ? 'text-amber' : 'text-noir-text-muted hover:text-noir-text'
                 }`}
               >
                 {label}
                 {active && (
                   <span
-                    className="absolute bottom-0 left-2 right-2 h-0.5 bg-cinema-neon-blue shadow-[0_0_8px_var(--color-cinema-neon-blue)] sm:left-4 sm:right-4"
+                    className="absolute bottom-0 left-2 right-2 h-0.5 bg-amber shadow-[0_1px_0_0_#e8a849,0_0_8px_rgba(232,168,73,0.4)] sm:left-4 sm:right-4"
                   />
                 )}
               </Link>
@@ -75,24 +75,24 @@ export function NavigationBar() {
           {isAuthenticated && isAdmin && (
             <Link
               to="/admin"
-              className="rounded-lg px-3 py-2 text-sm text-cinema-muted transition hover:bg-cinema-glass hover:text-cinema-text sm:px-4"
+              className="px-3 py-2 font-sans text-[10px] uppercase tracking-[2px] text-noir-text-muted transition hover:bg-noir-hover hover:text-noir-text sm:px-4"
             >
               관리자
             </Link>
           )}
           {isAuthenticated && (
             <>
-              <span className="mx-1 h-4 w-px bg-cinema-glass-border" />
+              <span className="mx-1 h-4 w-px bg-noir-border" />
               <Link
                 to="/mypage"
-                className="max-w-[120px] truncate px-2 text-sm text-cinema-muted transition hover:text-cinema-neon-blue sm:max-w-[160px]"
+                className="max-w-[120px] truncate px-2 text-[10px] font-sans uppercase tracking-[2px] text-noir-text-muted transition hover:text-amber sm:max-w-[160px]"
               >
                 {loginId ?? '회원'}
               </Link>
               <button
                 type="button"
                 onClick={handleLogout}
-                className="rounded-lg bg-cinema-glass px-3 py-2 text-sm font-medium text-cinema-muted transition hover:bg-cinema-glass-border hover:text-cinema-text"
+                className="bg-noir-surface px-3 py-2 font-sans text-[10px] font-medium uppercase tracking-[2px] text-noir-text-muted transition hover:bg-noir-hover hover:text-noir-text"
               >
                 로그아웃
               </button>
@@ -101,7 +101,7 @@ export function NavigationBar() {
           {!isAuthenticated && (
             <Link
               to="/login"
-              className="rounded-lg bg-cinema-neon-blue px-3 py-2 text-sm font-medium text-cinema-bg shadow-[0_0_16px_rgba(0,212,255,0.4)] transition hover:opacity-90"
+              className="bg-amber px-3 py-2 font-sans text-[10px] font-semibold uppercase tracking-[2px] text-noir-bg shadow-[0_0_16px_rgba(232,168,73,0.3)] transition hover:bg-amber-hover"
             >
               로그인
             </Link>
