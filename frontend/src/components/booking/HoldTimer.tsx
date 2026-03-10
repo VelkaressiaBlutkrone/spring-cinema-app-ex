@@ -1,5 +1,5 @@
 /**
- * HOLD 타이머 — cinema theme
+ * HOLD 타이머 — Noir Luxe theme
  */
 import { useState, useEffect } from 'react';
 
@@ -47,10 +47,10 @@ export function HoldTimer({ holdExpireAt, onExpire, className = '' }: HoldTimerP
 
   return (
     <div
-      className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2 ${
+      className={`inline-flex items-center gap-2 rounded-sm border px-4 py-2 ${
         isLow
-          ? 'border-cinema-neon-red/50 bg-cinema-neon-red/10 text-cinema-neon-red'
-          : 'border-cinema-glass-border bg-cinema-glass text-cinema-muted'
+          ? 'border-noir-danger/50 bg-noir-danger/10 text-noir-danger'
+          : 'border-noir-border bg-noir-surface text-amber'
       } ${className}`}
       role="timer"
       aria-live="polite"

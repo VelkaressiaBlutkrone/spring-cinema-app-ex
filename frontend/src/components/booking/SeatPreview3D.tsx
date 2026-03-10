@@ -1,6 +1,6 @@
 /**
  * 2.5D 극장 시트 프리뷰 — CSS perspective 기반
- * 선택한 좌석에서의 스크린 시야각을 시각화
+ * Noir Luxe theme — 선택한 좌석에서의 스크린 시야각을 시각화
  */
 import { useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -83,11 +83,11 @@ export function SeatPreview3D({ seats, myHoldSeatIds, visible }: SeatPreview3DPr
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
-          className="relative mx-auto w-full max-w-[500px] rounded-xl border border-cinema-glass-border bg-cinema-surface p-6"
+          className="relative mx-auto w-full max-w-[500px] rounded-sm border border-noir-border bg-noir-surface p-6"
           style={{ perspective: '800px' }}
         >
           {selectedSeat && (
-            <p className="mb-3 text-center text-sm text-cinema-neon-blue">
+            <p className="mb-3 text-center text-sm text-amber">
               {selectedSeat.label} 좌석에서 바라본 시야
             </p>
           )}
@@ -102,14 +102,21 @@ export function SeatPreview3D({ seats, myHoldSeatIds, visible }: SeatPreview3DPr
             transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
             style={{ transformStyle: 'preserve-3d' }}
           >
-            {/* 스크린 */}
-            <div className="mx-auto mb-4 h-6 w-[80%] rounded-sm bg-gradient-to-b from-white/60 to-white/20 shadow-[0_0_24px_rgba(255,255,255,0.3)]" />
+            {/* 스크린 — amber glow */}
+            <div
+              className="mx-auto mb-4 h-6 w-[80%] rounded-sm"
+              style={{
+                background:
+                  'linear-gradient(to bottom, rgba(232,168,73,0.6), rgba(232,168,73,0.2))',
+                boxShadow: '0 0 24px rgba(232,168,73,0.3)',
+              }}
+            />
 
             {/* 좌석 그리드 */}
             <div className="flex flex-col items-center gap-1">
               {rows.map(([rowLabel, rowSeats], ri) => (
                 <div key={rowLabel} className="flex items-center gap-0.5">
-                  <span className="w-5 text-right text-[10px] text-cinema-muted-dark">
+                  <span className="w-5 text-right text-[10px] text-noir-text-muted">
                     {rowLabel}
                   </span>
                   {rowSeats.map((seat, ci) => {
@@ -121,14 +128,14 @@ export function SeatPreview3D({ seats, myHoldSeatIds, visible }: SeatPreview3DPr
                         key={seat.seatId}
                         className={`h-3 w-3 rounded-[2px] transition-all duration-300 ${
                           isSelected
-                            ? 'scale-150 bg-cinema-neon-blue shadow-[0_0_8px_rgba(0,212,255,0.8)]'
+                            ? 'scale-150 bg-amber shadow-[0_0_8px_rgba(232,168,73,0.8)]'
                             : isMyHold
-                              ? 'bg-cinema-neon-blue/70'
+                              ? 'bg-noir-info/70'
                               : seat.status === 'AVAILABLE'
-                                ? 'bg-green-500/40'
+                                ? 'bg-noir-success/40'
                                 : seat.status === 'RESERVED'
-                                  ? 'bg-red-500/40'
-                                  : 'bg-cinema-muted-dark/30'
+                                  ? 'bg-noir-danger/40'
+                                  : 'bg-noir-blocked/30'
                         }`}
                       />
                     );
@@ -139,7 +146,7 @@ export function SeatPreview3D({ seats, myHoldSeatIds, visible }: SeatPreview3DPr
           </motion.div>
 
           {!selectedSeat && (
-            <p className="mt-4 text-center text-xs text-cinema-muted">
+            <p className="mt-4 text-center text-xs text-noir-text-muted">
               좌석을 선택하면 해당 위치에서의 시야를 확인할 수 있습니다.
             </p>
           )}
