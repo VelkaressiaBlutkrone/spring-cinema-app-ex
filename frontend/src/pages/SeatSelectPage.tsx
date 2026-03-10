@@ -39,9 +39,9 @@ export function SeatSelectPage() {
 
   if (id == null) {
     return (
-      <div className="py-8 text-center text-cinema-muted">
+      <div className="py-8 text-center text-noir-text-muted">
         상영 정보가 없습니다.{' '}
-        <Link to="/movies" className="text-cinema-neon-blue hover:underline">
+        <Link to="/movies" className="text-amber hover:underline">
           영화 목록
         </Link>
         에서 예매할 상영을 선택해 주세요.
@@ -61,7 +61,7 @@ export function SeatSelectPage() {
     <div className="py-6">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-2xl tracking-widest text-cinema-text">
+          <h1 className="font-display text-2xl tracking-widest text-noir-text">
             {screening
               ? [
                   screening.theaterName,
@@ -73,7 +73,7 @@ export function SeatSelectPage() {
               : `상영 #${id} 좌석 선택`}
           </h1>
           {screening && (
-            <p className="mt-1 text-cinema-muted">
+            <p className="mt-1 text-noir-text-muted">
               {formatDate(screening.startTime, 'YYYY-MM-DD HH:mm')} ~{' '}
               {formatDate(screening.endTime, 'HH:mm')}
             </p>
@@ -86,7 +86,7 @@ export function SeatSelectPage() {
         <button
           type="button"
           onClick={() => setShow3D((v) => !v)}
-          className="rounded-lg border border-cinema-glass-border bg-cinema-surface px-3 py-1.5 text-xs text-cinema-muted transition-all duration-200 hover:border-cinema-neon-blue/50 hover:text-cinema-neon-blue"
+          className="rounded-sm border border-noir-border bg-noir-surface px-3 py-1.5 text-xs text-noir-text-muted transition-all duration-200 hover:border-amber/50 hover:text-amber"
         >
           {show3D ? '2D 좌석 맵' : '3D 시야 미리보기'}
         </button>
@@ -109,12 +109,12 @@ export function SeatSelectPage() {
       {heldSeats.length > 0 && (
         <motion.div initial="hidden" animate="visible" exit="hidden" variants={slideUp}>
         <NoirCard>
-          <h2 className="mb-2 font-medium text-cinema-text">선택한 좌석 ({heldSeats.length}석)</h2>
+          <h2 className="mb-2 font-display font-medium text-noir-text">선택한 좌석 ({heldSeats.length}석)</h2>
           <ul className="mb-4 flex flex-wrap gap-2">
             {heldSeats.map((h) => (
               <li
                 key={h.seat.seatId}
-                className="flex items-center gap-2 rounded-lg border border-cinema-neon-blue/40 bg-cinema-neon-blue/10 px-3 py-1.5 text-sm text-cinema-neon-blue"
+                className="flex items-center gap-2 rounded-sm border border-amber/40 bg-amber/10 px-3 py-1.5 text-sm text-amber"
               >
                 <span>
                   {h.seat.rowLabel}-{h.seat.seatNo}
@@ -123,7 +123,7 @@ export function SeatSelectPage() {
                   type="button"
                   onClick={() => handleReleaseFromCart(h)}
                   disabled={holdLoading}
-                  className="rounded bg-cinema-surface/80 px-2 py-0.5 text-xs text-cinema-muted transition hover:bg-cinema-glass-border hover:text-cinema-text disabled:opacity-50"
+                  className="rounded-sm bg-noir-surface/80 px-2 py-0.5 text-xs text-noir-text-muted transition hover:bg-noir-border hover:text-noir-text disabled:opacity-50"
                 >
                   취소
                 </button>
