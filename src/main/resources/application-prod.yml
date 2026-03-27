@@ -1,6 +1,15 @@
 ########################################
 # Production Profile (운영 환경)
 # 사용 DB: MySQL
+#
+# Railway 등 클라우드: MySQL 서비스를 연결하면 MYSQLHOST, MYSQLPORT,
+# MYSQLUSER, MYSQLPASSWORD, MYSQLDATABASE 가 주입됩니다(값은 패널에서 확인).
+# 같은 프로젝트 내 앱은 내부 호스트(mysql.railway.internal)를 쓰고,
+# 로컬 PC에서만 DB에 붙을 때는 MYSQL_PUBLIC_URL 기준 호스트/포트를
+# 환경 변수로 맞추면 됩니다(비밀번호는 저장소에 넣지 말 것).
+#
+# 우선순위: SPRING_DATASOURCE_URL / USERNAME / PASSWORD 환경 변수가
+# 설정되면 이 파일의 url·username·password 보다 우선합니다.
 ########################################
 spring:
   ########################################
@@ -16,13 +25,13 @@ spring:
   # DataSource (MySQL)
   ########################################
   datasource:
-    url: jdbc:mysql://localhost:3306/cinema?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&connectTimeout=5000&socketTimeout=5000&allowPublicKeyRetrieval=true
-    username: cinema_user
-    password: cinema_26118791
+    url: jdbc:mysql://${MYSQLHOST:localhost}:${MYSQLPORT:3306}/${MYSQLDATABASE:cinema}?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8&connectTimeout=30000&socketTimeout=30000&allowPublicKeyRetrieval=true
+    username: ${MYSQLUSER:cinema_user}
+    password: ${MYSQLPASSWORD:cinema_26118791}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       initialization-fail-timeout: -1 # DB 연결 실패해도 서버 시작
-      connection-timeout: 5000 # 연결 타임아웃 5초
+      connection-timeout: 30000 # 클라우드 DB 지연 대비
       maximum-pool-size: 10
       minimum-idle: 2
 
