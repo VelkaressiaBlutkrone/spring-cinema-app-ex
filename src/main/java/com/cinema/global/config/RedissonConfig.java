@@ -27,6 +27,12 @@ public class RedissonConfig {
     @Value("${redisson.single-server-config.address}")
     private String address;
 
+    @Value("${redisson.single-server-config.username:}")
+    private String username;
+
+    @Value("${redisson.single-server-config.password:}")
+    private String password;
+
     @Value("${redisson.single-server-config.connection-minimum-idle-size:5}")
     private int connectionMinimumIdleSize;
 
@@ -57,7 +63,7 @@ public class RedissonConfig {
     public RedissonClient redissonClient() {
         Config config = new Config();
 
-        config.useSingleServer()
+        var singleServer = config.useSingleServer()
                 .setAddress(address)
                 .setConnectionMinimumIdleSize(connectionMinimumIdleSize)
                 .setConnectionPoolSize(connectionPoolSize)
@@ -66,6 +72,12 @@ public class RedissonConfig {
                 .setTimeout(timeout)
                 .setRetryAttempts(retryAttempts)
                 .setRetryInterval(retryInterval);
+        if (username != null && !username.isBlank()) {
+            singleServer.setUsername(username.trim());
+        }
+        if (password != null && !password.isBlank()) {
+            singleServer.setPassword(password);
+        }
 
         try {
             redissonClientInstance = Redisson.create(config);

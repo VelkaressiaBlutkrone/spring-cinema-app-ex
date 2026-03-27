@@ -10,6 +10,11 @@
 #
 # 우선순위: SPRING_DATASOURCE_URL / USERNAME / PASSWORD 환경 변수가
 # 설정되면 이 파일의 url·username·password 보다 우선합니다.
+#
+# Redis(Railway): Redis 플러그인 연결 시 REDISHOST, REDISPORT, REDISUSER,
+# REDISPASSWORD(또는 REDIS_PASSWORD)가 주입됩니다. 앱이 Railway 내부에서
+# 떠 있으면 내부 호스트(redis.railway.internal)를 씁니다.
+# SPRING_DATA_REDIS_* / REDISSON_* 환경 변수는 항상 이 YAML보다 우선합니다.
 ########################################
 spring:
   ########################################
@@ -48,6 +53,34 @@ spring:
       hibernate:
         format_sql: false
         dialect: org.hibernate.dialect.MySQLDialect # MySQL용 dialect
+
+  ########################################
+  # Redis (Lettuce / Spring Data Redis)
+  ########################################
+  data:
+    redis:
+      host: ${REDISHOST:localhost}
+      port: ${REDISPORT:6379}
+      username: ${REDISUSER:}
+      password: ${REDISPASSWORD:${REDIS_PASSWORD:}}
+      timeout: 5000ms
+      connect-timeout: 15000ms
+
+########################################
+# Redisson (분산 락 — 호스트·포트·인증은 위 Redis와 동일 변수 사용)
+########################################
+redisson:
+  single-server-config:
+    address: redis://${REDISHOST:localhost}:${REDISPORT:6379}
+    username: ${REDISUSER:}
+    password: ${REDISPASSWORD:${REDIS_PASSWORD:}}
+    connection-minimum-idle-size: 5
+    connection-pool-size: 16
+    idle-connection-timeout: 10000
+    connect-timeout: 15000
+    timeout: 5000
+    retry-attempts: 3
+    retry-interval: 1500
 
 ########################################
 # API 문서 (운영: 필요 시 비활성화)
