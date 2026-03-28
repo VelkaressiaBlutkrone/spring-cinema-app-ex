@@ -6,16 +6,17 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { NavigationBar } from '@/components/common/NavigationBar';
 import { NavigationLogger } from '@/components/common/NavigationLogger';
+import { Footer } from '@/components/common/Footer';
 import { pageTransition } from '@/lib/transitions';
 
 export function MainLayout() {
   const location = useLocation();
 
   return (
-    <div className="projector-ambience min-h-screen bg-noir-bg text-noir-text">
+    <div className="projector-ambience flex min-h-screen flex-col bg-noir-bg text-noir-text">
       <NavigationLogger />
       <NavigationBar />
-      <main className="container mx-auto px-4 py-6">
+      <main className="container mx-auto flex-1 px-4 py-6">
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
@@ -28,6 +29,7 @@ export function MainLayout() {
           </motion.div>
         </AnimatePresence>
       </main>
+      <Footer />
     </div>
   );
 }

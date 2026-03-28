@@ -57,35 +57,45 @@ export function ReservationsPage() {
         </NoirCard>
       ) : (
         <motion.ul
-          className="space-y-4"
+          className="space-y-3"
           initial="hidden"
           animate="visible"
           variants={staggerContainer}
+          style={{ listStyle: 'none' }}
         >
           {items.map((r) => (
             <motion.li key={r.reservationId} variants={slideUp}>
-              <NoirCard>
-                <div className="flex flex-wrap items-start justify-between gap-2">
-                  <div>
-                    <p className="font-medium text-noir-text">{r.movieTitle}</p>
-                    <p className="text-sm text-noir-text-muted">
-                      {r.screenName} · {formatDate(r.startTime, 'YYYY-MM-DD HH:mm')}
-                    </p>
-                    <p className="mt-1 font-mono text-sm text-amber">
-                      {r.reservationNo}
-                    </p>
-                    <p className="mt-1 text-sm text-amber">
-                      {r.totalSeats}석 · {formatPrice(r.totalAmount)}
-                    </p>
-                  </div>
-                  <Link
-                    to={`/reservations/${r.reservationId}`}
-                    className="rounded-sm border border-noir-border bg-amber-subtle px-3 py-1.5 text-sm font-medium text-noir-text-muted transition hover:bg-noir-border hover:text-noir-text"
-                  >
-                    상세
-                  </Link>
+              <Link
+                to={`/reservations/${r.reservationId}`}
+                className="group grid grid-cols-[auto_1fr_auto] items-center gap-4 rounded-sm border border-noir-border bg-noir-surface px-4 py-3.5 transition-all duration-300 hover:translate-x-1 hover:border-noir-border-hover hover:bg-noir-elevated"
+              >
+                <span className="flex h-12 w-9 items-center justify-center rounded-sm border border-noir-border bg-noir-elevated text-lg text-noir-text-muted">
+                  🎬
+                </span>
+                <div className="min-w-0">
+                  <p className="truncate font-medium text-noir-text transition group-hover:text-amber">
+                    {r.movieTitle}
+                  </p>
+                  <p className="flex flex-wrap items-center gap-1 text-[11px] text-noir-text-muted">
+                    <span>{formatDate(r.startTime, 'YYYY-MM-DD HH:mm')}</span>
+                    <span className="inline-block h-[3px] w-[3px] rounded-full bg-noir-text-muted" />
+                    <span>{r.screenName}</span>
+                    <span className="inline-block h-[3px] w-[3px] rounded-full bg-noir-text-muted" />
+                    <span>{r.totalSeats}석</span>
+                  </p>
+                  <p className="mt-0.5 font-mono text-[11px] text-noir-text-muted">
+                    {r.reservationNo}
+                  </p>
                 </div>
-              </NoirCard>
+                <div className="text-right">
+                  <p className="text-sm font-medium text-amber">
+                    {formatPrice(r.totalAmount)}
+                  </p>
+                  <p className="mt-0.5 text-[9px] uppercase tracking-[2px] text-noir-success">
+                    확정됨
+                  </p>
+                </div>
+              </Link>
             </motion.li>
           ))}
         </motion.ul>
