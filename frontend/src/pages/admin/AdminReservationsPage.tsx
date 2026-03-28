@@ -128,7 +128,7 @@ export function AdminReservationsPage() {
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="mt-1 block w-full rounded-md border-cinema-admin-border shadow-sm focus:border-cinema-admin-primary focus:ring-cinema-admin-primary sm:text-sm"
+              className="mt-1 block w-full rounded-md border border-cinema-admin-border bg-cinema-admin-surface text-cinema-admin-text shadow-sm focus:border-cinema-admin-primary focus:ring-cinema-admin-primary sm:text-sm"
             />
           </div>
           <div>
@@ -137,7 +137,7 @@ export function AdminReservationsPage() {
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="mt-1 block w-full rounded-md border-cinema-admin-border shadow-sm focus:border-cinema-admin-primary focus:ring-cinema-admin-primary sm:text-sm"
+              className="mt-1 block w-full rounded-md border border-cinema-admin-border bg-cinema-admin-surface text-cinema-admin-text shadow-sm focus:border-cinema-admin-primary focus:ring-cinema-admin-primary sm:text-sm"
             />
           </div>
           <div>
@@ -147,7 +147,7 @@ export function AdminReservationsPage() {
               value={movieId}
               onChange={(e) => setMovieId(e.target.value)}
               placeholder="전체"
-              className="mt-1 block w-full rounded-md border-cinema-admin-border shadow-sm focus:border-cinema-admin-primary focus:ring-cinema-admin-primary sm:text-sm"
+              className="mt-1 block w-full rounded-md border border-cinema-admin-border bg-cinema-admin-surface text-cinema-admin-text shadow-sm focus:border-cinema-admin-primary focus:ring-cinema-admin-primary sm:text-sm"
             />
           </div>
           <div>
@@ -157,7 +157,7 @@ export function AdminReservationsPage() {
               value={memberId}
               onChange={(e) => setMemberId(e.target.value)}
               placeholder="전체"
-              className="mt-1 block w-full rounded-md border-cinema-admin-border shadow-sm focus:border-cinema-admin-primary focus:ring-cinema-admin-primary sm:text-sm"
+              className="mt-1 block w-full rounded-md border border-cinema-admin-border bg-cinema-admin-surface text-cinema-admin-text shadow-sm focus:border-cinema-admin-primary focus:ring-cinema-admin-primary sm:text-sm"
             />
           </div>
           <div>
@@ -165,7 +165,7 @@ export function AdminReservationsPage() {
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="mt-1 block w-full rounded-md border-cinema-admin-border shadow-sm focus:border-cinema-admin-primary focus:ring-cinema-admin-primary sm:text-sm"
+              className="mt-1 block w-full rounded-md border border-cinema-admin-border bg-cinema-admin-surface text-cinema-admin-text shadow-sm focus:border-cinema-admin-primary focus:ring-cinema-admin-primary sm:text-sm"
             >
               <option value="">전체</option>
               {Object.entries(STATUS_LABEL).map(([key, label]) => (
@@ -190,7 +190,7 @@ export function AdminReservationsPage() {
       {loading ? (
         <LoadingSpinner />
       ) : content.length === 0 ? (
-        <EmptyState message="예매 내역이 없습니다." />
+        <EmptyState message="예매 내역이 없습니다." variant="admin" />
       ) : (
         <>
           <div className="overflow-hidden rounded-lg border border-cinema-admin-border bg-cinema-admin-surface shadow">
@@ -293,6 +293,7 @@ export function AdminReservationsPage() {
       {/* 상세 모달 */}
       <Modal
         isOpen={detailModalOpen}
+        variant="admin"
         onClose={() => {
           setDetailModalOpen(false);
           setSelectedReservation(null);
@@ -305,46 +306,46 @@ export function AdminReservationsPage() {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-cinema-muted">예매번호</label>
-                <p className="mt-1 text-sm text-cinema-text">{selectedReservation.reservationNo}</p>
+                <label className="block text-sm font-medium text-cinema-admin-muted">예매번호</label>
+                <p className="mt-1 text-sm text-cinema-admin-text">{selectedReservation.reservationNo}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-cinema-muted">상태</label>
-                <p className="mt-1 text-sm text-cinema-text">
+                <label className="block text-sm font-medium text-cinema-admin-muted">상태</label>
+                <p className="mt-1 text-sm text-cinema-admin-text">
                   {STATUS_LABEL[selectedReservation.status as AdminReservationStatus]}
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-cinema-muted">영화</label>
-                <p className="mt-1 text-sm text-cinema-text">{selectedReservation.movieTitle}</p>
+                <label className="block text-sm font-medium text-cinema-admin-muted">영화</label>
+                <p className="mt-1 text-sm text-cinema-admin-text">{selectedReservation.movieTitle}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-cinema-muted">상영관</label>
-                <p className="mt-1 text-sm text-cinema-text">{selectedReservation.screenName}</p>
+                <label className="block text-sm font-medium text-cinema-admin-muted">상영관</label>
+                <p className="mt-1 text-sm text-cinema-admin-text">{selectedReservation.screenName}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-cinema-muted">상영시간</label>
-                <p className="mt-1 text-sm text-cinema-text">
+                <label className="block text-sm font-medium text-cinema-admin-muted">상영시간</label>
+                <p className="mt-1 text-sm text-cinema-admin-text">
                   {formatDate(selectedReservation.startTime.toString())}
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-cinema-muted">총 금액</label>
-                <p className="mt-1 text-sm text-cinema-text">
+                <label className="block text-sm font-medium text-cinema-admin-muted">총 금액</label>
+                <p className="mt-1 text-sm text-cinema-admin-text">
                   {formatAmount(selectedReservation.totalAmount)}
                 </p>
               </div>
             </div>
             <div>
-              <label className="block text-sm font-medium text-cinema-muted">좌석 정보</label>
+              <label className="block text-sm font-medium text-cinema-admin-muted">좌석 정보</label>
               <div className="mt-2 space-y-2">
                 {selectedReservation.seats.map((seat, idx) => (
                   <div
                     key={idx}
                     className="flex items-center justify-between rounded-md border border-cinema-glass-border p-2"
                   >
-                    <span className="text-sm text-cinema-text">{seat.displayName}</span>
-                    <span className="text-sm text-cinema-muted">{formatAmount(seat.price)}</span>
+                    <span className="text-sm text-cinema-admin-text">{seat.displayName}</span>
+                    <span className="text-sm text-cinema-admin-muted">{formatAmount(seat.price)}</span>
                   </div>
                 ))}
               </div>

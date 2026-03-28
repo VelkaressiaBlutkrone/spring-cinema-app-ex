@@ -209,7 +209,7 @@ export function AdminSeatsPage() {
               const v = e.target.value;
               setSelectedScreenId(v === '' ? null : Number.parseInt(v, 10));
             }}
-            className="rounded-md border border-cinema-admin-border px-3 py-2 text-sm shadow-sm focus:border-cinema-admin-primary focus:ring-1 focus:ring-cinema-admin-primary"
+            className="rounded-md border border-cinema-admin-border bg-cinema-admin-surface px-3 py-2 text-sm text-cinema-admin-text shadow-sm focus:border-cinema-admin-primary focus:ring-1 focus:ring-cinema-admin-primary"
           >
             <option value="">선택</option>
             {screens.map((s) => (
@@ -239,6 +239,7 @@ export function AdminSeatsPage() {
         <EmptyState
           title="상영관을 선택하세요"
           message="위에서 상영관을 선택하면 해당 상영관의 좌석 목록이 표시됩니다."
+          variant="admin"
         />
       ) : loading && seats.length === 0 ? (
         <div className="flex min-h-[240px] items-center justify-center">
@@ -248,6 +249,7 @@ export function AdminSeatsPage() {
         <EmptyState
           title="등록된 좌석이 없습니다"
           message="좌석 등록 버튼을 눌러 첫 좌석을 등록하세요."
+          variant="admin"
         />
       ) : (
         <div className="overflow-hidden rounded-lg border border-cinema-admin-border bg-cinema-admin-surface shadow">
@@ -311,10 +313,10 @@ export function AdminSeatsPage() {
       )}
 
       {/* 등록 모달 */}
-      <Modal isOpen={modalOpen && !editing} onClose={closeModal} title="좌석 등록" size="md">
+      <Modal isOpen={modalOpen && !editing} onClose={closeModal} title="좌석 등록" size="md" variant="admin">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="seat-screen" className="mb-1 block text-sm font-medium text-cinema-text">
+            <label htmlFor="seat-screen" className="mb-1 block text-sm font-medium text-cinema-admin-text">
               상영관 *
             </label>
             <select
@@ -326,7 +328,7 @@ export function AdminSeatsPage() {
                   screenId: Number.parseInt(e.target.value, 10) || 0,
                 }))
               }
-              className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
+              className="block w-full rounded-xl border border-cinema-admin-border bg-cinema-admin-surface px-4 py-2.5 text-cinema-admin-text focus:border-cinema-admin-primary focus:outline-none focus:ring-1 focus:ring-cinema-admin-primary"
               required
             >
               <option value="">선택</option>
@@ -339,7 +341,7 @@ export function AdminSeatsPage() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="seat-row" className="mb-1 block text-sm font-medium text-cinema-text">
+              <label htmlFor="seat-row" className="mb-1 block text-sm font-medium text-cinema-admin-text">
                 행 라벨 *
               </label>
               <input
@@ -347,13 +349,13 @@ export function AdminSeatsPage() {
                 type="text"
                 value={form.rowLabel}
                 onChange={(e) => setForm((f) => ({ ...f, rowLabel: e.target.value }))}
-                className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text placeholder:text-cinema-muted focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
+                className="block w-full rounded-xl border border-cinema-admin-border bg-cinema-admin-surface px-4 py-2.5 text-cinema-admin-text placeholder:text-cinema-admin-muted focus:border-cinema-admin-primary focus:outline-none focus:ring-1 focus:ring-cinema-admin-primary"
                 placeholder="예: A"
                 required
               />
             </div>
             <div>
-              <label htmlFor="seat-no" className="mb-1 block text-sm font-medium text-cinema-text">
+              <label htmlFor="seat-no" className="mb-1 block text-sm font-medium text-cinema-admin-text">
                 좌석 번호 *
               </label>
               <input
@@ -367,13 +369,13 @@ export function AdminSeatsPage() {
                     seatNo: Number.parseInt(e.target.value, 10) || 0,
                   }))
                 }
-                className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
+                className="block w-full rounded-xl border border-cinema-admin-border bg-cinema-admin-surface px-4 py-2.5 text-cinema-admin-text focus:border-cinema-admin-primary focus:outline-none focus:ring-1 focus:ring-cinema-admin-primary"
                 required
               />
             </div>
           </div>
           <div>
-            <label htmlFor="seat-type" className="mb-1 block text-sm font-medium text-cinema-text">
+            <label htmlFor="seat-type" className="mb-1 block text-sm font-medium text-cinema-admin-text">
               좌석 타입 *
             </label>
             <select
@@ -382,7 +384,7 @@ export function AdminSeatsPage() {
               onChange={(e) =>
                 setForm((f) => ({ ...f, seatType: e.target.value as AdminSeatType }))
               }
-              className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
+              className="block w-full rounded-xl border border-cinema-admin-border bg-cinema-admin-surface px-4 py-2.5 text-cinema-admin-text focus:border-cinema-admin-primary focus:outline-none focus:ring-1 focus:ring-cinema-admin-primary"
             >
               {(Object.keys(SEAT_TYPE_LABEL) as AdminSeatType[]).map((k) => (
                 <option key={k} value={k}>
@@ -395,14 +397,14 @@ export function AdminSeatsPage() {
             <button
               type="button"
               onClick={closeModal}
-              className="rounded-xl border border-cinema-glass-border bg-cinema-glass px-4 py-2 text-sm font-medium text-cinema-text transition hover:bg-cinema-glass-border"
+              className="rounded-xl border border-cinema-admin-border bg-cinema-admin-surface-alt px-4 py-2 text-sm font-medium text-cinema-admin-text transition hover:bg-cinema-admin-border"
             >
               취소
             </button>
             <button
               type="submit"
               disabled={submitLoading}
-              className="rounded-xl bg-cinema-neon-blue px-4 py-2 text-sm font-medium text-black transition hover:opacity-90 disabled:opacity-50"
+              className="rounded-xl bg-cinema-admin-primary px-4 py-2 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-50"
             >
               {submitLoading ? '처리 중...' : '등록'}
             </button>
@@ -411,15 +413,15 @@ export function AdminSeatsPage() {
       </Modal>
 
       {/* 수정 모달 */}
-      <Modal isOpen={modalOpen && !!editing} onClose={closeModal} title="좌석 수정" size="sm">
+      <Modal isOpen={modalOpen && !!editing} onClose={closeModal} title="좌석 수정" size="sm" variant="admin">
         <form onSubmit={handleUpdateSubmit} className="space-y-4">
           {editing && (
-            <p className="text-sm text-cinema-muted">
+            <p className="text-sm text-cinema-admin-muted">
               {editing.screenName} - {editing.displayName}
             </p>
           )}
           <div>
-            <label htmlFor="edit-seat-type" className="mb-1 block text-sm font-medium text-cinema-text">
+            <label htmlFor="edit-seat-type" className="mb-1 block text-sm font-medium text-cinema-admin-text">
               좌석 타입
             </label>
             <select
@@ -431,7 +433,7 @@ export function AdminSeatsPage() {
                   seatType: e.target.value as AdminSeatType,
                 }))
               }
-              className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
+              className="block w-full rounded-xl border border-cinema-admin-border bg-cinema-admin-surface px-4 py-2.5 text-cinema-admin-text focus:border-cinema-admin-primary focus:outline-none focus:ring-1 focus:ring-cinema-admin-primary"
             >
               {(Object.keys(SEAT_TYPE_LABEL) as AdminSeatType[]).map((k) => (
                 <option key={k} value={k}>
@@ -441,7 +443,7 @@ export function AdminSeatsPage() {
             </select>
           </div>
           <div>
-            <label htmlFor="edit-base-status" className="mb-1 block text-sm font-medium text-cinema-text">
+            <label htmlFor="edit-base-status" className="mb-1 block text-sm font-medium text-cinema-admin-text">
               기본 상태 *
             </label>
             <select
@@ -453,7 +455,7 @@ export function AdminSeatsPage() {
                   baseStatus: e.target.value as AdminSeatBaseStatus,
                 }))
               }
-              className="block w-full rounded-xl border border-cinema-glass-border bg-cinema-surface px-4 py-2.5 text-cinema-text focus:border-cinema-neon-blue focus:outline-none focus:ring-1 focus:ring-cinema-neon-blue"
+              className="block w-full rounded-xl border border-cinema-admin-border bg-cinema-admin-surface px-4 py-2.5 text-cinema-admin-text focus:border-cinema-admin-primary focus:outline-none focus:ring-1 focus:ring-cinema-admin-primary"
             >
               {(Object.keys(BASE_STATUS_LABEL) as AdminSeatBaseStatus[]).map((k) => (
                 <option key={k} value={k}>
@@ -466,14 +468,14 @@ export function AdminSeatsPage() {
             <button
               type="button"
               onClick={closeModal}
-              className="rounded-xl border border-cinema-glass-border bg-cinema-glass px-4 py-2 text-sm font-medium text-cinema-text transition hover:bg-cinema-glass-border"
+              className="rounded-xl border border-cinema-admin-border bg-cinema-admin-surface-alt px-4 py-2 text-sm font-medium text-cinema-admin-text transition hover:bg-cinema-admin-border"
             >
               취소
             </button>
             <button
               type="submit"
               disabled={submitLoading}
-              className="rounded-xl bg-cinema-neon-blue px-4 py-2 text-sm font-medium text-black transition hover:opacity-90 disabled:opacity-50"
+              className="rounded-xl bg-cinema-admin-primary px-4 py-2 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-50"
             >
               {submitLoading ? '처리 중...' : '수정'}
             </button>
@@ -485,6 +487,7 @@ export function AdminSeatsPage() {
         isOpen={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}
         onConfirm={handleDelete}
+        theme="admin"
         title="좌석 삭제"
         message={deleteTarget ? `"${deleteTarget.displayName}" 좌석을 삭제하시겠습니까?` : ''}
         confirmText="삭제"
