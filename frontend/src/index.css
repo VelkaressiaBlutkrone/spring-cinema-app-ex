@@ -54,6 +54,12 @@
     background-color: var(--color-noir-bg);
     color: var(--color-noir-text);
   }
+  /* Custom scrollbar — Noir Luxe */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--color-noir-surface); }
+  ::-webkit-scrollbar-thumb { background: rgba(232, 168, 73, 0.2); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(232, 168, 73, 0.4); }
+  * { scrollbar-width: thin; scrollbar-color: rgba(232, 168, 73, 0.2) var(--color-noir-surface); }
 }
 
 @layer utilities {

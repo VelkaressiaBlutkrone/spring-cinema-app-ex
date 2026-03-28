@@ -182,36 +182,26 @@ export function SeatMap({
           </text>
         ))}
       </svg>
-      <div className="mt-4 flex flex-wrap gap-4 text-xs text-noir-text-muted">
-        <span className="flex items-center gap-1">
+      {/* Seat legend — mini seat icons */}
+      <div className="mt-4 flex flex-wrap justify-center gap-0.5 rounded-sm border border-noir-border bg-noir-surface px-3 py-2.5">
+        {[
+          { color: STATUS_COLOR.AVAILABLE, label: '예매 가능' },
+          { color: STATUS_COLOR.HOLD, label: '내 선택' },
+          { color: OTHER_HOLD_COLOR, label: '다른 고객' },
+          { color: STATUS_COLOR.RESERVED, label: '예매 완료' },
+          { color: STATUS_COLOR.BLOCKED, label: '운영 차단' },
+        ].map(({ color, label }) => (
           <span
-            className="inline-block h-3 w-3 rounded"
-            style={{ background: STATUS_COLOR.AVAILABLE }}
-          />{' '}
-          예매 가능
-        </span>
-        <span className="flex items-center gap-1">
-          <span className="inline-block h-3 w-3 rounded" style={{ background: STATUS_COLOR.HOLD }} />{' '}
-          내 선택
-        </span>
-        <span className="flex items-center gap-1">
-          <span className="inline-block h-3 w-3 rounded" style={{ background: OTHER_HOLD_COLOR }} />{' '}
-          다른 고객 선택
-        </span>
-        <span className="flex items-center gap-1">
-          <span
-            className="inline-block h-3 w-3 rounded"
-            style={{ background: STATUS_COLOR.RESERVED }}
-          />{' '}
-          예매 완료
-        </span>
-        <span className="flex items-center gap-1">
-          <span
-            className="inline-block h-3 w-3 rounded"
-            style={{ background: STATUS_COLOR.BLOCKED }}
-          />{' '}
-          운영 차단
-        </span>
+            key={label}
+            className="flex items-center gap-2 rounded-[1px] px-3 py-1.5 text-[10px] uppercase tracking-[1.5px] text-noir-text-muted transition hover:bg-amber-subtle hover:text-noir-text"
+          >
+            <span
+              className="inline-block h-3.5 w-4 rounded-t-sm border-[1.5px]"
+              style={{ borderColor: color, background: `${color}25` }}
+            />
+            {label}
+          </span>
+        ))}
       </div>
     </div>
   );

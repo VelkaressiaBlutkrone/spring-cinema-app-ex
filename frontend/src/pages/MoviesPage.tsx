@@ -72,7 +72,8 @@ export function MoviesPage() {
       ) : (
         <LayoutGroup>
         <motion.ul
-          className="flex gap-5 overflow-x-auto pb-4 scroll-snap-x list-none"
+          className="flex gap-5 overflow-x-auto pb-4 scroll-snap-x"
+          style={{ listStyle: 'none' }}
           aria-label="영화 목록"
           initial="hidden"
           animate="visible"
@@ -83,7 +84,7 @@ export function MoviesPage() {
               <button
                 type="button"
                 onClick={() => openDetail(movie)}
-                className="group flex w-[min(180px,40vw)] flex-col overflow-hidden rounded-sm border border-noir-border bg-noir-surface text-left shadow-lg transition-all duration-300 hover:border-amber/50 hover:shadow-[0_0_24px_rgba(232,168,73,0.2)] focus:outline-none focus:ring-2 focus:ring-amber/50"
+                className="group relative flex w-[min(200px,42vw)] flex-col overflow-hidden rounded-sm border border-noir-border bg-noir-surface text-left shadow-lg transition-all duration-400 hover:-translate-y-1 hover:border-amber/40 hover:shadow-[0_8px_40px_rgba(232,168,73,0.12),0_0_0_1px_rgba(232,168,73,0.1)] focus:outline-none focus:ring-2 focus:ring-amber/50"
               >
               <motion.div
                 layoutId={`poster-${movie.id}`}
@@ -93,28 +94,45 @@ export function MoviesPage() {
                   <img
                     src={movie.posterUrl}
                     alt={movie.title}
-                    className="h-full w-full object-cover transition-transform duration-300"
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.06]"
                   />
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center text-4xl text-noir-text-muted">
+                  <div className="flex h-full w-full items-center justify-center text-4xl text-noir-text-muted/40">
                     🎬
                   </div>
                 )}
-                <div className="poster-overlay" aria-hidden />
+                {/* Gradient overlay */}
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[60%] bg-gradient-to-t from-noir-bg/95 to-transparent" aria-hidden />
+                {/* Genre tag overlay */}
+                {movie.genre && (
+                  <span className="absolute bottom-3 left-3 z-[2] inline-block rounded-[1px] bg-amber/[0.12] px-2 py-[3px] text-[8px] uppercase tracking-[2px] text-amber">
+                    {movie.genre}
+                  </span>
+                )}
+                {/* Rating badge */}
+                {movie.rating && (
+                  <span className="absolute right-2.5 top-2.5 z-[2] rounded-[1px] border border-amber/30 bg-noir-bg/70 px-2 py-1 text-[9px] font-semibold tracking-[1px] text-amber backdrop-blur-sm">
+                    {movie.rating}
+                  </span>
+                )}
               </motion.div>
-              <div className="p-3">
+              <div className="relative p-3">
                 <motion.h2
                   layoutId={`title-${movie.id}`}
-                  className="line-clamp-2 font-medium text-noir-text transition group-hover:text-amber"
+                  className="line-clamp-2 text-[13px] font-medium text-noir-text transition group-hover:text-amber"
                 >
                   {movie.title}
                 </motion.h2>
                 {movie.releaseDate && (
-                  <p className="mt-1 text-xs text-noir-text-muted">
+                  <p className="mt-1 text-[11px] text-noir-text-muted">
                     {formatDate(movie.releaseDate, 'YYYY-MM-DD')}
                   </p>
                 )}
               </div>
+              {/* Slide-up quick book */}
+              <span className="absolute inset-x-0 bottom-0 translate-y-full bg-gradient-to-t from-amber to-amber-hover py-2.5 text-center text-[10px] font-semibold uppercase tracking-[3px] text-noir-bg transition-transform duration-400 group-hover:translate-y-0">
+                예매하기 →
+              </span>
               </button>
             </motion.li>
           ))}

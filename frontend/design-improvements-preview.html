@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Noir Luxe Cinema — 디자인 개선 프리뷰</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --noir-bg: #06060a;
+    --noir-surface: #0d0d0d;
+    --noir-elevated: #161616;
+    --noir-hover: #1e1e1e;
+    --amber: #e8a849;
+    --amber-hover: #d4963e;
+    --amber-ghost: rgba(232, 168, 73, 0.15);
+    --amber-subtle: rgba(232, 168, 73, 0.06);
+    --noir-text: #f5f0e8;
+    --noir-text-secondary: rgba(245, 240, 232, 0.6);
+    --noir-text-muted: rgba(245, 240, 232, 0.35);
+    --noir-border: rgba(232, 168, 73, 0.08);
+    --noir-border-hover: rgba(232, 168, 73, 0.2);
+    --noir-divider: rgba(232, 168, 73, 0.1);
+    --noir-danger: #c44040;
+    --noir-success: #4a9e6e;
+    --font-display: 'Cormorant Garamond', 'Georgia', serif;
+    --font-sans: 'Sora', ui-sans-serif, system-ui, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--noir-bg);
+    color: var(--noir-text);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--noir-surface); }
+  ::-webkit-scrollbar-thumb { background: rgba(232, 168, 73, 0.2); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(232, 168, 73, 0.4); }
+
+  /* ═══════════════════════════════════════
+     TOC / Improvement List Panel
+     ═══════════════════════════════════════ */
+  .toc-panel {
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    width: 320px;
+    background: var(--noir-surface);
+    border-right: 1px solid var(--noir-border);
+    z-index: 100;
+    overflow-y: auto;
+    padding: 32px 24px;
+    transform: translateX(0);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .toc-panel.collapsed { transform: translateX(-320px); }
+
+  .toc-toggle {
+    position: fixed;
+    top: 16px; left: 16px;
+    z-index: 200;
+    width: 44px; height: 44px;
+    border: 1px solid var(--noir-border);
+    background: var(--noir-surface);
+    color: var(--amber);
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.3s;
+  }
+  .toc-toggle:hover {
+    border-color: var(--amber);
+    box-shadow: 0 0 16px rgba(232, 168, 73, 0.2);
+  }
+  .toc-toggle.shifted { left: 336px; }
+
+  .toc-title {
+    font-family: var(--font-display);
+    font-size: 22px;
+    letter-spacing: 0.15em;
+    margin-bottom: 8px;
+  }
+  .toc-subtitle {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--amber);
+    margin-bottom: 24px;
+  }
+
+  .toc-section {
+    margin-bottom: 20px;
+  }
+  .toc-section-title {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--noir-text-muted);
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--noir-border);
+  }
+  .toc-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    color: var(--noir-text);
+    margin-bottom: 2px;
+  }
+  .toc-item:hover {
+    background: var(--amber-subtle);
+    color: var(--amber);
+  }
+  .toc-item-num {
+    font-family: var(--font-display);
+    font-size: 18px;
+    color: var(--amber);
+    min-width: 24px;
+    line-height: 1.2;
+  }
+  .toc-item-text {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .toc-item-text strong {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 2px;
+  }
+  .toc-item-text span {
+    color: var(--noir-text-muted);
+    font-size: 11px;
+  }
+
+  .priority-badge {
+    display: inline-block;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    padding: 2px 8px;
+    border-radius: 1px;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+  .priority-high { background: rgba(196, 64, 64, 0.2); color: #e06060; }
+  .priority-medium { background: rgba(232, 168, 73, 0.15); color: var(--amber); }
+  .priority-low { background: rgba(91, 125, 184, 0.15); color: #7b9dd8; }
+
+  /* ═══════════════════════════════════════
+     Main Preview Content
+     ═══════════════════════════════════════ */
+  .preview-content {
+    margin-left: 320px;
+    transition: margin-left 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .preview-content.expanded { margin-left: 0; }
+
+  /* Section separator */
+  .preview-section {
+    padding: 60px 40px;
+    border-bottom: 1px solid var(--noir-border);
+    position: relative;
+    overflow: hidden;
+  }
+  .preview-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--amber-ghost), transparent);
+  }
+
+  .section-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: var(--amber);
+    margin-bottom: 4px;
+    opacity: 0.7;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    letter-spacing: 0.12em;
+    margin-bottom: 12px;
+  }
+  .section-desc {
+    color: var(--noir-text-muted);
+    font-size: 13px;
+    line-height: 1.7;
+    max-width: 640px;
+    margin-bottom: 32px;
+  }
+
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 24px;
+  }
+  .compare-box {
+    border: 1px solid var(--noir-border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .compare-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--noir-border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .compare-label.before { color: var(--noir-text-muted); background: var(--noir-surface); }
+  .compare-label.after { color: var(--amber); background: var(--amber-subtle); }
+  .compare-content {
+    padding: 24px;
+    background: var(--noir-bg);
+    min-height: 180px;
+  }
+
+  /* ═══════════════════════════════════════
+     1. Footer Preview
+     ═══════════════════════════════════════ */
+  .footer-preview {
+    background: var(--noir-surface);
+    border-top: 1px solid var(--noir-border);
+    padding: 48px 40px 32px;
+    position: relative;
+  }
+  .footer-preview::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(232, 168, 73, 0.3), transparent);
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 40px;
+    margin-bottom: 40px;
+  }
+  .footer-brand {
+    font-family: var(--font-display);
+    font-size: 24px;
+    letter-spacing: 0.15em;
+    margin-bottom: 12px;
+  }
+  .footer-brand-desc {
+    font-size: 12px;
+    color: var(--noir-text-muted);
+    line-height: 1.7;
+    max-width: 280px;
+  }
+  .footer-col-title {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--amber);
+    margin-bottom: 16px;
+    opacity: 0.7;
+  }
+  .footer-link {
+    display: block;
+    font-size: 12px;
+    color: var(--noir-text-muted);
+    text-decoration: none;
+    padding: 4px 0;
+    transition: color 0.2s;
+  }
+  .footer-link:hover { color: var(--amber); }
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 24px;
+    border-top: 1px solid var(--noir-border);
+    font-size: 11px;
+    color: var(--noir-text-muted);
+  }
+  .footer-social {
+    display: flex;
+    gap: 16px;
+  }
+  .footer-social a {
+    width: 32px; height: 32px;
+    border: 1px solid var(--noir-border);
+    border-radius: 2px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--noir-text-muted);
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.2s;
+  }
+  .footer-social a:hover {
+    border-color: var(--amber);
+    color: var(--amber);
+    box-shadow: 0 0 12px rgba(232, 168, 73, 0.15);
+  }
+
+  /* ═══════════════════════════════════════
+     2. Mobile Navigation Preview
+     ═══════════════════════════════════════ */
+  .mobile-nav-demo {
+    width: 375px;
+    height: 680px;
+    border: 1px solid var(--noir-border);
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    background: var(--noir-bg);
+    margin: 0 auto;
+  }
+  .mobile-statusbar {
+    height: 44px;
+    background: var(--noir-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--noir-text);
+  }
+  .mobile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    height: 52px;
+    border-bottom: 1px solid var(--noir-border);
+    background: rgba(6, 6, 10, 0.95);
+    backdrop-filter: blur(20px);
+  }
+  .mobile-logo {
+    font-family: var(--font-display);
+    font-size: 16px;
+    letter-spacing: 0.15em;
+  }
+  .hamburger {
+    width: 28px; height: 20px;
+    display: flex; flex-direction: column;
+    justify-content: space-between;
+    cursor: pointer;
+  }
+  .hamburger span {
+    height: 1.5px;
+    background: var(--amber);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    border-radius: 1px;
+  }
+  .hamburger.open span:first-child { transform: translateY(9px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .hamburger.open span:last-child { transform: translateY(-9px) rotate(-45deg); }
+
+  .mobile-drawer {
+    position: absolute;
+    top: 96px; left: 0; right: 0; bottom: 0;
+    background: rgba(6, 6, 10, 0.98);
+    backdrop-filter: blur(30px);
+    padding: 32px 24px;
+    transform: translateX(100%);
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 10;
+  }
+  .mobile-drawer.open { transform: translateX(0); }
+
+  .mobile-nav-link {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 32px;
+    letter-spacing: 0.1em;
+    color: var(--noir-text);
+    text-decoration: none;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--noir-border);
+    transition: all 0.3s;
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  .mobile-drawer.open .mobile-nav-link {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  .mobile-drawer.open .mobile-nav-link:nth-child(1) { transition-delay: 0.1s; }
+  .mobile-drawer.open .mobile-nav-link:nth-child(2) { transition-delay: 0.15s; }
+  .mobile-drawer.open .mobile-nav-link:nth-child(3) { transition-delay: 0.2s; }
+  .mobile-drawer.open .mobile-nav-link:nth-child(4) { transition-delay: 0.25s; }
+  .mobile-nav-link:hover { color: var(--amber); padding-left: 12px; }
+  .mobile-nav-link .nav-num {
+    font-family: var(--font-sans);
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--amber);
+    display: block;
+    margin-bottom: 4px;
+    opacity: 0.6;
+  }
+
+  /* ═══════════════════════════════════════
+     3. Enhanced Movie Card
+     ═══════════════════════════════════════ */
+  .movie-cards-row {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    padding: 8px 0 20px;
+    scroll-snap-type: x mandatory;
+  }
+
+  .movie-card-before {
+    flex: 0 0 160px;
+    border: 1px solid var(--noir-border);
+    border-radius: 2px;
+    overflow: hidden;
+    background: var(--noir-surface);
+  }
+  .movie-card-before .poster {
+    aspect-ratio: 2/3;
+    background: var(--noir-elevated);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 40px;
+    color: var(--noir-text-muted);
+  }
+  .movie-card-before .info { padding: 10px; font-size: 13px; }
+
+  .movie-card-after {
+    flex: 0 0 200px;
+    border: 1px solid var(--noir-border);
+    border-radius: 2px;
+    overflow: hidden;
+    background: var(--noir-surface);
+    position: relative;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    scroll-snap-align: start;
+  }
+  .movie-card-after:hover {
+    border-color: rgba(232, 168, 73, 0.4);
+    box-shadow: 0 8px 40px rgba(232, 168, 73, 0.12), 0 0 0 1px rgba(232, 168, 73, 0.1);
+    transform: translateY(-4px);
+  }
+  .movie-card-after .poster-wrap {
+    aspect-ratio: 2/3;
+    overflow: hidden;
+    position: relative;
+    background: var(--noir-elevated);
+  }
+  .movie-card-after .poster-img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .movie-card-after:hover .poster-img { transform: scale(1.08); }
+
+  .movie-card-after .poster-gradient {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 60%;
+    background: linear-gradient(to top, rgba(6, 6, 10, 0.95), transparent);
+    pointer-events: none;
+  }
+  .movie-card-after .poster-meta {
+    position: absolute;
+    bottom: 12px; left: 12px; right: 12px;
+    z-index: 2;
+  }
+  .movie-card-after .genre-tag {
+    display: inline-block;
+    font-size: 8px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--amber);
+    background: rgba(232, 168, 73, 0.12);
+    padding: 3px 8px;
+    border-radius: 1px;
+    margin-bottom: 6px;
+  }
+  .movie-card-after .rating-badge {
+    position: absolute;
+    top: 10px; right: 10px;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    padding: 4px 8px;
+    background: rgba(6, 6, 10, 0.7);
+    border: 1px solid rgba(232, 168, 73, 0.3);
+    backdrop-filter: blur(8px);
+    border-radius: 1px;
+    color: var(--amber);
+    z-index: 2;
+  }
+  .movie-card-after .info {
+    padding: 14px;
+  }
+  .movie-card-after .info h3 {
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    transition: color 0.3s;
+  }
+  .movie-card-after:hover .info h3 { color: var(--amber); }
+  .movie-card-after .info .date {
+    font-size: 11px;
+    color: var(--noir-text-muted);
+  }
+  .movie-card-after .quick-book {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(to top, var(--amber), var(--amber-hover));
+    color: var(--noir-bg);
+    text-align: center;
+    padding: 10px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .movie-card-after:hover .quick-book { transform: translateY(0); }
+
+  /* ═══════════════════════════════════════
+     4. Enhanced Scrollbar + Hero
+     ═══════════════════════════════════════ */
+  .hero-enhanced {
+    position: relative;
+    min-height: 340px;
+    border-radius: 2px;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(232, 168, 73, 0.06) 0%, rgba(6, 6, 10, 0.4) 50%, var(--noir-surface) 100%);
+  }
+  .hero-enhanced .hero-particles {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+  .hero-particle {
+    position: absolute;
+    width: 2px; height: 2px;
+    background: var(--amber);
+    border-radius: 50%;
+    opacity: 0;
+    animation: float-particle 8s ease-in-out infinite;
+  }
+  @keyframes float-particle {
+    0% { opacity: 0; transform: translateY(100%) scale(0); }
+    20% { opacity: 0.6; }
+    80% { opacity: 0.3; }
+    100% { opacity: 0; transform: translateY(-100vh) scale(1.5); }
+  }
+  .hero-enhanced .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(6, 6, 10, 0.95) 0%, rgba(6, 6, 10, 0.3) 50%, transparent 100%);
+  }
+  .hero-enhanced .hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 80px 48px 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 340px;
+  }
+  .hero-enhanced .hero-eyebrow {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    color: var(--amber);
+    opacity: 0.6;
+    margin-bottom: 12px;
+  }
+  .hero-enhanced h1 {
+    font-family: var(--font-display);
+    font-size: 52px;
+    letter-spacing: 0.2em;
+    text-shadow: 0 0 40px rgba(232, 168, 73, 0.15), 0 4px 16px rgba(0,0,0,0.5);
+    margin-bottom: 8px;
+  }
+  .hero-enhanced .hero-divider {
+    width: 48px;
+    height: 1px;
+    background: linear-gradient(90deg, var(--amber), transparent);
+    margin: 16px 0;
+  }
+  .hero-enhanced .hero-subtitle {
+    font-size: 13px;
+    color: var(--noir-text-muted);
+    max-width: 400px;
+    line-height: 1.7;
+  }
+  .hero-cta-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    text-decoration: none;
+    transition: all 0.3s;
+    border: none;
+    cursor: pointer;
+  }
+  .hero-cta.primary {
+    background: var(--amber);
+    color: var(--noir-bg);
+    box-shadow: 0 0 24px rgba(232, 168, 73, 0.3);
+  }
+  .hero-cta.primary:hover {
+    box-shadow: 0 0 40px rgba(232, 168, 73, 0.5);
+    transform: translateY(-2px);
+  }
+  .hero-cta.ghost {
+    background: transparent;
+    color: var(--amber);
+    border: 1px solid rgba(232, 168, 73, 0.3);
+  }
+  .hero-cta.ghost:hover {
+    border-color: rgba(232, 168, 73, 0.6);
+    box-shadow: 0 0 20px rgba(232, 168, 73, 0.1);
+  }
+
+  /* ═══════════════════════════════════════
+     5. Login Form Enhancement
+     ═══════════════════════════════════════ */
+  .login-enhanced {
+    width: 420px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .login-enhanced .login-card {
+    border: 1px solid var(--noir-border);
+    background: var(--noir-surface);
+    padding: 48px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .login-enhanced .login-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--amber), transparent);
+  }
+  .login-enhanced .login-card::after {
+    content: '';
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(232, 168, 73, 0.04), transparent 70%);
+    pointer-events: none;
+  }
+  .login-enhanced .login-icon {
+    width: 48px; height: 48px;
+    border: 1px solid var(--noir-border);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 24px;
+    font-size: 20px;
+    color: var(--amber);
+    background: var(--amber-subtle);
+  }
+  .login-enhanced h1 {
+    font-family: var(--font-display);
+    font-size: 28px;
+    letter-spacing: 0.15em;
+    margin-bottom: 6px;
+  }
+  .login-enhanced .login-sub {
+    font-size: 12px;
+    color: var(--noir-text-muted);
+    margin-bottom: 32px;
+  }
+  .login-enhanced .form-group {
+    margin-bottom: 20px;
+  }
+  .login-enhanced label {
+    display: block;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--noir-text-muted);
+    margin-bottom: 8px;
+  }
+  .login-enhanced input {
+    width: 100%;
+    padding: 14px 16px;
+    background: var(--noir-elevated);
+    border: 1px solid var(--noir-border);
+    color: var(--noir-text);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    outline: none;
+    transition: all 0.3s;
+  }
+  .login-enhanced input:focus {
+    border-color: rgba(232, 168, 73, 0.4);
+    box-shadow: 0 0 0 3px rgba(232, 168, 73, 0.08);
+  }
+  .login-enhanced input::placeholder { color: var(--noir-text-muted); }
+  .login-enhanced .login-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--amber);
+    color: var(--noir-bg);
+    border: none;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 8px;
+  }
+  .login-enhanced .login-btn:hover {
+    box-shadow: 0 0 32px rgba(232, 168, 73, 0.4);
+    transform: translateY(-1px);
+  }
+  .login-enhanced .divider-text {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 24px 0;
+    font-size: 10px;
+    color: var(--noir-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+  .login-enhanced .divider-text::before,
+  .login-enhanced .divider-text::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--noir-border);
+  }
+  .login-enhanced .signup-link {
+    text-align: center;
+    font-size: 12px;
+    color: var(--noir-text-muted);
+  }
+  .login-enhanced .signup-link a {
+    color: var(--amber);
+    text-decoration: none;
+    font-weight: 500;
+    transition: opacity 0.2s;
+  }
+  .login-enhanced .signup-link a:hover { opacity: 0.8; }
+
+  /* ═══════════════════════════════════════
+     6. Stats Section Enhancement
+     ═══════════════════════════════════════ */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .stat-card-before {
+    display: flex;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--noir-text-muted);
+    padding: 16px;
+    background: var(--noir-surface);
+    border: 1px solid var(--noir-border);
+  }
+  .stat-card-before strong {
+    color: var(--noir-text);
+    text-shadow: 0 0 16px rgba(232, 168, 73, 0.2);
+  }
+
+  .stat-card-after {
+    padding: 24px;
+    background: var(--noir-surface);
+    border: 1px solid var(--noir-border);
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+  .stat-card-after:hover {
+    border-color: var(--noir-border-hover);
+    transform: translateY(-2px);
+  }
+  .stat-card-after::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--amber), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .stat-card-after:hover::after { opacity: 1; }
+  .stat-card-after .stat-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--noir-text-muted);
+    margin-bottom: 8px;
+  }
+  .stat-card-after .stat-value {
+    font-family: var(--font-display);
+    font-size: 36px;
+    color: var(--noir-text);
+    text-shadow: 0 0 24px rgba(232, 168, 73, 0.2);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-card-after .stat-unit {
+    font-size: 11px;
+    color: var(--noir-text-muted);
+  }
+
+  /* ═══════════════════════════════════════
+     7. Empty State Enhancement
+     ═══════════════════════════════════════ */
+  .empty-state-before {
+    text-align: center;
+    padding: 48px;
+    background: var(--noir-surface);
+    border: 1px solid var(--noir-border);
+    color: var(--noir-text-muted);
+  }
+  .empty-state-before .emoji { font-size: 48px; margin-bottom: 16px; opacity: 0.6; }
+
+  .empty-state-after {
+    text-align: center;
+    padding: 64px 48px;
+    background: var(--noir-surface);
+    border: 1px dashed var(--noir-border);
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+  }
+  .empty-state-after::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 30%, rgba(232, 168, 73, 0.03), transparent 60%);
+    pointer-events: none;
+  }
+  .empty-state-after .empty-icon {
+    width: 64px; height: 64px;
+    border: 1px solid var(--noir-border);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 24px;
+    color: var(--amber);
+    opacity: 0.5;
+    background: var(--amber-subtle);
+  }
+  .empty-state-after h3 {
+    font-family: var(--font-display);
+    font-size: 18px;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+  .empty-state-after p {
+    font-size: 12px;
+    color: var(--noir-text-muted);
+    margin-bottom: 24px;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+  }
+  .empty-state-after .empty-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 24px;
+    background: transparent;
+    border: 1px solid rgba(232, 168, 73, 0.3);
+    color: var(--amber);
+    font-family: var(--font-sans);
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .empty-state-after .empty-cta:hover {
+    border-color: var(--amber);
+    box-shadow: 0 0 20px rgba(232, 168, 73, 0.15);
+  }
+
+  /* ═══════════════════════════════════════
+     8. Reservation List Enhancement
+     ═══════════════════════════════════════ */
+  .reservation-item-before {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: var(--noir-surface);
+    border: 1px solid var(--noir-border);
+    border-radius: 2px;
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+
+  .reservation-item-after {
+    display: grid;
+    grid-template-columns: 50px 1fr auto;
+    gap: 16px;
+    align-items: center;
+    padding: 16px 20px;
+    background: var(--noir-surface);
+    border: 1px solid var(--noir-border);
+    border-radius: 2px;
+    margin-bottom: 8px;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  .reservation-item-after:hover {
+    border-color: var(--noir-border-hover);
+    background: var(--noir-elevated);
+    transform: translateX(4px);
+  }
+  .reservation-item-after .res-poster {
+    width: 50px;
+    aspect-ratio: 2/3;
+    background: var(--noir-elevated);
+    border-radius: 2px;
+    overflow: hidden;
+    border: 1px solid var(--noir-border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    color: var(--noir-text-muted);
+  }
+  .reservation-item-after .res-info h4 {
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  .reservation-item-after .res-info .res-detail {
+    font-size: 11px;
+    color: var(--noir-text-muted);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .reservation-item-after .res-info .res-detail .dot {
+    width: 3px; height: 3px;
+    background: var(--noir-text-muted);
+    border-radius: 50%;
+  }
+  .reservation-item-after .res-price {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--amber);
+    text-align: right;
+  }
+  .reservation-item-after .res-status {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--noir-success);
+    margin-top: 2px;
+  }
+
+  /* ═══════════════════════════════════════
+     9. Toast Notification Enhancement
+     ═══════════════════════════════════════ */
+  .toast-demos { display: flex; gap: 16px; flex-direction: column; max-width: 400px; }
+
+  .toast-before {
+    padding: 12px 16px;
+    background: var(--noir-surface);
+    border: 1px solid var(--noir-border);
+    border-radius: 2px;
+    font-size: 13px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .toast-after {
+    padding: 0;
+    background: var(--noir-surface);
+    border: 1px solid var(--noir-border);
+    border-radius: 2px;
+    overflow: hidden;
+    display: flex;
+    align-items: stretch;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  }
+  .toast-after .toast-accent {
+    width: 3px;
+    flex-shrink: 0;
+  }
+  .toast-after .toast-accent.success { background: var(--noir-success); }
+  .toast-after .toast-accent.error { background: var(--noir-danger); }
+  .toast-after .toast-accent.info { background: #5b7db8; }
+  .toast-after .toast-body {
+    padding: 14px 16px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .toast-after .toast-icon {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+  .toast-after .toast-icon.success { background: rgba(74, 158, 110, 0.15); color: var(--noir-success); }
+  .toast-after .toast-icon.error { background: rgba(196, 64, 64, 0.15); color: var(--noir-danger); }
+  .toast-after .toast-icon.info { background: rgba(91, 125, 184, 0.15); color: #5b7db8; }
+  .toast-after .toast-text { font-size: 12px; line-height: 1.5; }
+  .toast-after .toast-text strong { display: block; font-size: 12px; margin-bottom: 2px; }
+  .toast-after .toast-close {
+    padding: 0 14px;
+    border: none;
+    background: transparent;
+    color: var(--noir-text-muted);
+    cursor: pointer;
+    font-size: 16px;
+    transition: color 0.2s;
+    border-left: 1px solid var(--noir-border);
+  }
+  .toast-after .toast-close:hover { color: var(--noir-text); }
+  .toast-after .progress-bar {
+    position: absolute;
+    bottom: 0; left: 3px; right: 0;
+    height: 2px;
+    background: var(--amber);
+    animation: progress-shrink 5s linear forwards;
+  }
+  @keyframes progress-shrink {
+    from { width: 100%; }
+    to { width: 0; }
+  }
+
+  /* ═══════════════════════════════════════
+     10. Seat Legend Enhancement
+     ═══════════════════════════════════════ */
+  .legend-before {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 12px;
+    font-size: 12px;
+    color: var(--noir-text-muted);
+  }
+  .legend-before .legend-dot {
+    width: 12px; height: 12px;
+    border-radius: 2px;
+    display: inline-block;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  .legend-after {
+    display: flex;
+    gap: 2px;
+    padding: 12px 16px;
+    background: var(--noir-surface);
+    border: 1px solid var(--noir-border);
+    border-radius: 2px;
+    justify-content: center;
+  }
+  .legend-after .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 1px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--noir-text-muted);
+    transition: all 0.2s;
+  }
+  .legend-after .legend-item:hover {
+    background: var(--amber-subtle);
+    color: var(--noir-text);
+  }
+  .legend-after .legend-seat {
+    width: 16px; height: 14px;
+    border-radius: 2px 2px 4px 4px;
+    border: 1.5px solid;
+    position: relative;
+  }
+  .legend-after .legend-seat::after {
+    content: '';
+    position: absolute;
+    bottom: -3px; left: 2px; right: 2px;
+    height: 2px;
+    border-radius: 1px;
+    background: inherit;
+    border-color: inherit;
+  }
+
+  /* ═══════════════════════════════════════
+     Animations for preview
+     ═══════════════════════════════════════ */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-in { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+  /* ═══════════════════════════════════════
+     Responsive
+     ═══════════════════════════════════════ */
+  @media (max-width: 900px) {
+    .toc-panel { transform: translateX(-320px); }
+    .toc-toggle { left: 16px !important; }
+    .toc-toggle.shifted { left: 336px !important; }
+    .preview-content { margin-left: 0; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .preview-section { padding: 40px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOC Toggle -->
+<button class="toc-toggle shifted" onclick="toggleTOC()" id="tocBtn" title="개선 목록">☰</button>
+
+<!-- TOC Panel -->
+<nav class="toc-panel" id="tocPanel">
+  <div class="toc-title">디자인 개선</div>
+  <div class="toc-subtitle">Noir Luxe Cinema</div>
+
+  <div class="toc-section">
+    <div class="toc-section-title">Layout & Navigation</div>
+    <a class="toc-item" href="#section-1">
+      <span class="toc-item-num">1</span>
+      <div class="toc-item-text">
+        <strong>Footer 컴포넌트 추가</strong>
+        <span>사이트 정보, 링크, 브랜딩 영역 부재</span>
+        <div class="priority-badge priority-high">높음</div>
+      </div>
+    </a>
+    <a class="toc-item" href="#section-2">
+      <span class="toc-item-num">2</span>
+      <div class="toc-item-text">
+        <strong>모바일 네비게이션 드로어</strong>
+        <span>햄버거 메뉴 없이 nav 링크 겹침 문제</span>
+        <div class="priority-badge priority-high">높음</div>
+      </div>
+    </a>
+  </div>
+
+  <div class="toc-section">
+    <div class="toc-section-title">Visual Impact</div>
+    <a class="toc-item" href="#section-3">
+      <span class="toc-item-num">3</span>
+      <div class="toc-item-text">
+        <strong>Hero 섹션 강화</strong>
+        <span>파티클 효과, CTA 버튼, 타이포그래피 개선</span>
+        <div class="priority-badge priority-medium">중간</div>
+      </div>
+    </a>
+    <a class="toc-item" href="#section-4">
+      <span class="toc-item-num">4</span>
+      <div class="toc-item-text">
+        <strong>영화 카드 리디자인</strong>
+        <span>호버 이미지 줌, 장르 태그, 빠른 예매 슬라이드</span>
+        <div class="priority-badge priority-medium">중간</div>
+      </div>
+    </a>
+    <a class="toc-item" href="#section-5">
+      <span class="toc-item-num">5</span>
+      <div class="toc-item-text">
+        <strong>통계 카드 분리 배치</strong>
+        <span>인라인 텍스트 → 개별 카드 그리드</span>
+        <div class="priority-badge priority-medium">중간</div>
+      </div>
+    </a>
+  </div>
+
+  <div class="toc-section">
+    <div class="toc-section-title">UX & Polish</div>
+    <a class="toc-item" href="#section-6">
+      <span class="toc-item-num">6</span>
+      <div class="toc-item-text">
+        <strong>로그인 폼 비주얼 업그레이드</strong>
+        <span>아이콘, 라벨 스타일, 구분선, 글로우 효과</span>
+        <div class="priority-badge priority-medium">중간</div>
+      </div>
+    </a>
+    <a class="toc-item" href="#section-7">
+      <span class="toc-item-num">7</span>
+      <div class="toc-item-text">
+        <strong>빈 상태(Empty State) 개선</strong>
+        <span>점선 테두리, 아이콘, 구조화된 CTA</span>
+        <div class="priority-badge priority-low">낮음</div>
+      </div>
+    </a>
+    <a class="toc-item" href="#section-8">
+      <span class="toc-item-num">8</span>
+      <div class="toc-item-text">
+        <strong>예매 목록 카드형 레이아웃</strong>
+        <span>포스터 썸네일, 상태 배지, 슬라이드 호버</span>
+        <div class="priority-badge priority-low">낮음</div>
+      </div>
+    </a>
+    <a class="toc-item" href="#section-9">
+      <span class="toc-item-num">9</span>
+      <div class="toc-item-text">
+        <strong>Toast 알림 리디자인</strong>
+        <span>컬러 악센트 바, 아이콘, 프로그레스 바</span>
+        <div class="priority-badge priority-low">낮음</div>
+      </div>
+    </a>
+    <a class="toc-item" href="#section-10">
+      <span class="toc-item-num">10</span>
+      <div class="toc-item-text">
+        <strong>좌석 범례(Legend) UI</strong>
+        <span>미니 좌석 아이콘, 호버 강조, 정렬된 레이아웃</span>
+        <div class="priority-badge priority-low">낮음</div>
+      </div>
+    </a>
+  </div>
+
+  <div class="toc-section">
+    <div class="toc-section-title">Cross-cutting</div>
+    <a class="toc-item" href="#section-11">
+      <span class="toc-item-num">11</span>
+      <div class="toc-item-text">
+        <strong>커스텀 스크롤바</strong>
+        <span>다크 테마 일관성을 위한 스크롤바 스타일링</span>
+        <div class="priority-badge priority-low">낮음</div>
+      </div>
+    </a>
+  </div>
+</nav>
+
+<!-- Main Preview -->
+<div class="preview-content" id="previewContent">
+
+  <!-- Header -->
+  <div style="text-align:center; padding: 80px 40px 60px; border-bottom: 1px solid var(--noir-border);">
+    <div style="font-size:9px; text-transform:uppercase; letter-spacing:5px; color:var(--amber); opacity:0.6; margin-bottom:8px;">Design Improvement Report</div>
+    <h1 style="font-family:var(--font-display); font-size:42px; letter-spacing:0.2em; margin-bottom:12px;">Noir Luxe Cinema</h1>
+    <div style="width:48px; height:1px; background:linear-gradient(90deg, transparent, var(--amber), transparent); margin:16px auto;"></div>
+    <p style="font-size:13px; color:var(--noir-text-muted); max-width:520px; margin:0 auto; line-height:1.7;">
+      현재 Noir Luxe 디자인 시스템을 기반으로 11가지 개선 항목을 식별했습니다.<br>
+      각 항목에 대해 Before/After 비교 프리뷰를 제공합니다.
+    </p>
+  </div>
+
+  <!-- Section 1: Footer -->
+  <section class="preview-section" id="section-1">
+    <div class="section-label">개선 #1 — 높은 우선순위</div>
+    <h2 class="section-title">Footer 컴포넌트</h2>
+    <p class="section-desc">
+      현재 사이트에 Footer가 없습니다. 브랜딩, 주요 링크, 소셜 미디어, 저작권 정보를 담는 Footer를 추가하면 사이트의 완성도가 크게 높아집니다.
+      <br><strong>대상 파일:</strong> <code>components/common/Footer.tsx</code> (신규), <code>layouts/MainLayout.tsx</code>
+    </p>
+    <div class="compare-grid">
+      <div class="compare-box">
+        <div class="compare-label before">● 현재 (Before)</div>
+        <div class="compare-content" style="display:flex;align-items:center;justify-content:center;color:var(--noir-text-muted);font-size:13px;">
+          Footer 없음 — 콘텐츠 끝에서 바로 종료
+        </div>
+      </div>
+      <div class="compare-box">
+        <div class="compare-label after">◆ 개선 (After)</div>
+        <div class="compare-content" style="padding:0;">
+          <div class="footer-preview">
+            <div class="footer-grid">
+              <div>
+                <div class="footer-brand">영화관 예매</div>
+                <p class="footer-brand-desc">특별한 영화 경험을 위한 프리미엄 예매 시스템. 최적의 좌석에서 최고의 영화를 만나보세요.</p>
+              </div>
+              <div>
+                <div class="footer-col-title">바로가기</div>
+                <a href="#" class="footer-link">영화 목록</a>
+                <a href="#" class="footer-link">예매 내역</a>
+                <a href="#" class="footer-link">마이페이지</a>
+              </div>
+              <div>
+                <div class="footer-col-title">고객 지원</div>
+                <a href="#" class="footer-link">자주 묻는 질문</a>
+                <a href="#" class="footer-link">문의하기</a>
+                <a href="#" class="footer-link">이용약관</a>
+              </div>
+              <div>
+                <div class="footer-col-title">운영 시간</div>
+                <span class="footer-link" style="cursor:default;">평일 09:00 — 22:00</span>
+                <span class="footer-link" style="cursor:default;">주말 10:00 — 23:00</span>
+              </div>
+            </div>
+            <div class="footer-bottom">
+              <span>© 2026 영화관 예매. All rights reserved.</span>
+              <div class="footer-social">
+                <a href="#" title="Instagram">IG</a>
+                <a href="#" title="Twitter">X</a>
+                <a href="#" title="YouTube">YT</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2: Mobile Navigation -->
+  <section class="preview-section" id="section-2">
+    <div class="section-label">개선 #2 — 높은 우선순위</div>
+    <h2 class="section-title">모바일 네비게이션 드로어</h2>
+    <p class="section-desc">
+      현재 NavigationBar는 모바일에서 모든 링크가 일렬로 나열되어 작은 화면에서 텍스트가 잘리거나 겹칠 수 있습니다. 풀스크린 드로어 방식의 모바일 메뉴를 도입합니다.
+      <br><strong>대상 파일:</strong> <code>components/common/NavigationBar.tsx</code>
+    </p>
+    <div style="display:flex; justify-content:center;">
+      <div class="mobile-nav-demo" id="mobileDemo">
+        <div class="mobile-statusbar">9:41</div>
+        <div class="mobile-header">
+          <span class="mobile-logo">영화관 예매</span>
+          <div class="hamburger" id="hamburger" onclick="toggleMobileMenu()">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+        <div class="mobile-drawer" id="mobileDrawer">
+          <a href="#" class="mobile-nav-link"><span class="nav-num">01</span>홈</a>
+          <a href="#" class="mobile-nav-link"><span class="nav-num">02</span>영화 찾기</a>
+          <a href="#" class="mobile-nav-link"><span class="nav-num">03</span>예매 내역</a>
+          <a href="#" class="mobile-nav-link"><span class="nav-num">04</span>마이페이지</a>
+        </div>
+        <div style="padding:24px;color:var(--noir-text-muted);font-size:12px;text-align:center;margin-top:60px;">
+          ↑ 햄버거 메뉴를 클릭해보세요
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3: Hero Enhancement -->
+  <section class="preview-section" id="section-3">
+    <div class="section-label">개선 #3 — 중간 우선순위</div>
+    <h2 class="section-title">Hero 섹션 강화</h2>
+    <p class="section-desc">
+      현재 Hero는 비디오 없을 때 단순 그라데이션만 보입니다. 파티클 효과, eyebrow 텍스트, 듀얼 CTA 버튼을 추가하여 비디오 없이도 임팩트 있는 첫인상을 제공합니다.
+      <br><strong>대상 파일:</strong> <code>pages/HomePage.tsx</code>, <code>index.css</code>
+    </p>
+    <div class="hero-enhanced">
+      <div class="hero-particles">
+        <div class="hero-particle" style="left:10%;animation-delay:0s;"></div>
+        <div class="hero-particle" style="left:25%;animation-delay:1.2s;"></div>
+        <div class="hero-particle" style="left:45%;animation-delay:2.4s;"></div>
+        <div class="hero-particle" style="left:65%;animation-delay:0.8s;"></div>
+        <div class="hero-particle" style="left:80%;animation-delay:3.2s;"></div>
+        <div class="hero-particle" style="left:90%;animation-delay:1.8s;"></div>
+      </div>
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <div class="hero-eyebrow">Premium Cinema Experience</div>
+        <h1>영화관 예매</h1>
+        <div class="hero-divider"></div>
+        <p class="hero-subtitle">상영 중인 영화를 확인하고, 최적의 좌석을 선택하여 특별한 영화 경험을 시작하세요.</p>
+        <div class="hero-cta-row">
+          <button class="hero-cta primary">지금 바로 예매하기</button>
+          <button class="hero-cta ghost">상영 일정 보기</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 4: Movie Cards -->
+  <section class="preview-section" id="section-4">
+    <div class="section-label">개선 #4 — 중간 우선순위</div>
+    <h2 class="section-title">영화 카드 리디자인</h2>
+    <p class="section-desc">
+      현재 영화 카드는 호버 시 테두리 색 변경만 있습니다. 이미지 줌, 장르 태그 오버레이, 등급 배지, 슬라이드업 "빠른 예매" 버튼을 추가합니다.
+      <br><strong>대상 파일:</strong> <code>pages/MoviesPage.tsx</code>, <code>pages/HomePage.tsx</code>
+    </p>
+    <div class="compare-grid">
+      <div class="compare-box">
+        <div class="compare-label before">● 현재</div>
+        <div class="compare-content">
+          <div class="movie-cards-row">
+            <div class="movie-card-before">
+              <div class="poster" style="background:linear-gradient(135deg, #1a1a2e, #16213e);">🎬</div>
+              <div class="info">인셉션</div>
+            </div>
+            <div class="movie-card-before">
+              <div class="poster" style="background:linear-gradient(135deg, #1a1a2e, #16213e);">🎬</div>
+              <div class="info">듄: 파트 2</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="compare-box">
+        <div class="compare-label after">◆ 개선</div>
+        <div class="compare-content">
+          <div class="movie-cards-row">
+            <div class="movie-card-after">
+              <div class="poster-wrap">
+                <div class="poster-img" style="background:linear-gradient(135deg, #2d1b4e 0%, #1a0a3e 50%, #0a0a1e 100%); width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
+                  <span style="font-size:48px;opacity:0.3;">🌀</span>
+                </div>
+                <div class="poster-gradient"></div>
+                <div class="poster-meta">
+                  <span class="genre-tag">SF · 액션</span>
+                </div>
+                <span class="rating-badge">12+</span>
+              </div>
+              <div class="info">
+                <h3>인셉션</h3>
+                <span class="date">2024-07-16</span>
+              </div>
+              <div class="quick-book">예매하기 →</div>
+            </div>
+            <div class="movie-card-after">
+              <div class="poster-wrap">
+                <div class="poster-img" style="background:linear-gradient(135deg, #3d2b1a 0%, #1a1308 50%, #0a0a06 100%); width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
+                  <span style="font-size:48px;opacity:0.3;">🏜️</span>
+                </div>
+                <div class="poster-gradient"></div>
+                <div class="poster-meta">
+                  <span class="genre-tag">SF · 드라마</span>
+                </div>
+                <span class="rating-badge">15+</span>
+              </div>
+              <div class="info">
+                <h3>듄: 파트 2</h3>
+                <span class="date">2024-02-28</span>
+              </div>
+              <div class="quick-book">예매하기 →</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 5: Stats Cards -->
+  <section class="preview-section" id="section-5">
+    <div class="section-label">개선 #5 — 중간 우선순위</div>
+    <h2 class="section-title">통계 카드 분리 배치</h2>
+    <p class="section-desc">
+      현재 영화관 현황은 하나의 카드에 인라인으로 나열됩니다. 각 항목을 개별 카드로 분리하고, 큰 숫자 + 레이블 구조로 변경합니다.
+      <br><strong>대상 파일:</strong> <code>pages/HomePage.tsx</code>
+    </p>
+    <div class="compare-grid">
+      <div class="compare-box">
+        <div class="compare-label before">● 현재</div>
+        <div class="compare-content" style="display:flex;align-items:center;">
+          <div style="display:flex;flex-wrap:wrap;gap:24px;padding:16px;background:var(--noir-surface);border:1px solid var(--noir-border);width:100%;border-radius:2px;">
+            <span style="color:var(--noir-text-muted);font-size:13px;">영화관 <strong style="color:var(--noir-text);">3</strong>개</span>
+            <span style="color:var(--noir-text-muted);font-size:13px;">상영관 <strong style="color:var(--noir-text);">8</strong>개</span>
+            <span style="color:var(--noir-text-muted);font-size:13px;">오늘 상영 <strong style="color:var(--noir-text);">12</strong>편</span>
+          </div>
+        </div>
+      </div>
+      <div class="compare-box">
+        <div class="compare-label after">◆ 개선</div>
+        <div class="compare-content">
+          <div class="stats-grid">
+            <div class="stat-card-after">
+              <div class="stat-label">영화관</div>
+              <div class="stat-value">3</div>
+              <div class="stat-unit">개소 운영 중</div>
+            </div>
+            <div class="stat-card-after">
+              <div class="stat-label">상영관</div>
+              <div class="stat-value">8</div>
+              <div class="stat-unit">스크린 보유</div>
+            </div>
+            <div class="stat-card-after">
+              <div class="stat-label">오늘 상영</div>
+              <div class="stat-value">12</div>
+              <div class="stat-unit">편 예정</div>
+            </div>
+            <div class="stat-card-after">
+              <div class="stat-label">좌석 가용</div>
+              <div class="stat-value">84</div>
+              <div class="stat-unit">% 예매 가능</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 6: Login Form -->
+  <section class="preview-section" id="section-6">
+    <div class="section-label">개선 #6 — 중간 우선순위</div>
+    <h2 class="section-title">로그인 폼 비주얼 업그레이드</h2>
+    <p class="section-desc">
+      현재 로그인 폼은 기능적이지만 시각적 임팩트가 부족합니다. 상단 앰버 라인, 코너 글로우, 아이콘, uppercase 레이블 등을 추가합니다.
+      <br><strong>대상 파일:</strong> <code>pages/LoginPage.tsx</code>, <code>pages/SignupPage.tsx</code>
+    </p>
+    <div class="compare-grid">
+      <div class="compare-box">
+        <div class="compare-label before">● 현재</div>
+        <div class="compare-content" style="display:flex;align-items:center;justify-content:center;">
+          <div style="width:300px;background:var(--noir-surface);border:1px solid var(--noir-border);padding:32px;border-radius:2px;">
+            <h1 style="font-family:var(--font-display);font-size:22px;letter-spacing:0.15em;margin-bottom:16px;">로그인</h1>
+            <div style="margin-bottom:12px;">
+              <label style="font-size:12px;color:var(--noir-text-muted);display:block;margin-bottom:4px;">아이디</label>
+              <div style="padding:10px 12px;background:var(--noir-elevated);border:1px solid var(--noir-border);color:var(--noir-text-muted);font-size:13px;">admin</div>
+            </div>
+            <div style="margin-bottom:16px;">
+              <label style="font-size:12px;color:var(--noir-text-muted);display:block;margin-bottom:4px;">비밀번호</label>
+              <div style="padding:10px 12px;background:var(--noir-elevated);border:1px solid var(--noir-border);color:var(--noir-text-muted);font-size:13px;">••••••</div>
+            </div>
+            <div style="padding:10px;background:var(--amber);color:var(--noir-bg);text-align:center;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;">로그인</div>
+          </div>
+        </div>
+      </div>
+      <div class="compare-box">
+        <div class="compare-label after">◆ 개선</div>
+        <div class="compare-content" style="display:flex;align-items:center;justify-content:center;">
+          <div class="login-enhanced" style="width:100%;max-width:360px;">
+            <div class="login-card">
+              <div class="login-icon">✦</div>
+              <h1>로그인</h1>
+              <p class="login-sub">영화관 예매 시스템에 로그인합니다</p>
+              <div class="form-group">
+                <label>아이디</label>
+                <input type="text" placeholder="아이디를 입력하세요" value="admin" readonly>
+              </div>
+              <div class="form-group">
+                <label>비밀번호</label>
+                <input type="password" placeholder="비밀번호를 입력하세요" value="password" readonly>
+              </div>
+              <button class="login-btn">로그인</button>
+              <div class="divider-text">또는</div>
+              <p class="signup-link">계정이 없으신가요? <a href="#">회원가입</a></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 7: Empty State -->
+  <section class="preview-section" id="section-7">
+    <div class="section-label">개선 #7 — 낮은 우선순위</div>
+    <h2 class="section-title">빈 상태(Empty State) 개선</h2>
+    <p class="section-desc">
+      현재 빈 상태는 이모지 + 텍스트로 단순합니다. 점선 테두리, 원형 아이콘, 구조화된 CTA로 더 정돈된 느낌을 줍니다.
+      <br><strong>대상 파일:</strong> <code>components/common/ui/EmptyState.tsx</code>
+    </p>
+    <div class="compare-grid">
+      <div class="compare-box">
+        <div class="compare-label before">● 현재</div>
+        <div class="compare-content">
+          <div class="empty-state-before">
+            <div class="emoji">🎬</div>
+            <p>첫 예매를 시작해보세요</p>
+            <p style="font-size:12px;margin-top:8px;">영화 목록에서 상영을 선택해 예매해 보세요.</p>
+          </div>
+        </div>
+      </div>
+      <div class="compare-box">
+        <div class="compare-label after">◆ 개선</div>
+        <div class="compare-content">
+          <div class="empty-state-after">
+            <div class="empty-icon">▶</div>
+            <h3>첫 예매를 시작해보세요</h3>
+            <p>영화 목록에서 원하는 상영을 선택하고, 최적의 좌석을 골라 특별한 경험을 시작하세요.</p>
+            <button class="empty-cta">영화 둘러보기 →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 8: Reservation List -->
+  <section class="preview-section" id="section-8">
+    <div class="section-label">개선 #8 — 낮은 우선순위</div>
+    <h2 class="section-title">예매 목록 카드형 레이아웃</h2>
+    <p class="section-desc">
+      현재 예매 목록은 flex-wrap으로 정보가 나열됩니다. 포스터 썸네일, 3-column 그리드, 상태 배지, 슬라이드 호버를 추가합니다.
+      <br><strong>대상 파일:</strong> <code>pages/HomePage.tsx</code>, <code>pages/ReservationsPage.tsx</code>
+    </p>
+    <div class="compare-grid">
+      <div class="compare-box">
+        <div class="compare-label before">● 현재</div>
+        <div class="compare-content">
+          <div class="reservation-item-before">
+            <span style="font-weight:500;">인셉션</span>
+            <span style="font-size:12px;color:var(--noir-text-muted);">2026-03-28 14:00 · 1관</span>
+            <span style="font-size:12px;font-weight:500;color:var(--amber);">₩15,000</span>
+          </div>
+          <div class="reservation-item-before">
+            <span style="font-weight:500;">듄: 파트 2</span>
+            <span style="font-size:12px;color:var(--noir-text-muted);">2026-03-29 19:30 · 3관</span>
+            <span style="font-size:12px;font-weight:500;color:var(--amber);">₩18,000</span>
+          </div>
+        </div>
+      </div>
+      <div class="compare-box">
+        <div class="compare-label after">◆ 개선</div>
+        <div class="compare-content">
+          <div class="reservation-item-after">
+            <div class="res-poster">🌀</div>
+            <div class="res-info">
+              <h4>인셉션</h4>
+              <div class="res-detail">
+                <span>2026-03-28 14:00</span>
+                <span class="dot"></span>
+                <span>CGV 강남 · 1관</span>
+              </div>
+            </div>
+            <div>
+              <div class="res-price">₩15,000</div>
+              <div class="res-status">확정됨</div>
+            </div>
+          </div>
+          <div class="reservation-item-after">
+            <div class="res-poster">🏜️</div>
+            <div class="res-info">
+              <h4>듄: 파트 2</h4>
+              <div class="res-detail">
+                <span>2026-03-29 19:30</span>
+                <span class="dot"></span>
+                <span>CGV 강남 · 3관</span>
+              </div>
+            </div>
+            <div>
+              <div class="res-price">₩18,000</div>
+              <div class="res-status">확정됨</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 9: Toast -->
+  <section class="preview-section" id="section-9">
+    <div class="section-label">개선 #9 — 낮은 우선순위</div>
+    <h2 class="section-title">Toast 알림 리디자인</h2>
+    <p class="section-desc">
+      현재 Toast는 단순 텍스트입니다. 좌측 컬러 악센트 바, 타입별 아이콘, 타이틀/설명 구분, 자동 해제 프로그레스 바를 추가합니다.
+      <br><strong>대상 파일:</strong> <code>components/common/ui/Toast.tsx</code>
+    </p>
+    <div class="compare-grid">
+      <div class="compare-box">
+        <div class="compare-label before">● 현재</div>
+        <div class="compare-content">
+          <div class="toast-demos">
+            <div class="toast-before"><span style="color:var(--noir-success);">✓</span> 로그인되었습니다.</div>
+            <div class="toast-before"><span style="color:var(--noir-danger);">✕</span> 잘못된 비밀번호입니다.</div>
+          </div>
+        </div>
+      </div>
+      <div class="compare-box">
+        <div class="compare-label after">◆ 개선</div>
+        <div class="compare-content">
+          <div class="toast-demos">
+            <div class="toast-after" style="position:relative;">
+              <div class="toast-accent success"></div>
+              <div class="toast-body">
+                <div class="toast-icon success">✓</div>
+                <div class="toast-text"><strong>로그인 성공</strong>환영합니다! 예매를 시작하세요.</div>
+              </div>
+              <button class="toast-close">×</button>
+            </div>
+            <div class="toast-after" style="position:relative;">
+              <div class="toast-accent error"></div>
+              <div class="toast-body">
+                <div class="toast-icon error">!</div>
+                <div class="toast-text"><strong>인증 실패</strong>비밀번호가 올바르지 않습니다.</div>
+              </div>
+              <button class="toast-close">×</button>
+            </div>
+            <div class="toast-after" style="position:relative;">
+              <div class="toast-accent info"></div>
+              <div class="toast-body">
+                <div class="toast-icon info">i</div>
+                <div class="toast-text"><strong>좌석 홀드</strong>A-5 좌석이 5분간 홀드됩니다.</div>
+              </div>
+              <button class="toast-close">×</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 10: Seat Legend -->
+  <section class="preview-section" id="section-10">
+    <div class="section-label">개선 #10 — 낮은 우선순위</div>
+    <h2 class="section-title">좌석 범례(Legend) UI</h2>
+    <p class="section-desc">
+      좌석 선택 페이지의 범례를 미니 좌석 아이콘 형태로 변경하고, 호버 시 강조 효과를 추가합니다.
+      <br><strong>대상 파일:</strong> <code>components/booking/SeatMap.tsx</code>
+    </p>
+    <div class="compare-grid">
+      <div class="compare-box">
+        <div class="compare-label before">● 현재</div>
+        <div class="compare-content" style="display:flex;align-items:center;">
+          <div class="legend-before">
+            <span><span class="legend-dot" style="background:var(--noir-success);"></span>선택 가능</span>
+            <span><span class="legend-dot" style="background:var(--amber);"></span>내 홀드</span>
+            <span><span class="legend-dot" style="background:var(--noir-danger);"></span>예약됨</span>
+            <span><span class="legend-dot" style="background:var(--noir-blocked);"></span>이용 불가</span>
+          </div>
+        </div>
+      </div>
+      <div class="compare-box">
+        <div class="compare-label after">◆ 개선</div>
+        <div class="compare-content" style="display:flex;align-items:center;">
+          <div class="legend-after">
+            <div class="legend-item">
+              <div class="legend-seat" style="border-color:var(--noir-success);background:rgba(74,158,110,0.15);"></div>
+              선택 가능
+            </div>
+            <div class="legend-item">
+              <div class="legend-seat" style="border-color:var(--amber);background:rgba(232,168,73,0.2);"></div>
+              내 홀드
+            </div>
+            <div class="legend-item">
+              <div class="legend-seat" style="border-color:var(--noir-danger);background:rgba(196,64,64,0.15);"></div>
+              예약됨
+            </div>
+            <div class="legend-item">
+              <div class="legend-seat" style="border-color:var(--noir-blocked);background:rgba(58,58,58,0.3);"></div>
+              이용 불가
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 11: Custom Scrollbar -->
+  <section class="preview-section" id="section-11">
+    <div class="section-label">개선 #11 — 낮은 우선순위</div>
+    <h2 class="section-title">커스텀 스크롤바</h2>
+    <p class="section-desc">
+      현재 기본 브라우저 스크롤바가 다크 테마와 어울리지 않습니다. 앰버 악센트의 얇은 커스텀 스크롤바를 적용합니다.
+      이 페이지의 스크롤바에 이미 적용되어 있습니다 — 우측 스크롤바를 확인해보세요.
+      <br><strong>대상 파일:</strong> <code>index.css</code>
+    </p>
+    <div style="background:var(--noir-surface);border:1px solid var(--noir-border);border-radius:2px;padding:20px;">
+      <pre style="font-family:var(--font-sans);font-size:11px;color:var(--noir-text-muted);line-height:1.8;white-space:pre-wrap;">/* index.css에 추가 */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--color-noir-surface); }
+::-webkit-scrollbar-thumb {
+  background: rgba(232, 168, 73, 0.2);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(232, 168, 73, 0.4);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(232, 168, 73, 0.2) var(--color-noir-surface);
+}</pre>
+    </div>
+  </section>
+
+  <!-- Summary -->
+  <section style="padding:80px 40px;text-align:center;">
+    <div style="font-size:9px;text-transform:uppercase;letter-spacing:5px;color:var(--amber);opacity:0.6;margin-bottom:8px;">Summary</div>
+    <h2 style="font-family:var(--font-display);font-size:32px;letter-spacing:0.15em;margin-bottom:24px;">구현 우선순위</h2>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:720px;margin:0 auto;">
+      <div style="padding:24px;border:1px solid rgba(196,64,64,0.2);background:rgba(196,64,64,0.03);border-radius:2px;">
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:3px;color:#e06060;margin-bottom:12px;">높음</div>
+        <div style="font-family:var(--font-display);font-size:36px;margin-bottom:8px;">2</div>
+        <div style="font-size:11px;color:var(--noir-text-muted);line-height:1.6;">Footer 추가<br>모바일 네비게이션</div>
+      </div>
+      <div style="padding:24px;border:1px solid rgba(232,168,73,0.2);background:rgba(232,168,73,0.03);border-radius:2px;">
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:3px;color:var(--amber);margin-bottom:12px;">중간</div>
+        <div style="font-family:var(--font-display);font-size:36px;margin-bottom:8px;">4</div>
+        <div style="font-size:11px;color:var(--noir-text-muted);line-height:1.6;">Hero 강화<br>영화 카드<br>통계 카드<br>로그인 폼</div>
+      </div>
+      <div style="padding:24px;border:1px solid rgba(91,125,184,0.2);background:rgba(91,125,184,0.03);border-radius:2px;">
+        <div style="font-size:9px;text-transform:uppercase;letter-spacing:3px;color:#7b9dd8;margin-bottom:12px;">낮음</div>
+        <div style="font-family:var(--font-display);font-size:36px;margin-bottom:8px;">5</div>
+        <div style="font-size:11px;color:var(--noir-text-muted);line-height:1.6;">Empty State<br>예매 목록<br>Toast 알림<br>좌석 범례<br>커스텀 스크롤바</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  let tocOpen = true;
+
+  function toggleTOC() {
+    tocOpen = !tocOpen;
+    document.getElementById('tocPanel').classList.toggle('collapsed', !tocOpen);
+    document.getElementById('previewContent').classList.toggle('expanded', !tocOpen);
+    document.getElementById('tocBtn').classList.toggle('shifted', tocOpen);
+  }
+
+  function toggleMobileMenu() {
+    const hamburger = document.getElementById('hamburger');
+    const drawer = document.getElementById('mobileDrawer');
+    hamburger.classList.toggle('open');
+    drawer.classList.toggle('open');
+  }
+
+  // Smooth scroll for TOC links
+  document.querySelectorAll('.toc-item').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+</body>
+</html>
