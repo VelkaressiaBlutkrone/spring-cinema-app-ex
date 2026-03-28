@@ -106,6 +106,7 @@ export function AdminScreensPage() {
         <EmptyState
           title="등록된 상영관이 없습니다"
           message="상영관 등록 버튼을 눌러 첫 상영관을 등록하세요."
+          variant="admin"
         />
       ) : (
         <>
@@ -181,6 +182,7 @@ export function AdminScreensPage() {
       <Modal
         isOpen={crud.modalOpen}
         onClose={crud.closeModal}
+        variant="admin"
         title={crud.editing ? '상영관 수정' : '상영관 등록'}
         size="md"
       >
@@ -313,6 +315,7 @@ export function AdminScreensPage() {
       <ConfirmDialog
         isOpen={!!crud.deleteTarget}
         onClose={() => crud.setDeleteTarget(null)}
+        theme="admin"
         onConfirm={() =>
           crud.handleDelete(
             (t) => t.id,

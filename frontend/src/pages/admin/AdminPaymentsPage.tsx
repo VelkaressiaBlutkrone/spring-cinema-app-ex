@@ -125,7 +125,7 @@ export function AdminPaymentsPage() {
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="mt-1 block w-full rounded-md border-cinema-admin-border shadow-sm focus:border-cinema-admin-primary focus:ring-cinema-admin-primary sm:text-sm"
+              className="mt-1 block w-full rounded-md border border-cinema-admin-border bg-cinema-admin-surface text-cinema-admin-text shadow-sm focus:border-cinema-admin-primary focus:ring-cinema-admin-primary sm:text-sm"
             />
           </div>
           <div>
@@ -134,7 +134,7 @@ export function AdminPaymentsPage() {
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="mt-1 block w-full rounded-md border-cinema-admin-border shadow-sm focus:border-cinema-admin-primary focus:ring-cinema-admin-primary sm:text-sm"
+              className="mt-1 block w-full rounded-md border border-cinema-admin-border bg-cinema-admin-surface text-cinema-admin-text shadow-sm focus:border-cinema-admin-primary focus:ring-cinema-admin-primary sm:text-sm"
             />
           </div>
           <div>
@@ -144,7 +144,7 @@ export function AdminPaymentsPage() {
               value={memberId}
               onChange={(e) => setMemberId(e.target.value)}
               placeholder="전체"
-              className="mt-1 block w-full rounded-md border-cinema-admin-border shadow-sm focus:border-cinema-admin-primary focus:ring-cinema-admin-primary sm:text-sm"
+              className="mt-1 block w-full rounded-md border border-cinema-admin-border bg-cinema-admin-surface text-cinema-admin-text shadow-sm focus:border-cinema-admin-primary focus:ring-cinema-admin-primary sm:text-sm"
             />
           </div>
           <div>
@@ -152,7 +152,7 @@ export function AdminPaymentsPage() {
             <select
               value={payStatus}
               onChange={(e) => setPayStatus(e.target.value)}
-              className="mt-1 block w-full rounded-md border-cinema-admin-border shadow-sm focus:border-cinema-admin-primary focus:ring-cinema-admin-primary sm:text-sm"
+              className="mt-1 block w-full rounded-md border border-cinema-admin-border bg-cinema-admin-surface text-cinema-admin-text shadow-sm focus:border-cinema-admin-primary focus:ring-cinema-admin-primary sm:text-sm"
             >
               <option value="">전체</option>
               {Object.entries(STATUS_LABEL).map(([key, label]) => (
@@ -177,7 +177,7 @@ export function AdminPaymentsPage() {
       {loading ? (
         <LoadingSpinner />
       ) : content.length === 0 ? (
-        <EmptyState message="결제 내역이 없습니다." />
+        <EmptyState message="결제 내역이 없습니다." variant="admin" />
       ) : (
         <>
           <div className="overflow-hidden rounded-lg border border-cinema-admin-border bg-cinema-admin-surface shadow">
@@ -276,6 +276,7 @@ export function AdminPaymentsPage() {
       {/* 상세 모달 */}
       <Modal
         isOpen={detailModalOpen}
+        variant="admin"
         onClose={() => {
           setDetailModalOpen(false);
           setSelectedPayment(null);
@@ -288,51 +289,51 @@ export function AdminPaymentsPage() {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-cinema-muted">결제번호</label>
-                <p className="mt-1 text-sm text-cinema-text">{selectedPayment.paymentNo}</p>
+                <label className="block text-sm font-medium text-cinema-admin-muted">결제번호</label>
+                <p className="mt-1 text-sm text-cinema-admin-text">{selectedPayment.paymentNo}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-cinema-muted">예매번호</label>
-                <p className="mt-1 text-sm text-cinema-text">{selectedPayment.reservationNo}</p>
+                <label className="block text-sm font-medium text-cinema-admin-muted">예매번호</label>
+                <p className="mt-1 text-sm text-cinema-admin-text">{selectedPayment.reservationNo}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-cinema-muted">회원</label>
-                <p className="mt-1 text-sm text-cinema-text">
+                <label className="block text-sm font-medium text-cinema-admin-muted">회원</label>
+                <p className="mt-1 text-sm text-cinema-admin-text">
                   {selectedPayment.memberLoginId} ({selectedPayment.memberId})
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-cinema-muted">영화</label>
-                <p className="mt-1 text-sm text-cinema-text">{selectedPayment.movieTitle}</p>
+                <label className="block text-sm font-medium text-cinema-admin-muted">영화</label>
+                <p className="mt-1 text-sm text-cinema-admin-text">{selectedPayment.movieTitle}</p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-cinema-muted">결제수단</label>
-                <p className="mt-1 text-sm text-cinema-text">
+                <label className="block text-sm font-medium text-cinema-admin-muted">결제수단</label>
+                <p className="mt-1 text-sm text-cinema-admin-text">
                   {METHOD_LABEL[selectedPayment.payMethod] || selectedPayment.payMethod}
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-cinema-muted">결제 금액</label>
-                <p className="mt-1 text-sm text-cinema-text">
+                <label className="block text-sm font-medium text-cinema-admin-muted">결제 금액</label>
+                <p className="mt-1 text-sm text-cinema-admin-text">
                   {formatAmount(selectedPayment.payAmount)}
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-cinema-muted">결제 상태</label>
-                <p className="mt-1 text-sm text-cinema-text">
+                <label className="block text-sm font-medium text-cinema-admin-muted">결제 상태</label>
+                <p className="mt-1 text-sm text-cinema-admin-text">
                   {STATUS_LABEL[selectedPayment.payStatus]}
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-cinema-muted">결제일시</label>
-                <p className="mt-1 text-sm text-cinema-text">
+                <label className="block text-sm font-medium text-cinema-admin-muted">결제일시</label>
+                <p className="mt-1 text-sm text-cinema-admin-text">
                   {selectedPayment.paidAt ? formatDate(selectedPayment.paidAt) : '-'}
                 </p>
               </div>
               {selectedPayment.cancelledAt && (
                 <div>
-                  <label className="block text-sm font-medium text-cinema-muted">취소일시</label>
-                  <p className="mt-1 text-sm text-cinema-text">
+                  <label className="block text-sm font-medium text-cinema-admin-muted">취소일시</label>
+                  <p className="mt-1 text-sm text-cinema-admin-text">
                     {formatDate(selectedPayment.cancelledAt)}
                   </p>
                 </div>

@@ -70,6 +70,7 @@ export function AdminMoviesPage() {
         <EmptyState
           title="등록된 영화가 없습니다"
           message="영화 등록 버튼을 눌러 첫 영화를 등록하세요."
+          variant="admin"
         />
       ) : (
         <>
@@ -144,6 +145,7 @@ export function AdminMoviesPage() {
       <Modal
         isOpen={crud.modalOpen}
         onClose={crud.closeModal}
+        variant="admin"
         title={crud.editing ? '영화 수정' : '영화 등록'}
         size="lg"
       >
@@ -293,6 +295,7 @@ export function AdminMoviesPage() {
       <ConfirmDialog
         isOpen={!!crud.deleteTarget}
         onClose={() => crud.setDeleteTarget(null)}
+        theme="admin"
         onConfirm={() =>
           crud.handleDelete(
             (t) => t.id,

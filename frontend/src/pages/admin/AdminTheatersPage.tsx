@@ -65,6 +65,7 @@ export function AdminTheatersPage() {
         <EmptyState
           title="등록된 영화관이 없습니다"
           message="영화관 등록 버튼을 눌러 첫 영화관을 등록하세요."
+          variant="admin"
         />
       ) : (
         <>
@@ -133,6 +134,7 @@ export function AdminTheatersPage() {
       <Modal
         isOpen={crud.modalOpen}
         onClose={crud.closeModal}
+        variant="admin"
         title={crud.editing ? '영화관 수정' : '영화관 등록'}
         size="md"
       >
@@ -216,6 +218,7 @@ export function AdminTheatersPage() {
       <ConfirmDialog
         isOpen={!!crud.deleteTarget}
         onClose={() => crud.setDeleteTarget(null)}
+        theme="admin"
         onConfirm={() =>
           crud.handleDelete(
             (t) => t.id,
